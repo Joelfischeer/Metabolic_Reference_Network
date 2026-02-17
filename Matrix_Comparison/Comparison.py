@@ -1,5 +1,9 @@
 
-def run_network_comparison(reference_path: str, given_path: str, threshold: float = 0.3):
+def run_network_comparison(reference_path: str, 
+                           given_path: str, 
+                           metabolic_data_folder: str,
+                           threshold: float = 0.3):
+    
     from pathlib import Path
 
     # Convert to Path objects
@@ -26,6 +30,16 @@ def run_network_comparison(reference_path: str, given_path: str, threshold: floa
         threshold
     )
 
+    # --- Load metabolic metadata using separate functions ---
+    node_metadata = load_data.load_node_metadata(f"{metabolic_data_folder}/organ_data")
+    edge_metadata = load_data.load_edge_metadata(f"{metabolic_data_folder}/connection_data")
+
+    # --- Attach metadata to the graph ---
+    for node in graph.nodes:
+        graph.nodes[node]['description'] = node_metadata.get(node, "")
+    for u, v in graph.edges:
+        graph.edges[u, v]['description'] = edge_metadata.get((u, v), "")
+
     # --- Define output paths in SAME folder as given network ---
     output_folder = given_path.parent
     output_html = output_folder / f"{given_path.stem}_comparison.html"
@@ -37,7 +51,10 @@ def run_network_comparison(reference_path: str, given_path: str, threshold: floa
 
     # Export network HTML
     from Visualisation import networkBuilderUtils
-    networkBuilderUtils.export_network_to_html(graph, filename=str(output_html))
+    networkBuilderUtils.export_network_to_html(graph=graph,
+                                                filename=str(output_html)
+                                            )
+
 
     print(f"[✔] HTML visualization saved to {output_html}")
 

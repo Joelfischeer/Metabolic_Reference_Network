@@ -42,9 +42,9 @@ def export_network_to_html(
 
       # Format hover tooltip
       if description:
-          tooltip = f"<b>{node}</b><br><br>{description.replace(chr(10), '<br>')}"
+          tooltip = f"{description.replace(chr(10), '\n')}"
       else:
-          tooltip = f"<b>{node}</b>"
+          tooltip = f"{node}"
 
       nodes.append({
           "id": str(node),
@@ -60,9 +60,9 @@ def export_network_to_html(
       description = attrs.get("description", "")
 
       if description:
-          tooltip = f"<b>{u} ↔ {v}</b><br><br>{description.replace(chr(10), '<br>')}"
+          tooltip = f"{description.replace(chr(10), '\n')}"
       else:
-          tooltip = f"<b>{u} ↔ {v}</b>"
+          tooltip = f"{u} ↔ {v}"
 
       edge_data = {
           "from": str(u),
