@@ -54,21 +54,19 @@ def export_network_to_html(
 
     # Edges
     for u, v, attrs in graph.edges(data=True):
-        weight = attrs.get("weight", 1)
-        if isinstance(weight, (int, float)):
-            weight_display = round(weight, 2)
-        else:
-            weight_display = str(weight)[:truncate_len]
-        color = attrs.get("color", "#888")
-        edge_data = {
-            "from": str(u),
-            "to": str(v),
-            "label": str(weight_display),
-            "color": color
-        }
-        if directed:
-            edge_data["arrows"] = "to"
-        edges.append(edge_data)
+      color = attrs.get("color", "#888")
+
+      edge_data = {
+          "from": str(u),
+          "to": str(v),
+          "color": color
+      }
+
+      if directed:
+          edge_data["arrows"] = "to"
+
+      edges.append(edge_data)
+
 
     graph_type = "Directed Graph" if directed else "Undirected Graph"
 
@@ -92,11 +90,52 @@ def export_network_to_html(
       height: 800px;
       border: 1px solid lightgray;
     }}
+    #legend {{
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      font-size: 14px;
+    }}
+
+    .legend-item {{
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+    }}
+
+    .legend-color {{
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      border-radius: 3px;
+    }}
+
   </style>
 </head>
 <body>
   <div id="title">{filename}</div>
   <div id="network"></div>
+  <div id="legend">
+    <strong>Edge Legend</strong>
+    <div class="legend-item">
+      <div class="legend-color" style="background: green;"></div>
+      Present in both networks
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: red;"></div>
+      Missing in provided network
+    </div>
+    <div class="legend-item">
+      <div class="legend-color" style="background: orange;"></div>
+      Only in reference network
+    </div>
+  </div>
+
   <script type="text/javascript">
     var nodes = new vis.DataSet({nodes});
     var edges = new vis.DataSet({edges});
