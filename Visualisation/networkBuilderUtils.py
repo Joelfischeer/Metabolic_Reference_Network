@@ -38,28 +38,37 @@ def export_network_to_html(
 
     # Nodes
     for node, attrs in graph.nodes(data=True):
-        title_parts = []
-        for k, v in attrs.items():
-            if isinstance(v, (int, float)):
-                value = round(v, 2)
-            else:
-                value = str(v)[:truncate_len]
-            title_parts.append(f"{k}: {value}")
-        title = "<br>".join(title_parts)
-        nodes.append({
-            "id": str(node),
-            "label": str(node),
-            "title": title
-        })
+      description = attrs.get("description", "")
+
+      # Format hover tooltip
+      if description:
+          tooltip = f"<b>{node}</b><br><br>{description.replace(chr(10), '<br>')}"
+      else:
+          tooltip = f"<b>{node}</b>"
+
+      nodes.append({
+          "id": str(node),
+          "label": str(node),   # stays visible on graph
+          "title": tooltip      # shown only on hover
+      })
+
 
     # Edges
     for u, v, attrs in graph.edges(data=True):
       color = attrs.get("color", "#888")
 
+      description = attrs.get("description", "")
+
+      if description:
+          tooltip = f"<b>{u} ↔ {v}</b><br><br>{description.replace(chr(10), '<br>')}"
+      else:
+          tooltip = f"<b>{u} ↔ {v}</b>"
+
       edge_data = {
           "from": str(u),
           "to": str(v),
-          "color": color
+          "color": color,
+          "title": tooltip
       }
 
       if directed:

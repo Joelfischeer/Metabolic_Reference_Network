@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
+
 
 
 def load_excel(file_path: str, decimal=","):
@@ -45,4 +47,49 @@ def load_csv(file_path: str) -> pd.DataFrame:
     print(f"[ℹ] Numeric columns detected: {df.select_dtypes(include=np.number).shape[1]}")
     return df
 
+def load_node_metadata(folder: str):
+    """
+    Returns dict: {node_name: text}
+    """
+    metadata = {}
+    folder = Path(folder)
 
+    if not folder.exists():
+        print("[ℹ] No node metadata folder found.")
+        return metadata
+
+    for file in folder.glob("*.txt"):
+        node_name = file.stem  # filename without .txt
+        metadata[node_name] = file.read_text(encoding="utf-8")
+
+    print(f"[✔] Loaded metadata for {len(metadata)} nodes")
+    return metadata
+
+
+def load_edge_metadata(folder: str):
+    """
+    Returns dict: {(node1, node2): text}
+    Order independent.
+    """
+    metadata = {}
+    folder = Path(folder)
+
+    if not folder.exists():
+        print("[ℹ] No edge metadata folder found.")
+        return metadata
+
+    for file in folder.glob("*.txt"):
+        name = file.stem
+        parts = name.split("_")
+
+        if len(parts) != 2:
+            continue
+
+        n1, n2 = parts
+        text = file.read_text(encoding="utf-8")
+
+        metadata[(n1, n2)] = text
+        metadata[(n2, n1)] = text  # make symmetric
+
+    print(f"[✔] Loaded metadata for {len(metadata)//2} edges")
+    return metadata

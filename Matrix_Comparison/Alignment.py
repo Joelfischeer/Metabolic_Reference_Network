@@ -26,7 +26,11 @@ def align_matrices(reference: pd.DataFrame, given: pd.DataFrame):
     return ref_aligned, given_aligned
 
 
-def compare_networks(ref: pd.DataFrame, given: pd.DataFrame, threshold: float):
+def compare_networks(ref: pd.DataFrame,
+                     given: pd.DataFrame,
+                     threshold: float,
+                     node_metadata=None,
+                     edge_metadata=None):
     """
     Compare two aligned adjacency matrices using:
 
@@ -41,6 +45,13 @@ def compare_networks(ref: pd.DataFrame, given: pd.DataFrame, threshold: float):
         colored NetworkX graph
     """
 
+    if node_metadata is None:
+        node_metadata = {}
+
+    if edge_metadata is None:
+        edge_metadata = {}
+
+
     comparison = pd.DataFrame(
         0,
         index=ref.index,
@@ -50,7 +61,9 @@ def compare_networks(ref: pd.DataFrame, given: pd.DataFrame, threshold: float):
     G = nx.Graph()
 
     for node in ref.index:
-        G.add_node(node)
+        description = node_metadata.get(node, "")
+        G.add_node(node, description=description)
+
 
     for i in ref.index:
         for j in ref.columns:
@@ -64,12 +77,14 @@ def compare_networks(ref: pd.DataFrame, given: pd.DataFrame, threshold: float):
             if ref_present and given_present:
                 comparison.loc[i, j] = 1
                 comparison.loc[j, i] = 1
-                G.add_edge(i, j, weight=1, color="green")
+                edge_text = edge_metadata.get((i, j), "")
+                G.add_edge(i, j, weight=1, color="green", description=edge_text)    
 
             elif ref_present and not given_present:
                 comparison.loc[i, j] = -1
                 comparison.loc[j, i] = -1
-                G.add_edge(i, j, weight=-1, color="red")
+                edge_text = edge_metadata.get((i, j), "")
+                G.add_edge(i, j, weight=-1, color="red", description=edge_text)   
 
             elif not ref_present and given_present:
                 comparison.loc[i, j] = 2
