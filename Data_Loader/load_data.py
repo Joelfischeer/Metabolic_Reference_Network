@@ -47,8 +47,6 @@ def load_csv(file_path: str) -> pd.DataFrame:
     print(f"[ℹ] Numeric columns detected: {df.select_dtypes(include=np.number).shape[1]}")
     return df
 
-import pandas as pd
-from pathlib import Path
 
 def load_node_metadata_from_csv(csv_path: str):
     """
@@ -56,6 +54,7 @@ def load_node_metadata_from_csv(csv_path: str):
     CSV format:
         column 1 = node_name
         column 2 = text
+    Leading/trailing quotes in text are removed.
     """
     metadata = {}
     csv_path = Path(csv_path)
@@ -64,7 +63,10 @@ def load_node_metadata_from_csv(csv_path: str):
         print("[ℹ] CSV file not found.")
         return metadata
 
-    df = pd.read_csv(csv_path, encoding="utf-8")
+    df = pd.read_csv(csv_path, encoding="utf-8").fillna("")
+
+    # remove leading/trailing quotes from text column (2nd column)
+    df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.strip('"') if isinstance(x, str) else x)
 
     # assume first column = name, second column = text
     for _, row in df.iterrows():
@@ -80,6 +82,7 @@ def load_edge_metadata_from_csv(csv_path: str):
     """
     Returns dict: {(node1, node2): text}
     Assumes symmetric matrix where ONLY upper triangle is filled.
+    Leading/trailing quotes in text are removed.
     """
     metadata = {}
     csv_path = Path(csv_path)
@@ -89,6 +92,9 @@ def load_edge_metadata_from_csv(csv_path: str):
         return metadata
 
     df = pd.read_csv(csv_path, index_col=0, encoding="utf-8").fillna("")
+
+    # remove leading/trailing quotes from all cells
+    df = df.applymap(lambda x: x.strip('"') if isinstance(x, str) else x)
 
     nodes = list(df.index)
 
@@ -105,4 +111,3 @@ def load_edge_metadata_from_csv(csv_path: str):
 
     print(f"[✔] Loaded metadata for {len(metadata)//2} edges")
     return metadata
-

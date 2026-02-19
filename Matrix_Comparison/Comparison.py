@@ -1,7 +1,6 @@
 
 def run_network_comparison(reference_path: str, 
                            given_path: str, 
-                           metabolic_data_folder: str,
                            organ_data: str,
                            connection_data: str,
                            threshold: float = 0.3):
