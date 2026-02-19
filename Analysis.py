@@ -1,5 +1,5 @@
 def main():
-    reference_file = "../reference_network.csv"
+    reference_file = "../metabolic_data/reference_network.csv"
     given_file = "../metabolic_network.csv"
 
     metabolic_data_folder = "../metabolic_data"
