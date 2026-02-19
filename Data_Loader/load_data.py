@@ -94,7 +94,8 @@ def load_edge_metadata_from_csv(csv_path: str):
     df = pd.read_csv(csv_path, index_col=0, encoding="utf-8").fillna("")
 
     # remove leading/trailing quotes from all cells
-    df = df.applymap(lambda x: x.strip('"') if isinstance(x, str) else x)
+    df = df.fillna("")  # replace NaN with empty string
+    df = df.astype(str).apply(lambda col: col.str.strip('"'))
 
     nodes = list(df.index)
 
