@@ -35,7 +35,7 @@ def compare_networks(ref: pd.DataFrame,
     Compare two aligned adjacency matrices using:
 
     Reference:
-        edge exists if value > 1
+        edge exists if value == 1
 
     Given:
         edge exists if value >= threshold
@@ -71,7 +71,7 @@ def compare_networks(ref: pd.DataFrame,
                 continue  # undirected
 
             # --- Binary interpretation ---
-            ref_present = pd.notna(ref.loc[i, j]) and ref.loc[i, j] > 1
+            ref_present = pd.notna(ref.loc[i, j]) and ref.loc[i, j] == 1
             given_present = pd.notna(given.loc[i, j]) and given.loc[i, j] >= threshold
 
             if ref_present and given_present:
