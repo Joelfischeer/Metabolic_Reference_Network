@@ -47,49 +47,62 @@ def load_csv(file_path: str) -> pd.DataFrame:
     print(f"[ℹ] Numeric columns detected: {df.select_dtypes(include=np.number).shape[1]}")
     return df
 
-def load_node_metadata(folder: str):
+import pandas as pd
+from pathlib import Path
+
+def load_node_metadata_from_csv(csv_path: str):
     """
     Returns dict: {node_name: text}
+    CSV format:
+        column 1 = node_name
+        column 2 = text
     """
     metadata = {}
-    folder = Path(folder)
+    csv_path = Path(csv_path)
 
-    if not folder.exists():
-        print("[ℹ] No node metadata folder found.")
+    if not csv_path.exists():
+        print("[ℹ] CSV file not found.")
         return metadata
 
-    for file in folder.glob("*.txt"):
-        node_name = file.stem  # filename without .txt
-        metadata[node_name] = file.read_text(encoding="utf-8")
+    df = pd.read_csv(csv_path, encoding="utf-8")
+
+    # assume first column = name, second column = text
+    for _, row in df.iterrows():
+        node_name = str(row.iloc[0])
+        text = str(row.iloc[1])
+        metadata[node_name] = text
 
     print(f"[✔] Loaded metadata for {len(metadata)} nodes")
     return metadata
 
 
-def load_edge_metadata(folder: str):
+def load_edge_metadata_from_csv(csv_path: str):
     """
     Returns dict: {(node1, node2): text}
-    Order independent.
+    Assumes symmetric matrix where ONLY upper triangle is filled.
     """
     metadata = {}
-    folder = Path(folder)
+    csv_path = Path(csv_path)
 
-    if not folder.exists():
-        print("[ℹ] No edge metadata folder found.")
+    if not csv_path.exists():
+        print("[ℹ] No edge metadata CSV found.")
         return metadata
 
-    for file in folder.glob("*.txt"):
-        name = file.stem
-        parts = name.split("_")
+    df = pd.read_csv(csv_path, index_col=0, encoding="utf-8").fillna("")
 
-        if len(parts) != 2:
-            continue
+    nodes = list(df.index)
 
-        n1, n2 = parts
-        text = file.read_text(encoding="utf-8")
+    for i, n1 in enumerate(nodes):
+        for j in range(i + 1, len(nodes)):  # only upper triangle
+            n2 = nodes[j]
+            text = df.loc[n1, n2]
 
-        metadata[(n1, n2)] = text
-        metadata[(n2, n1)] = text  # make symmetric
+            if str(text).strip() == "":
+                continue
+
+            metadata[(n1, n2)] = text
+            metadata[(n2, n1)] = text  # make symmetric
 
     print(f"[✔] Loaded metadata for {len(metadata)//2} edges")
     return metadata
+

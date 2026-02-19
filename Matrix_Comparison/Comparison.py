@@ -2,6 +2,8 @@
 def run_network_comparison(reference_path: str, 
                            given_path: str, 
                            metabolic_data_folder: str,
+                           organ_data: str,
+                           connection_data: str,
                            threshold: float = 0.3):
     
     from pathlib import Path
@@ -31,8 +33,8 @@ def run_network_comparison(reference_path: str,
     )
 
     # --- Load metabolic metadata using separate functions ---
-    node_metadata = load_data.load_node_metadata(f"{metabolic_data_folder}/organ_data")
-    edge_metadata = load_data.load_edge_metadata(f"{metabolic_data_folder}/connection_data")
+    node_metadata = load_data.load_node_metadata_from_csv(organ_data)
+    edge_metadata = load_data.load_edge_metadata_from_csv(connection_data)
 
     # --- Attach metadata to the graph ---
     for node in graph.nodes:
