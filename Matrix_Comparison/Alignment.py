@@ -80,13 +80,13 @@ def compare_networks(ref: pd.DataFrame,
                 edge_text = edge_metadata.get((i, j), "")
                 G.add_edge(i, j, weight=1, color="green", description=edge_text)    
 
-            elif ref_present and not given_present:
+            elif not ref_present and given_present:
                 comparison.loc[i, j] = -1
                 comparison.loc[j, i] = -1
                 edge_text = edge_metadata.get((i, j), "")
                 G.add_edge(i, j, weight=-1, color="red", description=edge_text)   
 
-            elif not ref_present and given_present:
+            elif ref_present and not given_present:
                 comparison.loc[i, j] = 2
                 comparison.loc[j, i] = 2
                 G.add_edge(i, j, weight=2, color="orange")

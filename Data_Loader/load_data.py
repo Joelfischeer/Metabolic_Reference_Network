@@ -112,3 +112,36 @@ def load_edge_metadata_from_csv(csv_path: str):
 
     print(f"[✔] Loaded metadata for {len(metadata)//2} edges")
     return metadata
+
+def metadata_dict_to_binary_table(metadata: dict):
+    """
+    Convert metadata dict {(node1,node2): text} into a binary table:
+      - 1 if a text exists in the upper triangle
+      - 0 otherwise
+    Only upper triangle (row < col) will have 1s; diagonal and lower triangle remain 0.
+    
+    Returns:
+        binary_df: pd.DataFrame
+    """
+    if not metadata:
+        return pd.DataFrame()
+    
+    # Determine all nodes from dict keys
+    nodes = sorted(set([n for edge in metadata.keys() for n in edge]))
+    n = len(nodes)
+    
+    # Create empty DataFrame
+    binary_df = pd.DataFrame(0, index=nodes, columns=nodes, dtype=int)
+    
+    # Fill upper triangle with 1 where text exists
+    for (n1, n2), text in metadata.items():
+        if text.strip() == "":
+            continue
+        i = nodes.index(n1)
+        j = nodes.index(n2)
+        if i < j:  # only upper triangle
+            binary_df.iloc[i, j] = 1
+    
+    print(f"[✔] Binary table created with {binary_df.values.sum()} positive connections (upper triangle only)")
+    return binary_df
+

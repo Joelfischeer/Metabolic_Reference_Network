@@ -13,15 +13,20 @@ def run_network_comparison(reference_path: str,
 
     print(f"[ℹ] Using threshold = {threshold}")
 
-    # Load matrices
+
+    # --- Load metabolic metadata using separate functions ---
     from Data_Loader import load_data
-    ref = load_data.load_csv(str(reference_path))
+    node_metadata = load_data.load_node_metadata_from_csv(organ_data)
+    edge_metadata = load_data.load_edge_metadata_from_csv(connection_data)
+
+    #Convert the edge metadata to a binary matrix:
+    ref = load_data.metadata_dict_to_binary_table(edge_metadata)
+    # Load given matrix:
     given = load_data.load_csv(str(given_path))
 
     # Align organs automatically
     from Matrix_Comparison.Alignment import align_matrices
     ref_aligned, given_aligned = align_matrices(ref, given)
-
 
     # Compare with threshold
     from Matrix_Comparison.Alignment import compare_networks 
@@ -31,15 +36,12 @@ def run_network_comparison(reference_path: str,
         threshold
     )
 
-    # --- Load metabolic metadata using separate functions ---
-    node_metadata = load_data.load_node_metadata_from_csv(organ_data)
-    edge_metadata = load_data.load_edge_metadata_from_csv(connection_data)
-
     # --- Attach metadata to the graph ---
     for node in graph.nodes:
         graph.nodes[node]['description'] = node_metadata.get(node, "")
     for u, v in graph.edges:
         graph.edges[u, v]['description'] = edge_metadata.get((u, v), "")
+
 
     # --- Define output paths in SAME folder as given network ---
     output_folder = given_path.parent
