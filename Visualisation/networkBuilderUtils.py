@@ -1,11 +1,11 @@
 import json
 import networkx as nx
 
-
 def export_network_to_cytoscape_dashboard(
     graph: nx.Graph,
     filename: str = "network_dashboard.html",
-    directed: bool | None = None
+    directed: bool | None = None,
+    include_legend: bool = True  # <-- new parameter
 ):
     """
     Export a NetworkX graph to an interactive Cytoscape.js dashboard HTML file.
@@ -15,7 +15,7 @@ def export_network_to_cytoscape_dashboard(
     - Click node → highlight connected edges & neighbors (colors preserved)
     - Background click resets highlight
     - Force and Circle layouts
-    - Edge color legend
+    - Edge color legend (optional)
     - Hover tooltips
     """
 
@@ -49,6 +49,18 @@ def export_network_to_cytoscape_dashboard(
 
     elements_json = json.dumps(elements)
     arrow_shape = "triangle" if directed else "none"
+
+    # --- Conditional legend HTML ---
+    legend_html = ""
+    if include_legend:
+        legend_html = """
+<div id="legend">
+  <strong>Edge Color Legend</strong>
+  <div class="legend-item"><div class="legend-color" style="background: green;"></div>Present in both networks</div>
+  <div class="legend-item"><div class="legend-color" style="background: red;"></div>Missing in provided network</div>
+  <div class="legend-item"><div class="legend-color" style="background: orange;"></div>Only in reference network</div>
+</div>
+"""
 
     html_content = f"""
 <!DOCTYPE html>
@@ -138,12 +150,7 @@ def export_network_to_cytoscape_dashboard(
 <div id="cy"></div>
 <div id="tooltip"></div>
 
-<div id="legend">
-  <strong>Edge Color Legend</strong>
-  <div class="legend-item"><div class="legend-color" style="background: green;"></div>Present in both networks</div>
-  <div class="legend-item"><div class="legend-color" style="background: red;"></div>Missing in provided network</div>
-  <div class="legend-item"><div class="legend-color" style="background: orange;"></div>Only in reference network</div>
-</div>
+{legend_html} <!-- insert legend only if include_legend=True -->
 
 <script>
 

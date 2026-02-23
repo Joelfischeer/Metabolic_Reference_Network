@@ -58,7 +58,30 @@ def run_network_comparison(reference_path: str,
                                                 filename=str(output_html)
                                             )
 
+    print(f"[✔] Comparison Network saved to {output_html}")
 
-    print(f"[✔] HTML visualization saved to {output_html}")
+     # --- Export reference network HTML ---
+    reference_graph = graph.__class__()  # create same type of graph (Graph or DiGraph)
+
+    # Add nodes
+    for node in ref_aligned.index:
+        reference_graph.add_node(node)
+        reference_graph.nodes[node]['description'] = node_metadata.get(node, "")
+
+    # Add edges exactly as in reference
+    for u, v in ref_aligned.stack().items():
+        if v == 1:
+            reference_graph.add_edge(u[0], u[1])
+            reference_graph.edges[u[0], u[1]]['description'] = edge_metadata.get((u[0], u[1]), "")
+            reference_graph.edges[u[0], u[1]]['color'] = "green"  # or keep from metadata if exists
+
+    # Export reference network HTML
+    reference_html = output_folder / f"{reference_path.stem}_network.html"
+    networkBuilderUtils.export_network_to_cytoscape_dashboard(
+        graph=reference_graph,
+        filename=str(reference_html),
+        include_legend=False
+    )
+    print(f"[✔] Reference network HTML visualization saved to {reference_html}")
 
     return comparison_matrix
