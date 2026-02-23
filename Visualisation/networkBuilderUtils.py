@@ -1,138 +1,263 @@
+import json
 import networkx as nx
-from networkx.classes import Graph
 
-def export_network_to_html(
+
+def export_network_to_cytoscape_dashboard(
     graph: nx.Graph,
-    filename: str = "network.html",
-    truncate_len: int = 20,
+    filename: str = "network_dashboard.html",
     directed: bool | None = None
 ):
-    nodes = []
-    edges = []
+    """
+    Export a NetworkX graph to an interactive Cytoscape.js dashboard HTML file.
+
+    Features:
+    - Draggable nodes
+    - Click node → highlight connected edges & neighbors (colors preserved)
+    - Background click resets highlight
+    - Force and Circle layouts
+    - Edge color legend
+    - Hover tooltips
+    """
 
     if directed is None:
         directed = graph.is_directed()
 
+    elements = []
+
     # --- Nodes ---
     for node, attrs in graph.nodes(data=True):
-        description = attrs.get("description", "")
-        tooltip = description.replace('\n', '<br>') if description else ""
-        nodes.append({
-            "id": str(node),
-            "label": str(node),
-            "customTooltip": tooltip  # only use our custom floating tooltip
+        elements.append({
+            "data": {
+                "id": str(node),
+                "label": str(node),
+                "description": attrs.get("description", ""),
+                "color": attrs.get("color", "#2563eb")
+            }
         })
 
     # --- Edges ---
     for u, v, attrs in graph.edges(data=True):
-        color = attrs.get("color", "#888")
-        description = attrs.get("description", "")
-        tooltip = description.replace('\n', '<br>') if description else ""
-        edge_data = {
-            "from": str(u),
-            "to": str(v),
-            "color": color,
-            "customTooltip": tooltip
-        }
-        if directed:
-            edge_data["arrows"] = "to"
-        edges.append(edge_data)
+        elements.append({
+            "data": {
+                "id": f"{u}_{v}",
+                "source": str(u),
+                "target": str(v),
+                "color": attrs.get("color", "#9ca3af"),
+                "description": attrs.get("description", "")
+            }
+        })
 
-    graph_type = "Directed Graph" if directed else "Undirected Graph"
+    elements_json = json.dumps(elements)
+    arrow_shape = "triangle" if directed else "none"
 
     html_content = f"""
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Network Graph</title>
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <meta charset="utf-8">
+  <title>{filename}</title>
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+
   <style>
-    body {{ font-family: Arial, sans-serif; }}
-    #title {{ font-size: 18px; margin: 10px; font-weight: bold; }}
-    #network {{ width: 100%; height: 800px; border: 1px solid lightgray; }}
-    #legend {{
-      position: absolute; top: 20px; right: 20px; background: white;
-      padding: 12px; border: 1px solid #ccc; border-radius: 8px;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.1); font-size: 14px;
+    body {{
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: #f3f4f6;
     }}
-    .legend-item {{ display: flex; align-items: center; margin-bottom: 6px; }}
-    .legend-color {{ width: 16px; height: 16px; margin-right: 8px; border-radius: 3px; }}
+
+    #header {{
+      padding: 16px 24px;
+      font-size: 18px;
+      font-weight: 600;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+    }}
+
+    #controls {{
+      padding: 12px 24px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+    }}
+
+    #cy {{
+      width: 100%;
+      height: 80vh;
+      background: white;
+    }}
 
     #tooltip {{
-        position: absolute;
-        display: none;
-        background: white;
-        border: 1px solid #333;
-        padding: 6px;
-        border-radius: 5px;
-        box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-        pointer-events: none;
-        max-width: 300px;
-        font-size: 13px;
-        line-height: 1.3;
+      position: absolute;
+      display: none;
+      background: white;
+      border: 1px solid #d1d5db;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      max-width: 260px;
+      pointer-events: none;
+      z-index: 999;
+    }}
+
+    #legend {{
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }}
+
+    .legend-item {{
+      display: flex;
+      align-items: center;
+      margin-bottom: 4px;
+    }}
+
+    .legend-color {{
+      width: 16px;
+      height: 16px;
+      margin-right: 6px;
+      border-radius: 3px;
     }}
   </style>
 </head>
 <body>
-  <div id="title">{filename}</div>
-  <div id="network"></div>
-  <div id="legend">
-    <strong>Edge Legend</strong>
-    <div class="legend-item"><div class="legend-color" style="background: green;"></div>Present in both networks</div>
-    <div class="legend-item"><div class="legend-color" style="background: red;"></div>Missing in provided network</div>
-    <div class="legend-item"><div class="legend-color" style="background: orange;"></div>Only in reference network</div>
-  </div>
 
-  <div id="tooltip"></div>
+<div id="header">{filename}</div>
 
-  <script type="text/javascript">
-    var nodes = new vis.DataSet({nodes});
-    var edges = new vis.DataSet({edges});
-    var container = document.getElementById('network');
-    var data = {{ nodes: nodes, edges: edges }};
-    var options = {{
-      nodes: {{
-        shape: 'dot',
-        size: 20
+<div id="controls">
+  <button onclick="runLayout('cose')">Force Layout</button>
+  <button onclick="runLayout('circle')">Circle Layout</button>
+  <button onclick="fitGraph()">Fit Graph</button>
+</div>
+
+<div id="cy"></div>
+<div id="tooltip"></div>
+
+<div id="legend">
+  <strong>Edge Color Legend</strong>
+  <div class="legend-item"><div class="legend-color" style="background: green;"></div>Present in both networks</div>
+  <div class="legend-item"><div class="legend-color" style="background: red;"></div>Missing in provided network</div>
+  <div class="legend-item"><div class="legend-color" style="background: orange;"></div>Only in reference network</div>
+</div>
+
+<script>
+
+  const elements = {elements_json};
+
+  const cy = cytoscape({{
+    container: document.getElementById('cy'),
+    elements: elements,
+
+    style: [
+      {{
+        selector: 'node',
+        style: {{
+          'background-color': 'data(color)',
+          'label': 'data(label)',
+          'color': '#111827',
+          'text-valign': 'center',
+          'text-halign': 'center',
+          'font-size': '12px',
+          'width': 45,
+          'height': 45,
+          'opacity': 1
+        }}
       }},
-      edges: {{
-        smooth: {{ type: 'dynamic' }}
+      {{
+        selector: 'edge',
+        style: {{
+          'width': 2,
+          'line-color': 'data(color)',
+          'target-arrow-color': 'data(color)',
+          'target-arrow-shape': '{arrow_shape}',
+          'curve-style': 'bezier',
+          'opacity': 1
+        }}
       }},
-      physics: {{ enabled: false }},
-      interaction: {{
-        hover: true,
-        dragNodes: true
+      {{
+        selector: '.faded',
+        style: {{
+          'opacity': 0.1
+        }}
       }}
-    }};
-    var network = new vis.Network(container, data, options);
+    ],
 
-    // Floating tooltip div
-    var tooltipDiv = document.getElementById('tooltip');
+    layout: {{
+      name: 'cose',
+      animate: true,
+      padding: 100,
+      nodeRepulsion: 12000,
+      idealEdgeLength: 180,
+      edgeElasticity: 200,
+      gravity: 0.2
+    }}
+  }});
 
-    // Node hover
-    network.on("hoverNode", function(params) {{
-        var node = nodes.get(params.node);
-        tooltipDiv.innerHTML = node.customTooltip;
-        tooltipDiv.style.left = params.event.pageX + 10 + "px";
-        tooltipDiv.style.top = params.event.pageY + 10 + "px";
-        tooltipDiv.style.display = "block";
-    }});
-    network.on("blurNode", function(params) {{
-        tooltipDiv.style.display = "none";
-    }});
+  function runLayout(name) {{
+    cy.layout({{
+      name: name,
+      animate: true,
+      padding: 50
+    }}).run();
+  }}
 
-    // Edge hover
-    network.on("hoverEdge", function(params) {{
-        var edge = edges.get(params.edge);
-        tooltipDiv.innerHTML = edge.customTooltip;
-        tooltipDiv.style.left = params.event.pageX + 10 + "px";
-        tooltipDiv.style.top = params.event.pageY + 10 + "px";
-        tooltipDiv.style.display = "block";
-    }});
-    network.on("blurEdge", function(params) {{
-        tooltipDiv.style.display = "none";
-    }});
-  </script>
+  function fitGraph() {{
+    cy.fit();
+  }}
+
+  // --- TOOLTIP ---
+  const tooltip = document.getElementById('tooltip');
+
+  cy.on('mouseover', 'node, edge', function(evt) {{
+    const desc = evt.target.data('description');
+    if (desc) {{
+      tooltip.innerHTML = desc.replace(/\\n/g, "<br>");
+      tooltip.style.display = 'block';
+    }}
+  }});
+
+  cy.on('mousemove', function(evt) {{
+    tooltip.style.left = evt.originalEvent.pageX + 10 + 'px';
+    tooltip.style.top = evt.originalEvent.pageY + 10 + 'px';
+  }});
+
+  cy.on('mouseout', 'node, edge', function() {{
+    tooltip.style.display = 'none';
+  }});
+
+  // --- CLICK HIGHLIGHT LOGIC (COLORS PRESERVED) ---
+  cy.on('tap', 'node', function(evt) {{
+    const node = evt.target;
+
+    // Fade all elements
+    cy.elements().addClass('faded');
+
+    // Keep selected node visible
+    node.removeClass('faded');
+
+    // Connected edges
+    const connectedEdges = node.connectedEdges();
+    connectedEdges.removeClass('faded');
+
+    // Neighbor nodes
+    const neighbors = node.connectedNodes();
+    neighbors.removeClass('faded');
+  }});
+
+  // Background click → reset
+  cy.on('tap', function(evt) {{
+    if (evt.target === cy) {{
+      cy.elements().removeClass('faded');
+    }}
+  }});
+
+</script>
+
 </body>
 </html>
 """
@@ -140,4 +265,5 @@ def export_network_to_html(
     with open(filename, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"Network saved to {filename} ({graph_type})")
+    graph_type = "Directed Graph" if directed else "Undirected Graph"
+    print(f"Dashboard saved to {filename} ({graph_type})")

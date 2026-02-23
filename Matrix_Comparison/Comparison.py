@@ -54,7 +54,7 @@ def run_network_comparison(reference_path: str,
 
     # Export network HTML
     from Visualisation import networkBuilderUtils
-    networkBuilderUtils.export_network_to_html(graph=graph,
+    networkBuilderUtils.export_network_to_cytoscape_dashboard(graph=graph,
                                                 filename=str(output_html)
                                             )
 

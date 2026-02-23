@@ -63,7 +63,7 @@ def load_node_metadata_from_csv(csv_path: str):
         print("[ℹ] CSV file not found.")
         return metadata
 
-    df = pd.read_csv(csv_path, encoding="utf-8").fillna("")
+    df = pd.read_csv(csv_path, encoding="utf-8", header=None).fillna("")
 
     # remove leading/trailing quotes from text column (2nd column)
     df.iloc[:, 1] = df.iloc[:, 1].apply(lambda x: x.strip('"') if isinstance(x, str) else x)
