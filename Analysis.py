@@ -1,7 +1,6 @@
 def main():
-    reference_file = "../metabolic_data/reference_network.csv"
-    organ_data = "../metabolic_data/organ_data.csv"
-    connection_data = "../metabolic_data/connection_data.csv"
+    organ_data = "metabolic_data/organ_data.csv"
+    connection_data = "metabolic_data/connection_data.csv"
 
 
     given_file = "../metabolic_network.csv"
@@ -9,8 +8,7 @@ def main():
     threshold = 0.3
 
     from Matrix_Comparison.Comparison import run_network_comparison
-    run_network_comparison(reference_path=reference_file, 
-                           given_path=given_file,
+    run_network_comparison(given_path=given_file,
                            organ_data=organ_data,
                            connection_data=connection_data,
                            threshold=threshold)

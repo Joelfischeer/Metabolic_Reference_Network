@@ -1,0 +1,140 @@
+,Adrenal Glands,Bone Marrow,Brain,Colon,Heart,Kidney,Liver,Lung,Muscle,Pancreas,Small Intestine,Spleen,Thyroid,WAT
+Adrenal Glands,,,"""Type: Hormonal connection
+Metabolites: Cortisol, Adrenaline
+Notes: Stress response.  The hypothalamic-pituitary-adrenal (HPA) axis responds to stress and maintains homeostasis.
+Sources:
+- doi: 10.7326/0003-4819-141-11-200412070-00008.""",,,"""Type: Hormonal Connection
+Metabolites: Glucagon, cortisol, insulin, aldosterone
+Notes: - Adrenal glands sits anatomically next to kidney.
+- Renal function is regulated in multiple ways by the adrenal cortex.
+- Glucagon release by the pancreas is increased by cortisol, leading to gluconeogenesis in the liver and kidney.
+- Cortisol lowers insulin secretion by pancreas. As insulin inhibits gluconeogenesis in the kidney, more gluconeogenesis is done.
+Sources:
+- https://doi.org/10.1038/ki.1974.113
+- doi: 10.1093/ckj/sfad046""","""Type: Hormonal connection
+Metabolites: Cortisol, insulin, glucagon
+Notes: 
+- Cortisol lowers insulin production in the pancreas which will in turn lower insulin abundance and lead to less glucose uptake in Muscle. For this reason glucose might get taken up by the liver. 
+- Glucagon release by the pancreas is increased by cortisol, leading to gluconeogenesis in the liver and kidney.
+Sources:
+- https://my.clevelandclinic.org/health/articles/22187-cortisol
+- https://my.clevelandclinic.org/health/articles/22283-glucagon""",,"""Type: Hormonal connection
+Metabolites: Cortisol, insulin
+Notes: Cortisol lowers insulin production in the pancreas which will in turn lower insulin abundance and lead to less glucose uptake in Muscle.
+Sources:
+- https://my.clevelandclinic.org/health/articles/22187-cortisol""","""Type: Hormonal connection
+Metabolites: Cortisol, insulin
+Notes: Cortisol lowers insulin production in the pancreas.
+Sources:
+- https://my.clevelandclinic.org/health/articles/22187-cortisol""",,,,"""Type: Hormonal connection
+Metabolites: Cortisol, insulin, adrenaline, noradrenaline
+Notes: 
+- Cortisol lowers insulin production in the pancreas which will in turn lower insulin abundance and lead to less glucose uptake in WAT.
+- Cortisol drives lipolysis. Patients with a higher cortisol level (higher SUV in Adrenal Glands) will do more lipolysis and have less glucose uptake.
+- Adrenaline and noradrenaline lead to lipolysis in adipocytes and they supress the re-esterification of fatty acids .
+Sources:
+- https://my.clevelandclinic.org/health/articles/22187-cortisol
+-https://doi.org/10.1038/s42255-020-0217-6
+-DOI: 10.3181/00379727-99-24355"""
+Bone Marrow,,,"""Type: Metabolic status.
+Metabolites: 
+Notes: 
+- Might occur only during fasting as glucose is reserved for brain and immune system (bone marrow, spleen)
+Sources:""",,,,,,,,"""Type: Metabolic status. Similar Function.
+Metabolites: 
+Notes: 
+- Might occur only during fasting as glucose is reserved for brain and immune system (bone marrow, spleen, Peyer's patches in small intestine)
+Sources:
+- - doi: 10.4061/2010/823710 ""","""Type: Metabolic status. Similar Function.
+Metabolites: 
+Notes: 
+- Might occur only during fasting as glucose is reserved for brain and immune system (bone marrow, spleen, Peyer's patches in small intestine)
+Sources:""",,
+Brain,,,,,,,,,,,"""Type: Glucose-sensing
+Metabolites: Glucose
+Notes: Gut-Brain axis regulates glucose production.
+Sources:
+- DOI: 10.1016/j.cmet.2017.04.032
+- DOI: 10.1038/nature06852
+- https://doi.org/10.1038/s41467-021-21235-y""","""Type: Metabolic status.
+Metabolites: 
+Notes: 
+- Might occur only during fasting as glucose is reserved for brain and immune system (bone marrow, spleen)
+Sources:""","""Type: Hormonal connection
+Metabolites: TSH, TH (T3, T4)
+Notes: 
+- Thyroid hormones are essential for regulation of brain energy metabolism.
+Sources:
+- doi: 10.3389/fnins.2024.1383355.""",
+Colon,,,,,,,,,,,"""Type: Similar metabolic organ function.
+Metabolites: 
+Notes: 
+Sources:""",,,
+Heart,,,,,,"""Type: Hormonal connection
+Metabolites: TSH, TH, Insulin, Glucagon
+Notes: - At a fasting and resting state, the heart, kidney, and liver all take up Fatty acids secreted form the WAT which might lead to a more coordinated metabolism of these organs.
+Sources:""","""Type: Hormonal connection
+Metabolites: TSH, TH, Insulin, Glucagon
+Notes: - At a fasting and resting state, the heart, kidney, and liver all take up Fatty acids secreted form the WAT which might lead to a more coordinated metabolism of these organs.
+Sources:""","""Type: Stress response
+Metabolites: 
+Notes: - Might be as nervous patients during the scan breathe more heavily and have a higher heart rate. 
+Sources:""",,,,,"""Type: Metabolic status
+Metabolites: TSH, TH
+Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. At hyperthyroid condition: Increased heart rate. At Hypothyroid condition: decreased heart rate.
+Sources:
+- doi: 10.1177/2042018820917869
+- https://doi.org/10.1152/physrev.00030.2013""",
+Kidney,,,,,,,,,,,,,,
+Liver,,,,,,,,,,,,"""Type: Multiple Connections
+Metabolites: 
+Notes:
+- Gut-Spleen-Liver axis. Has key roles in liver Disease. Feedback loop between Spleen and Liver. Connected through lymphatic, vascular system and neurological pathways.
+- Likely to be present during inflammatory states.
+Sources:
+- https://doi.org/10.1096/fj.202502523RR""
+",,
+Lung,,,,,,,,,,,,,,
+Muscle,,,,,,,,,,"""Type: Hormonal connection
+Metabolites: Insulin
+Notes: Insulin form Pancreas directly influences glucose uptake by GLUT4.
+Sources:
+- """,,,"""Type: Metabolic status
+Metabolites: TSH, TH
+Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. At hyperthyroid condition: Increased heart rate. At Hypothyroid condition: decreased heart rate.
+Sources:
+- doi: 10.1177/2042018820917869
+- https://doi.org/10.1152/physrev.00030.2013""",S
+Pancreas,,,,,,,,,,,,,"""Type: General metabolic state
+Metabolites: TSH, TH
+Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. TH acts also through the pancreas.
+Sources:
+- doi: 10.1177/2042018820917869
+- https://doi.org/10.1152/physrev.00030.2013""","“Type: Hormonal connection
+Metabolites: Insulin
+Notes:
+- Insulin produced by the pancreas leads to glucose uptake in WAT
+- Dysfunction of adipocyte metabolism is also a key event in the development of insulin resistance.
+Sources:
+”"
+Small Intestine,,,,,,,,,,,,"""Type: Multiple Connections
+Metabolites: 
+Notes:
+- Gut-Spleen-Liver axis. Has key roles in liver Disease. Feedback loop between Spleen and Liver. Connected through lymphatic, vascular system and neurological pathways.
+- Likely to be present during inflammatory states.
+- Peyer’s patches in small intestine are part of immune system and might correlate with spleen and bone marrow due to inflammation.
+Sources:
+- doi: 10.4061/2010/823710 
+- https://doi.org/10.1096/fj.202502523RR""
+",,
+Spleen,,,,,,,,,,,,,,
+Thyroid,,,,,,,,,,,,,,"""Type: Hormonal connection
+Metabolites: TSH, leptin
+Notes: 
+- Higher TSH production due to obesity leads to higher glucose uptake in the thyroid.
+- TSH is positively correlated with obesity and metabolic syndrome. Leptin seems to stimulate the hypothalamus to increase TSH secretion in the thyroid. Higher TSH levels are often associated with hypothyroidism. 
+- Higher TSH/low-normal T3 is linked with a slower metabolic rate and metabolic syndrome.
+Sources:
+- DOI: 10.1177/2042018820917869
+"""
+WAT,,,,,,,,,,,,,,

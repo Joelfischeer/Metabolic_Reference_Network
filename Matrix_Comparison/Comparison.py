@@ -1,6 +1,5 @@
 
-def run_network_comparison(reference_path: str, 
-                           given_path: str, 
+def run_network_comparison(given_path: str, 
                            organ_data: str,
                            connection_data: str,
                            threshold: float = 0.3):
@@ -8,7 +7,6 @@ def run_network_comparison(reference_path: str,
     from pathlib import Path
 
     # Convert to Path objects
-    reference_path = Path(reference_path)
     given_path = Path(given_path)
 
     print(f"[ℹ] Using threshold = {threshold}")
@@ -76,7 +74,7 @@ def run_network_comparison(reference_path: str,
             reference_graph.edges[u[0], u[1]]['color'] = "green"  # or keep from metadata if exists
 
     # Export reference network HTML
-    reference_html = output_folder / f"{reference_path.stem}_network.html"
+    reference_html = output_folder / f"reference_network.html"
     networkBuilderUtils.export_network_to_cytoscape_dashboard(
         graph=reference_graph,
         filename=str(reference_html),

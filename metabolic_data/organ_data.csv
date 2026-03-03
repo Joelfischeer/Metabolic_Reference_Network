@@ -1,0 +1,137 @@
+Adrenal Glands,"""Function: Endocrine organs that regulate stress response, blood pressure, metabolism, electrolyte balance.
+Metabolism: 
+- Cortisol leads to gluconeogenesis in kidney and liver. 
+- Adrenaline leads to increased heart rate, breathing rate and glycogenolysis in liver.
+- Aldosterone regulates blood pressure and water reabsorption in the kidney.
+Key Metabolites: Adrenaline, Cortisol, aldosterone. 
+Key Proteins: 
+Sources: 
+- PMID: 40250885. 
+- https://doi.org/10.1038/s41574-019-0228-0
+- Viblanc, V. A. et al. An integrative appraisal of the hormonal and metabolic changes induced by acute stress using king penguins as a model. _Gen. Comp. Endocrinol._ **269**, 1-10 (2018)
+- https://my.clevelandclinic.org/health/body/23005-adrenal-gland
+https://my.clevelandclinic.org/health/articles/24158-aldosterone
+https://my.clevelandclinic.org/health/articles/22611-epinephrine-adrenaline"""
+Bone Marrow,"""Function: Hematopoiesis, trafficking of immune cells (regulatory T cells, conventional T cells, B cells, dendritic cells, natural killer T (NKT) cells). Suggested to be a immune regulatory organ.
+Metabolism:
+- Hematopoesis
+- Cytokine production
+Key Metabolites: Cytokines
+Key Proteins: 
+Sources:
+- https://my.clevelandclinic.org/health/body/22818-bone-marrow
+- PMID: 22020068"""
+Brain,"""Function: Cognitive and motor control
+Metabolism: High glucose consumption, partial switch to ketone bodies during fasting.
+Key Metabolites: Glucose
+Key Proteins: GLUT1 transports glucose at blood brain barrier. GLUT3 in nerve cells. SUV uptake can vary depending on region.
+Sources: 
+- https://doi.org/10.1093/lifemeta/loac030
+- https://doi.org/10.1152/physrev.00062.2017
+"""
+Colon,"""Function: Absorbs water, electrolytes and nutrients after bacterial metabolism of carbohydrates.
+Metabolism:
+- Aldosterone increases number of sodium pumps in basolateral membrane.
+Key Metabolites: butyrate
+Key Proteins: 
+Sources:
+- https://doi.org/10.1007/978-3-030-66049-9_2"""
+Heart,"""Function: Pumps blood through the body. 80% of cardiac ATP is provided by fatty acid oxidation (FAO) in the mitochondria. Rest: glucose and lactate, small amounts of ketone bodies and amino acids.
+Metabolism:
+- Uses mainly fatty acids as an energy source.
+- Metabolic switch to glucose can occur in severe diabetes.
+- Heart failure is associated with altered fatty acid uptake and fatty acid oxidation.
+Key Metabolites: 
+Key Proteins:
+Sources: 
+- PMCID: PMC10816475
+- doi: 10.1161/CIRCRESAHA.121.318241
+- doi: 10.1152/physrev.00015.2009
+"""
+Kidney,"""Function: Nutrient and electrolyte reabsorption, pH homeostasis. Glucose reabsorption by SGLT2. SUVs adjusted
+Metabolism:
+- Gluconeogenesis during fasting. Reduced in acute and chronic kidney disease.
+Key Metabolites: Glucose, 
+Key Proteins: SGLT2
+Sources: 
+- doi: 10.3389/fmed.2021.742072
+- doi: 10.1007/s00424-022-02696-6
+- doi: 10.1093/ckj/sfad046
+"""
+Liver,"""Function: Metabolic conversions, glucose storage and conversion.
+Metabolism:
+- Gluconeogenesis (inhibited by insulin), glycogen synthesis (promoted by insulin) and glycogenolysis.
+- Lipid oxidation
+- Protein/amino acid metabolism
+Key Metabolites: Glucose, glycogen,
+Key Proteins: GLUT2
+Sources:
+- doi: 10.1016/j.cub.2017.09.019"""
+Lung,"""Function: Oxygen uptake into the blood. 
+Metabolism:
+- Very high total glucose usage (mainly for normal protein production).
+- Does more aerobic glycolysis compare to many other tissues (40% of glucose ends up in lactate in healthy rats).
+Key Metabolites: glucose, lactate
+Key Proteins: 
+Sources: 
+- doi: 10.1146/annurev-physiol-020518-114640.
+- DOI: 10.1289/ehp.8455149
+- https://doi.org/10.1152/ajplegacy.1974.226.4.867"""
+Muscle,"""Function: Enables movement by contractions. Glucose consumer during exercise. 
+Metabolism:
+- Fatty acid oxidation is heightened during fasting.
+Key Metabolites: Glucose, fatty acids.
+Key Proteins: GLUT4
+Sources: doi: 10.1093/jas/skac035."""
+Pancreas,"""Function: Produces gastrointestinal enzymes. Secretes insulin and glucagon that regulate blood glucose levels.
+Metabolism:
+- Lower gastrointestinal enzyme production during fasting.
+Key Metabolites: 
+Key Proteins: Insulin, glucagon.
+Sources:
+- https://my.clevelandclinic.org/health/body/21743-pancreas
+- https://doi.org/10.1038/s41392-024-02098-3
+"""
+Small Intestine,"""Function: Nutrient absorption after food intake.
+Metabolism:
+- Some gluconeogenesis
+Key Metabolites: Glucose, Fatty acids, glycerol, amino acids.
+Key Proteins: SGLT1, GLUT5
+Sources:
+- DOI: 10.1016/j.cmet.2017.04.032
+- https://doi.org/10.1038/s41467-021-21235-y
+"""
+Spleen,"""Function: Adaptive immune response (B and T-cells). Innate immune response (macrophages).
+Metabolism:
+- Baseline metabolism is likely driven by inflammation.
+- FDG uptake can strongly change based on immune activation.
+Key Metabolites: 
+Key Proteins: 
+Sources:
+- https://doi.org/10.1038/nri1669
+- https://doi.org/10.1038/s41598-024-67905-x
+"""
+Thyroid,"""Function: Regulatory and secretory organ. TSH is the primary messenger that leads to T3 and T4 production. TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism.
+- Hyperthyroid condition: Increased heart rate, increased metabolism, can lead to high blood glucose levels due to high liver glucose production.
+- Hypothyroidism: Reduced metabolism, higher cholesterol and triglycerides in blood, higher blood pressure.
+--> Bidirectional link between TH and adiposity: 
+A) TH promotes fat storage + lowers energy expenditure
+B) Excess fat tissue releases inflammatory cytokines and leptin which alters TSH secretion. They have elevates TSH levels with a healthy thyroid.
+Metabolism:
+- Hormone production.
+- TSH influences the enzyme that turns inactive T4 into active T4.
+Key Metabolites: 
+Key Proteins: TH (T3 and T4), TSH (Thyrotropin)
+Sources:
+- doi: 10.1177/2042018820917869
+- https://doi.org/10.1152/physrev.00030.2013
+"""
+WAT,"""Function: Energy storage. 
+Metabolism: Lipolysis during fasting. 
+Key Metabolites: Secretes Leptin, which regulates hunger. Secretes lipolysis products: free fatty acids, glycerol. Insulin resistance: 
+- WAT and Muscle are impaired in taking up glucose while the liver looses its ability in endogenous glucose production. Leads to the uncontrolled release of fatty acids from the WAT.
+- ""A current view, which proposes adipocyte dysfunction as an early cardinal event in insulin resistance, is that WAT drives metabolic fluxes that affect the liver and skeletal muscle""[Morigny et. al.], [Roden et. al.]
+- The pancreas beta-cells have an increased burden to produce insulin. The function may then decline with time. Correlation is present in low-BMI (non diabetic?) patients while no correlation is present in high-BMI (diabetic?) patients.
+Key Proteins: GLUT4 (Insulin-dependent), GLUT1.
+Sources: https://doi.org/10.1038/s41574-021-00471-8 | The integrative biology of type 2 diabetes. Nature 576, 51-60 (2019). | Metabolic messengers: adiponectin. Nat. Metab. 1, 334-339 (2019).
+"""
