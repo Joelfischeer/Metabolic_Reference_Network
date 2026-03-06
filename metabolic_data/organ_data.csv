@@ -3,6 +3,7 @@ Metabolism:
 - Cortisol leads to gluconeogenesis in kidney and liver. 
 - Adrenaline leads to increased heart rate, breathing rate and glycogenolysis in liver.
 - Aldosterone regulates blood pressure and water reabsorption in the kidney.
+- Cortisol synchronizes peripheral clocks in liver, muscle, and adipose tissue and also seems to influencepancreas and gut.
 Key Metabolites: Adrenaline, Cortisol, aldosterone. 
 Key Proteins: 
 Sources: 
@@ -11,7 +12,11 @@ Sources:
 - Viblanc, V. A. et al. An integrative appraisal of the hormonal and metabolic changes induced by acute stress using king penguins as a model. _Gen. Comp. Endocrinol._ **269**, 1-10 (2018)
 - https://my.clevelandclinic.org/health/body/23005-adrenal-gland
 https://my.clevelandclinic.org/health/articles/24158-aldosterone
-https://my.clevelandclinic.org/health/articles/22611-epinephrine-adrenaline"""
+https://my.clevelandclinic.org/health/articles/22611-epinephrine-adrenaline
+- DOI: 10.5772/intechopen.1003161
+-doi: 10.1016/j.coemr.2021.03.011.
+-
+"""
 Bone Marrow,"""Function: Hematopoiesis, trafficking of immune cells (regulatory T cells, conventional T cells, B cells, dendritic cells, natural killer T (NKT) cells). Suggested to be a immune regulatory organ.
 Metabolism:
 - Hematopoesis
