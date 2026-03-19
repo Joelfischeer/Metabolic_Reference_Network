@@ -82,12 +82,14 @@ Sources:
 - doi: 10.1146/annurev-physiol-020518-114640.
 - DOI: 10.1289/ehp.8455149
 - https://doi.org/10.1152/ajplegacy.1974.226.4.867"""
-Muscle,"""Function: Enables movement by contractions. Glucose consumer during exercise. 
+Muscle,"""Function: Enables movement by contractions. Glucose consumer during exercise. Endocrine organ which releases myokines. 
 Metabolism:
 - Fatty acid oxidation is heightened during fasting.
 Key Metabolites: Glucose, fatty acids.
 Key Proteins: GLUT4
-Sources: doi: 10.1093/jas/skac035."""
+Sources: - doi: 10.1093/jas/skac035.
+- doi: 10.3390/jcm14134490
+- https://doi.org/10.1038/nrendo.2012.49"""
 Pancreas,"""Function: Produces gastrointestinal enzymes. Secretes insulin and glucagon that regulate blood glucose levels.
 Metabolism:
 - Lower gastrointestinal enzyme production during fasting.
