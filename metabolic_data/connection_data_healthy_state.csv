@@ -8,7 +8,7 @@ Sources:
 -DOI: 10.5772/intechopen.1003161
 ”","""Type: Hormonal connection
 Key Players: Cortisol, Adrenaline
-Notes: Stress response.  The hypothalamic-pituitary-adrenal (HPA) axis responds to stress and maintains homeostasis.
+Notes: Stress response. The hypothalamic-pituitary-adrenal (HPA) axis responds to stress and maintains homeostasis.
 Sources:
 - doi: 10.7326/0003-4819-141-11-200412070-00008.""",,,"""Type: Hormonal Connection
 Key Players: Glucagon, cortisol, insulin, aldosterone
@@ -70,16 +70,12 @@ Key Players:
 Notes: 
 - Might occur only during fasting as glucose is reserved for brain and immune system (bone marrow, spleen)
 Sources:""","""Type: Hormonal connection
-Key Players: TSH, TH (T3, T4), Il-6, TNF-alpha
+Key Players: TSH, TH (T3, T4)
 Notes: 
 - Thyroid hormones are essential for regulation of brain energy metabolism.
-- During inflammation Il-6 is produced by a multitude of cells/organs and leads to
-A decrease in plasma concentration of TSH and T3 in renal cancer patients. This might
-Lead to a lower and generally dysregulated thyroid activity.
 Sources:
-- doi: 10.3389/fnins.2024.1383355.
-- DOI: 10.1210/jcem.79.5.7962327""",
-Colon,,,,,,,,,,,"""Type: Similar metabolic organ function. Correlation might depend on fasting state/last meal.
+- doi: 10.3389/fnins.2024.1383355.""",
+Colon,,,,,,,,,,,"""Type: Similar metabolic organ function.
 Key Players: 
 Notes: 
 Sources:""",,,
@@ -99,34 +95,24 @@ Sources:
 - doi: 10.1177/2042018820917869
 - https://doi.org/10.1152/physrev.00030.2013""",
 Kidney,,,,,,,,,,,,,,
-Liver,,,,,,,,,,,,"""Type: Multiple Connections
-Key Players: 
-Notes:
-- Gut-Spleen-Liver axis. Has key roles in liver Disease. Feedback loop between Spleen and Liver. Connected through lymphatic, vascular system and neurological pathways.
-- Likely to be present during inflammatory states.
-Sources:
-- https://doi.org/10.1096/fj.202502523RR""
-",,
+Liver,,,,,,,,,,,,,,
 Lung,,,,,,,,,,,,,,
 Muscle,,,,,,,,,,"""Type: Hormonal connection
 Key Players: Insulin
 Notes: Insulin form Pancreas directly influences glucose uptake by GLUT4.
 Sources:
-- doi: 10.4331/wjbc.v11.i3.76.
-- doi: 10.1074/jbc.REV119.008351""",,,"""Type: Metabolic status
+ """,,,"""Type: Metabolic status
 Key Players: TSH, TH
-Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. 
-Thermogenesis occurs to a large part in muscle.
+Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. At hyperthyroid condition: Increased heart rate. At Hypothyroid condition: decreased heart rate.
 Sources:
 - doi: 10.1177/2042018820917869
-- https://doi.org/10.1152/physrev.00030.2013
-- doi: 10.4093/dmj.2017.41.5.327.""","“Type: Hormonal connection
+- https://doi.org/10.1152/physrev.00030.2013""","“Type: Hormonal connection
 Key Players: Insulin
 Notes:
 - Insulin produced by the pancreas leads to glucose uptake in both WAT and Muscle as both express GLUT4.
 - Both organs are large glucose sinks.
 Sources:
-- doi: 10.1074/jbc.REV119.008351”"
+”"
 Pancreas,,,,,,,,,,,,,"""Type: General metabolic state
 Key Players: TSH, TH
 Notes: - TH  regulates Thermogenesis, energy utilization by increasing the basal metabolic rate and regulate lipid and glucose metabolism. TH acts also through the pancreas.
@@ -138,7 +124,7 @@ Notes:
 - Insulin produced by the pancreas leads to glucose uptake in WAT
 - Dysfunction of adipocyte metabolism is also a key event in the development of insulin resistance.
 Sources:
-- https://doi.org/10.1038/s41574-021-00471-8”"
+”"
 Small Intestine,,,,,,,,,,,,"""Type: Multiple Connections
 Key Players: 
 Notes:

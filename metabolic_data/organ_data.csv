@@ -89,14 +89,14 @@ Key Metabolites: Glucose, fatty acids.
 Key Proteins: GLUT4
 Sources: - doi: 10.1093/jas/skac035.
 - doi: 10.3390/jcm14134490
-- https://doi.org/10.1038/nrendo.2012.49"""
+- https://doi.org/10.1038/nrendo.2012.49
+- doi: 10.1074/jbc.REV119.008351"""
 Pancreas,"""Function: Produces gastrointestinal enzymes. Secretes insulin and glucagon that regulate blood glucose levels.
 Metabolism:
 - Lower gastrointestinal enzyme production during fasting.
 Key Metabolites: 
 Key Proteins: Insulin, glucagon.
 Sources:
-- https://my.clevelandclinic.org/health/body/21743-pancreas
 - https://doi.org/10.1038/s41392-024-02098-3
 """
 Small Intestine,"""Function: Nutrient absorption after food intake.
@@ -135,10 +135,13 @@ Sources:
 """
 WAT,"""Function: Energy storage. 
 Metabolism: Lipolysis during fasting. 
-Key Metabolites: Secretes Leptin, which regulates hunger. Secretes lipolysis products: free fatty acids, glycerol. Insulin resistance: 
+Secretes Leptin, which regulates hunger. Secretes lipolysis products: free fatty acids, glycerol. 
+Insulin resistance: 
 - WAT and Muscle are impaired in taking up glucose while the liver looses its ability in endogenous glucose production. Leads to the uncontrolled release of fatty acids from the WAT.
 - ""A current view, which proposes adipocyte dysfunction as an early cardinal event in insulin resistance, is that WAT drives metabolic fluxes that affect the liver and skeletal muscle""[Morigny et. al.], [Roden et. al.]
 - The pancreas beta-cells have an increased burden to produce insulin. The function may then decline with time. Correlation is present in low-BMI (non diabetic?) patients while no correlation is present in high-BMI (diabetic?) patients.
 Key Proteins: GLUT4 (Insulin-dependent), GLUT1.
-Sources: https://doi.org/10.1038/s41574-021-00471-8 | The integrative biology of type 2 diabetes. Nature 576, 51-60 (2019). | Metabolic messengers: adiponectin. Nat. Metab. 1, 334-339 (2019).
+Sources: 
+- https://doi.org/10.1038/s41574-021-00471-8
+- doi: 10.1074/jbc.REV119.008351.
 """
