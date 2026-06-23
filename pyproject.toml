@@ -1,13 +1,16 @@
 [project]
 name = "metabolic-reference-network"
 version = "0.1.0"
-description = "Add your description here"
+description = "Metabolic organ-organ reference network with PubMed literature search and interactive visualization"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "dash>=4.0.0",
-    "dash-cytoscape>=1.0.2",
     "networkx>=3.6.1",
     "pandas>=3.0.0",
-    "path>=17.1.1",
+    "numpy>=2.0.0",
+    "requests>=2.32.0",
+    "anthropic>=0.40.0",
 ]
+
+[tool.uv]
+package = false

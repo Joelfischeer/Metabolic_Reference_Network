@@ -1,6 +1,12 @@
+import sys
 import pandas as pd
 import numpy as np
 from pathlib import Path
+
+# Ensure stdout handles unicode on Windows
+if sys.stdout.encoding and sys.stdout.encoding.lower() not in ('utf-8', 'utf_8'):
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 
 
