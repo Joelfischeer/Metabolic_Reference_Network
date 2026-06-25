@@ -283,52 +283,62 @@ def _pmc_to_pubmed(pmc_ids: list[str]) -> list[str]:
         return []
 
 
-def fetch_abstracts(pmids: list[str]) -> list[dict]:
-    """Fetch title + abstract + keywords for a list of PMIDs."""
+def fetch_abstracts(pmids: list[str], batch_size: int = 200, delay: float = 0.4) -> list[dict]:
+    """
+    Fetch title + abstract + keywords for a list of PMIDs.
+
+    PMIDs are fetched in batches of `batch_size` (PubMed efetch is unreliable
+    above ~200 IDs per request). Results from all batches are combined.
+    """
     if not pmids:
         return []
-    params = {
-        "db": "pubmed",
-        "id": ",".join(pmids),
-        "rettype": "abstract",
-        "retmode": "xml",
-    }
-    resp = _ncbi_get("efetch.fcgi", params)
-    if resp is None:
-        return []
-
-    xml = resp.text
-    papers = []
 
     def clean(text: str) -> str:
         text = re.sub(r"<[^>]+>", " ", text)
         return re.sub(r"\s+", " ", text).strip()
 
-    article_blocks = re.findall(r"<PubmedArticle>(.*?)</PubmedArticle>", xml, re.DOTALL)
-    for block in article_blocks:
-        pmid_m   = re.search(r"<PMID[^>]*>(\d+)</PMID>", block)
-        title_m  = re.search(r"<ArticleTitle>(.*?)</ArticleTitle>", block, re.DOTALL)
-        year_m   = re.search(r"<PubDate>.*?<Year>(\d{4})</Year>", block, re.DOTALL)
-        doi_m    = re.search(r'<ArticleId IdType="doi">(.*?)</ArticleId>', block)
+    def parse_xml_batch(xml: str) -> list[dict]:
+        papers = []
+        article_blocks = re.findall(r"<PubmedArticle>(.*?)</PubmedArticle>", xml, re.DOTALL)
+        for block in article_blocks:
+            pmid_m  = re.search(r"<PMID[^>]*>(\d+)</PMID>", block)
+            title_m = re.search(r"<ArticleTitle>(.*?)</ArticleTitle>", block, re.DOTALL)
+            year_m  = re.search(r"<PubDate>.*?<Year>(\d{4})</Year>", block, re.DOTALL)
+            doi_m   = re.search(r'<ArticleId IdType="doi">(.*?)</ArticleId>', block)
 
-        # Concatenate all AbstractText sections (structured abstracts have multiple)
-        abstract_parts = re.findall(r"<AbstractText[^>]*>(.*?)</AbstractText>", block, re.DOTALL)
-        abstract = " ".join(clean(p) for p in abstract_parts)
+            abstract_parts = re.findall(r"<AbstractText[^>]*>(.*?)</AbstractText>", block, re.DOTALL)
+            abstract = " ".join(clean(p) for p in abstract_parts)
 
-        # MeSH keywords
-        kw_matches = re.findall(r"<DescriptorName[^>]*>(.*?)</DescriptorName>", block, re.DOTALL)
-        keywords = [clean(k) for k in kw_matches]
+            kw_matches = re.findall(r"<DescriptorName[^>]*>(.*?)</DescriptorName>", block, re.DOTALL)
+            keywords = [clean(k) for k in kw_matches]
 
-        papers.append({
-            "pmid":     pmid_m.group(1) if pmid_m else "",
-            "title":    clean(title_m.group(1)) if title_m else "",
-            "abstract": abstract,
-            "keywords": keywords,
-            "year":     year_m.group(1) if year_m else "",
-            "doi":      doi_m.group(1).strip() if doi_m else "",
-        })
+            papers.append({
+                "pmid":     pmid_m.group(1) if pmid_m else "",
+                "title":    clean(title_m.group(1)) if title_m else "",
+                "abstract": abstract,
+                "keywords": keywords,
+                "year":     year_m.group(1) if year_m else "",
+                "doi":      doi_m.group(1).strip() if doi_m else "",
+            })
+        return papers
 
-    return papers
+    all_papers: list[dict] = []
+    batches = [pmids[i:i + batch_size] for i in range(0, len(pmids), batch_size)]
+
+    for i, batch in enumerate(batches):
+        if i > 0:
+            time.sleep(delay)
+        params = {
+            "db":      "pubmed",
+            "id":      ",".join(batch),
+            "rettype": "abstract",
+            "retmode": "xml",
+        }
+        resp = _ncbi_get("efetch.fcgi", params)
+        if resp is not None:
+            all_papers.extend(parse_xml_batch(resp.text))
+
+    return all_papers
 
 
 # ---------------------------------------------------------------------------
@@ -425,10 +435,13 @@ def search_with_cascade(
 # Key player extraction
 # ---------------------------------------------------------------------------
 
-def extract_key_players(papers: list[dict]) -> dict[str, list[str]]:
+def extract_key_players(papers: list[dict]) -> dict:
     """
     Scan titles, abstracts, and MeSH keywords for known biomedical terms.
-    Returns frequency-ranked lists per category.
+
+    Returns a dict with two parallel structures per category:
+      - "<cat>":        list of names sorted by descending mention count
+      - "<cat>_counts": dict of {name: mention_count}
     """
     combined_text = " ".join(
         (
@@ -439,20 +452,27 @@ def extract_key_players(papers: list[dict]) -> dict[str, list[str]]:
         for p in papers
     )
 
-    def find_terms(vocab: set[str]) -> list[str]:
+    def find_terms(vocab: set[str]) -> tuple[list[str], dict[str, int]]:
         counts: dict[str, int] = {}
         for term in vocab:
             pattern = r"\b" + re.escape(term) + r"\b"
             n = len(re.findall(pattern, combined_text))
             if n > 0:
                 counts[term] = n
-        return [t for t, _ in sorted(counts.items(), key=lambda x: -x[1])]
+        ranked = [t for t, _ in sorted(counts.items(), key=lambda x: -x[1])]
+        return ranked, counts
 
-    # Vocabularies are now mutually exclusive — no subtraction needed
+    metabolites, metabolites_counts = find_terms(METABOLITES)
+    hormones,    hormones_counts    = find_terms(HORMONES)
+    proteins,    proteins_counts    = find_terms(PROTEINS)
+
     return {
-        "metabolites": find_terms(METABOLITES),
-        "hormones":    find_terms(HORMONES),
-        "proteins":    find_terms(PROTEINS),
+        "metabolites":        metabolites,
+        "metabolites_counts": metabolites_counts,
+        "hormones":           hormones,
+        "hormones_counts":    hormones_counts,
+        "proteins":           proteins,
+        "proteins_counts":    proteins_counts,
     }
 
 
@@ -550,7 +570,7 @@ def run_literature_search(
         )
         time.sleep(delay)
 
-        papers = fetch_abstracts(pmids)
+        papers = fetch_abstracts(pmids, delay=delay)
         time.sleep(delay)
 
         key_players     = extract_key_players(papers)
@@ -630,22 +650,29 @@ def merge_with_edge_metadata(
         ai_description = llm_entry.get("description", "")
 
         # Merge: curated key players first, then PubMed-extracted ones
-        raw_kp = parsed.get("key_players_raw", [])
+        raw_kp = _filter_key_players(parsed.get("key_players_raw", []))
         lit_kp = lit.get("key_players", {})
         merged_players = {
             "metabolites": _merge_lists(raw_kp, lit_kp.get("metabolites", [])),
             "hormones":    _merge_lists(raw_kp, lit_kp.get("hormones", [])),
             "proteins":    _merge_lists(raw_kp, lit_kp.get("proteins", [])),
         }
+        # Mention counts from PubMed extraction (may be absent in old cached results)
+        counts = {
+            "metabolites": lit_kp.get("metabolites_counts", {}),
+            "hormones":    lit_kp.get("hormones_counts", {}),
+            "proteins":    lit_kp.get("proteins_counts", {}),
+        }
 
         merged[(o1, o2)] = {
-            "description":        text,
-            "connection_type":    parsed.get("connection_type") or lit.get("connection_type", ""),
-            "key_players_raw":    raw_kp,
-            "key_players_merged": merged_players,
-            "notes":              parsed.get("notes", ""),
-            "sources":            parsed.get("sources", []),
-            "ai_description":     ai_description,
+            "description":           text,
+            "connection_type":       parsed.get("connection_type") or lit.get("connection_type", ""),
+            "key_players_raw":       raw_kp,
+            "key_players_merged":    merged_players,
+            "key_players_counts":    counts,
+            "notes":                 parsed.get("notes", ""),
+            "sources":               parsed.get("sources", []),
+            "ai_description":        ai_description,
             "pubmed": {
                 "n_papers":     lit.get("n_papers_found", 0),
                 "papers":       lit.get("papers", [])[:5],
@@ -656,6 +683,31 @@ def merge_with_edge_metadata(
         merged[(o2, o1)] = merged[(o1, o2)]
 
     return merged
+
+
+def _filter_key_players(items: list[str]) -> list[str]:
+    """
+    Remove anything that looks like a sentence or free-text note rather than
+    an actual molecule/hormone/protein name. Keeps only short, name-like tokens.
+    """
+    clean = []
+    for item in items:
+        # Strip parenthetical expansions like "TH (T3, T4)" → keep outer token
+        item = re.sub(r"\s*\(.*?\)", "", item).strip()
+        if not item:
+            continue
+        # Drop if it looks like a sentence: ends with '.', '!', '?'
+        if item[-1] in ".!?":
+            continue
+        # Drop if it contains a verb-like word (a sign of free text)
+        if re.search(r"\b(is|are|was|were|has|have|the|that|which|this|via|through|by|from|with|into|and|or)\b",
+                     item, re.IGNORECASE):
+            continue
+        # Drop if it's more than 6 words (too long to be a molecule name)
+        if len(item.split()) > 6:
+            continue
+        clean.append(item)
+    return clean
 
 
 def _parse_edge_text(text: str) -> dict:
@@ -670,7 +722,9 @@ def _parse_edge_text(text: str) -> dict:
     m = re.search(r"Key Players:\s*(.+?)(?:\n|$)", text, re.IGNORECASE)
     if m:
         raw = m.group(1).strip()
-        result["key_players_raw"] = [p.strip() for p in raw.split(",") if p.strip()]
+        result["key_players_raw"] = _filter_key_players(
+            [p.strip() for p in raw.split(",") if p.strip()]
+        )
 
     m = re.search(r"Notes?:\s*(.*?)(?:Sources?:|$)", text, re.IGNORECASE | re.DOTALL)
     if m:

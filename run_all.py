@@ -1,16 +1,19 @@
 """
 Run the full pipeline in one command:
-  1. PubMed literature search (resumable)
-  2. Reference network visualization
-  3. Comparison network visualization (if --input is provided)
+  1. PubMed literature search for curated edges (resumable)
+  2. LLM connection descriptions (requires ANTHROPIC_API_KEY)
+  3. Reference network visualization
+  4. General organ-axis network (all-pairs PubMed search, evidence-based edges)
+  5. Comparison network visualization (if --input is provided)
 
 Usage
 -----
   uv run python run_all.py
-  uv run python run_all.py --input ../metabolic_network.csv --threshold 0.3
-  uv run python run_all.py --force-empty          # re-search edges with 0 papers
-  uv run python run_all.py --reset-search         # wipe literature cache and re-search
-  uv run python run_all.py --skip-search          # skip PubMed, just rebuild visualizations
+  uv run python run_all.py --skip-search --skip-llm   # just rebuild visualizations
+  uv run python run_all.py --reset-search              # wipe curated search cache
+  uv run python run_all.py --reset-general             # wipe general-axis cache
+  uv run python run_all.py --skip-general              # skip general-axis step
+  uv run python run_all.py --min-papers 3              # stricter threshold for general network
 """
 
 import sys
@@ -20,11 +23,13 @@ from pathlib import Path
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 
-ORGAN_DATA          = HERE / "metabolic_data" / "organ_data.csv"
-CONNECTION_DATA     = HERE / "metabolic_data" / "connection_data.csv"
-LITERATURE_RESULTS  = HERE / "metabolic_data" / "literature_results.json"
-LLM_DESCRIPTIONS    = HERE / "metabolic_data" / "llm_descriptions.json"
-REFERENCE_HTML      = HERE / "metabolic_data" / "reference_network.html"
+ORGAN_DATA            = HERE / "metabolic_data" / "organ_data.csv"
+CONNECTION_DATA       = HERE / "metabolic_data" / "connection_data.csv"
+LITERATURE_RESULTS    = HERE / "metabolic_data" / "literature_results.json"
+LLM_DESCRIPTIONS      = HERE / "metabolic_data" / "llm_descriptions.json"
+GENERAL_AXIS_RESULTS  = HERE / "metabolic_data" / "general_axis_results.json"
+REFERENCE_HTML        = HERE / "metabolic_data" / "reference_network.html"
+GENERAL_AXIS_HTML     = HERE / "metabolic_data" / "general_organ_axis_network.html"
 
 
 def step(label: str) -> None:
@@ -52,7 +57,7 @@ def run_search(force_empty: bool, reset: bool) -> None:
     run_literature_search(
         organ_pairs=pairs,
         output_path=LITERATURE_RESULTS,
-        max_results_per_pair=25,
+        max_results_per_pair=200,
         years_back=10,
         min_papers=5,
         delay=0.4,
@@ -61,7 +66,7 @@ def run_search(force_empty: bool, reset: bool) -> None:
     )
 
 
-def run_llm(reset: bool) -> None:
+def run_llm(reset: bool, model: str) -> None:
     from Data_Loader.load_data import load_edge_metadata_from_csv
     from Literature_Search.pubmed_search import load_literature_results
     from Literature_Search.llm_descriptions import generate_llm_descriptions
@@ -73,13 +78,13 @@ def run_llm(reset: bool) -> None:
         (o1, o2) if o1 < o2 else (o2, o1)
         for (o1, o2) in edge_metadata
     })
-    print(f"[i] {len(pairs)} organ-organ pairs to describe.")
+    print(f"[i] {len(pairs)} organ-organ pairs to summarise.")
 
     generate_llm_descriptions(
         organ_pairs=pairs,
-        edge_metadata=edge_metadata,
         literature_results=lit_results,
         output_path=LLM_DESCRIPTIONS,
+        model=model,
         resume=not reset,
         reset=reset,
     )
@@ -118,6 +123,31 @@ def run_reference_viz() -> None:
     print(f"[ok] Reference network: {REFERENCE_HTML}")
 
 
+def run_general_axis(reset: bool, min_papers: int) -> None:
+    from Data_Loader.load_data import load_node_metadata_from_csv
+    from Literature_Search.general_axis_search import (
+        run_general_axis_search, build_general_axis_viz,
+    )
+
+    node_metadata = load_node_metadata_from_csv(str(ORGAN_DATA))
+    organs = list(node_metadata.keys())
+
+    results = run_general_axis_search(
+        organs=organs,
+        output_path=GENERAL_AXIS_RESULTS,
+        min_papers=min_papers,
+        resume=not reset,
+        reset=reset,
+    )
+
+    build_general_axis_viz(
+        results=results,
+        node_metadata=node_metadata,
+        output_html=GENERAL_AXIS_HTML,
+        min_papers=min_papers,
+    )
+
+
 def run_comparison(input_path: Path, threshold: float) -> None:
     from Matrix_Comparison.Comparison import run_network_comparison
     run_network_comparison(
@@ -138,36 +168,51 @@ def main() -> None:
                         help="Edge threshold for comparison (default 0.3).")
     parser.add_argument("--skip-search",  action="store_true",
                         help="Skip the PubMed literature search step.")
-    parser.add_argument("--skip-llm",    action="store_true",
+    parser.add_argument("--skip-llm",     action="store_true",
                         help="Skip the LLM description generation step.")
+    parser.add_argument("--skip-general", action="store_true",
+                        help="Skip the general organ-axis network step.")
     parser.add_argument("--force-empty",  action="store_true",
                         help="Re-search edges that previously returned 0 papers.")
     parser.add_argument("--reset-search", action="store_true",
                         help="Delete literature cache and search everything from scratch.")
-    parser.add_argument("--reset-llm",   action="store_true",
+    parser.add_argument("--reset-llm",    action="store_true",
                         help="Delete LLM description cache and regenerate everything.")
+    parser.add_argument("--llm-model",    default="north-mini-code-1.0",
+                        help="Ollama model for LLM summaries (default: north-mini-code-1.0).")
+    parser.add_argument("--reset-general", action="store_true",
+                        help="Delete general-axis cache and re-search all pairs.")
+    parser.add_argument("--min-papers",   type=int, default=10,
+                        help="Min papers required to add an edge to the general network (default 2).")
     args = parser.parse_args()
 
-    # ── Step 1: Literature search ──────────────────────────────────────────
+    # ── Step 1: Curated literature search ─────────────────────────────────
     if not args.skip_search:
-        step("Step 1 / 4  —  PubMed literature search")
+        step("Step 1 / 5  —  PubMed literature search (curated edges)")
         run_search(force_empty=args.force_empty, reset=args.reset_search)
     else:
         print("\n[i] Skipping literature search (--skip-search).")
 
     # ── Step 2: LLM descriptions ───────────────────────────────────────────
     if not args.skip_llm:
-        step("Step 2 / 4  —  LLM connection descriptions")
-        run_llm(reset=args.reset_llm)
+        step("Step 2 / 5  —  LLM connection descriptions")
+        run_llm(reset=args.reset_llm, model=args.llm_model)
     else:
         print("\n[i] Skipping LLM descriptions (--skip-llm).")
 
     # ── Step 3: Reference network ──────────────────────────────────────────
-    step("Step 3 / 4  —  Reference network visualization")
+    step("Step 3 / 5  —  Reference network visualization")
     run_reference_viz()
 
-    # ── Step 4: Comparison network ─────────────────────────────────────────
-    step("Step 4 / 4  —  Comparison network visualization")
+    # ── Step 4: General organ-axis network ────────────────────────────────
+    if not args.skip_general:
+        step("Step 4 / 5  —  General organ-axis network (all-pairs search)")
+        run_general_axis(reset=args.reset_general, min_papers=args.min_papers)
+    else:
+        print("\n[i] Skipping general organ-axis network (--skip-general).")
+
+    # ── Step 5: Comparison network ─────────────────────────────────────────
+    step("Step 5 / 5  —  Comparison network visualization")
     if args.input:
         input_path = Path(args.input)
         if not input_path.exists():
@@ -179,10 +224,11 @@ def main() -> None:
         print("    Run with:  uv run python run_all.py --input path/to/network.csv")
 
     step("Done")
-    print(f"  Reference network : {REFERENCE_HTML}")
+    print(f"  Reference network    : {REFERENCE_HTML}")
+    print(f"  General axis network : {GENERAL_AXIS_HTML}")
     if args.input:
         input_path = Path(args.input)
-        print(f"  Comparison network: {input_path.parent / (input_path.stem + '_comparison.html')}")
+        print(f"  Comparison network   : {input_path.parent / (input_path.stem + '_comparison.html')}")
 
 
 if __name__ == "__main__":

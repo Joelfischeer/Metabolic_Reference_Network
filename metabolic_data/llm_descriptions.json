@@ -1,164 +1,98 @@
 {
   "Adrenal Glands|Bone Marrow": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:54.548979",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXP8AzvPca6RG2qQzn'}"
+    "description": "The Adrenal Glands-Bone Marrow axis is a complex inter-organ communication network that regulates various physiological processes, including hematopoiesis. Adult hematopoietic stem and progenitor cells (HSPCs) reside in the bone marrow (BM) hematopoietic niche, which is regulated by key signalling molecules such as CXCL12/CXCR4 [1]. However, evidence suggests that simpler extramedullary hematopoietic niches may exist, including those induced within the adrenal gland, a notion supported by anecdotal observations of retroperitoneal hematopoietic masses occurring in response to hormonal dysregulation [1].\n\nThe adrenal glands play a crucial role in regulating the hypothalamic-pituitary-adrenal (HPA) axis, which is responsible for responding to stress and regulating glucocorticoid production [2]. Adrenocorticotropin hormone (ACTH), released by the pituitary gland, stimulates the adrenal cortex to produce glucocorticoids, such as cortisol. In children with brain tumors and hematopoietic cell transplantation recipients, adrenocortical insufficiency (AI) is a common condition characterized by deficient production of glucocorticoids [2].\n\nResearch has shown that extracellular vesicles derived from bone marrow mesenchymal stem cells (BMSC-EVs) can repair functional and structural damage to the adrenal gland induced by toxins, such as fluoride [3]. This suggests that the BMSC-EVs may play a role in maintaining adrenal health and function.\n\nHistorical studies have also highlighted the importance of the HPA axis in regulating hematopoiesis. For example, ACTH has been shown to stimulate hematopoiesis in irradiated animals [5], while research on the endocrine regulation of hematopoiesis has demonstrated the action of adrenal cortex hormones and ACTH on hematopoiesis [6].\n\nIn summary, the Adrenal Glands-Bone Marrow axis is a complex network that regulates various physiological processes, including hematopoiesis. Key signalling molecules such as CXCL12/CXCR4 play a crucial role in regulating HSPC quiescence and self-renewal, while the adrenal glands are involved in regulating the HPA axis and responding to stress. Further research is needed to fully understand the mechanisms underlying this axis and its potential applications in disease prevention and treatment.\n\nReferences:\n\n[1] PMID 38728427 (2024)\n[2] PMID 34054040 (2022)\n[3] PMID 33508294 (2021)\n[4] PMID 14401042 (1960)\n[5] PMID 13792512 (1959)\n[6] PMID 14858249 (1951)",
+    "generated_at": "2026-06-24T17:44:52.708326",
+    "model": "llama3.2",
+    "n_papers_used": 6
   },
   "Adrenal Glands|Brain": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:54.920854",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXQnPNQKD62MaFGeFY'}"
+    "description": "The adrenal glands play a crucial role in the body's response to stress, regulating energy metabolism through the hypothalamic-pituitary-adrenal (HPA) axis. This axis is sensitive to glucose levels and can interfere with other pituitary axes, leading to changes in muscle mass and thyroid function [1]. Chronic stress can disrupt the HPA axis, causing central hypogonadism and a loss of muscle mass, while high glucose loads can impair its plasticity [1].\n\nThe HPA axis is also linked to the renin-angiotensin-aldosterone system (RAAS) and sympathetic nervous system, with spinal cord injury (SCI) disrupting this integrated network, leading to endocrine and immune dysfunction [2]. Angiotensin II receptor signaling plays a key role in this process, with SCI affecting AT1 and AT2 receptor expression in the HPA axis and spleen [2].\n\nChronic mild stress can alter neurotrophic factors in the brain, including those involved in the HPA axis, such as brain-derived neurotrophic factor (BDNF) [3]. The orexin system also interacts with the HPA axis, with juvenile-stressed rats showing reduced prepro-orexin mRNA and altered circadian rhythm [4].\n\nIn adolescent girls, the HPA axis plays a key role in energy allocation during somatic growth and reproductive maturation, with activity positively linked to energy mobilization and inversely linked to energy storage [5]. Hair cortisol concentrations can provide insight into long-term HPA axis dysregulation in panic disorder, with flattened cortisol responses to stimulation observed in patients [6].\n\nFinally, blueberry extract has been shown to modulate the HPA axis and alleviate post-stress anxiety in a rat model of intestinal dysbiosis induced by antibiotics [7]. Androgen loss can also accelerate brain tumor growth via HPA axis activation, highlighting the complex interplay between sex hormones and cancer progression [8].\n\nIn summary, the adrenal glands play a critical role in regulating energy metabolism through the HPA axis, which is sensitive to stress, glucose levels, and other physiological factors. Disruptions to this axis can have significant consequences for various physiological processes, including muscle mass, thyroid function, and anxiety disorders.\n\nReferences:\n\n[1] PMID 42264997 (2026)\n[2] PMID 42250115 (2026)\n[3] PMID 42176200 (2026)\n[4] PMID 42173622 (2026)\n[5] PMID 42143153 (2026)\n[6] PMID 42129434 (2026)\n[7] PMID 42116487 (2026)\n[8] PMID 42092136 (2026)",
+    "generated_at": "2026-06-24T17:46:33.551093",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Adrenal Glands|Kidney": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:55.303267",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXSEx6W4TRNUKG27sz'}"
+    "description": "The Adrenal Glands-Kidney axis is a complex interplay between the adrenal glands, kidneys, and hypothalamic-pituitary-adrenal (HPA) axis, involving key signalling molecules such as cortisol, aldosterone, and adrenocorticotropic hormone (ACTH). In patients with hypertension, vitamin D deficiency has been linked to impaired renal function, primary aldosteronism, and cardiovascular dysfunction [1]. The adrenal glands produce aldosterone, a mineralocorticoid that regulates electrolyte balance and blood pressure, while the kidneys respond by adjusting sodium reabsorption and water excretion. The HPA axis, activated by stress or low cortisol levels, stimulates ACTH release from the pituitary gland, which in turn promotes cortisol production by the adrenal glands [4].\n\nIn kidney transplant recipients on long-term glucocorticoid therapy, HPA axis suppression is common, leading to metabolic disorders such as hypertension and dyslipidemia [4]. The 11β-hydroxysteroid dehydrogenase type 1 (11β-HSD1) enzyme plays a crucial role in regulating cortisol production via reductase activity, with long-snake moxibustion potentially influencing its expression [5].\n\nIn the context of chronic kidney disease (CKD), the adrenal glands may play a role in disease progression, with some studies suggesting that CKD is associated with increased ACTH and cortisol levels, which can contribute to metabolic disorders [3]. Renal denervation has been shown to alter glucose release during hypoglycemia in pigs with altered HPA axis activity after prenatal dexamethasone injection [6].\n\nFurthermore, moxibustion, a traditional Chinese medicine technique, has been found to stimulate the amygdala and HPA axis in rats with kidney-deficiency symptom pattern induced by hydrocortisone [7]. In a rare case of ACTH-independent Cushing's syndrome caused by an ectopic adrenocortical adenoma in the renal hilum, the mass was negative for somatostatin receptors but showed mild FDG activity via PET/CT [8].\n\nOverall, the Adrenal Glands-Kidney axis is a complex system involving multiple signalling molecules and physiological mechanisms that are influenced by various factors, including vitamin D deficiency, glucocorticoid therapy, CKD, and moxibustion. Further research is needed to fully understand the relationships between these factors and their impact on metabolic disorders.\n\nReferences:\n\n[1] PMID 42317869\n[2] PMID 41085519\n[3] PMID 40412070\n[4] PMID 39597857\n[5] PMID 39397979\n[6] PMID 37628918\n[7] PMID 36640002\n[8] PMID 36010286",
+    "generated_at": "2026-06-24T17:48:21.075744",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Adrenal Glands|Liver": {
     "description": "",
-    "generated_at": "2026-06-23T11:17:55.635770",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXTohtaJYJdGAVknQM'}"
+    "generated_at": "2026-06-24T19:13:20.538650",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   },
   "Adrenal Glands|Muscle": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:56.921476",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXYwXQ8p28s5XP2b3h'}"
+    "description": "The adrenal glands play a crucial role in regulating energy homeostasis through the hypothalamic-pituitary-adrenal (HPA) axis, which interacts with other pituitary axes to modulate muscle mass and metabolism. Testosterone produced by the testes has an anabolic effect on skeletal muscle, while the adrenal glands contribute smaller amounts of steroid hormones that can be increased in response to testosterone deficiency, a phenomenon known as compensatory testicular adaptation (CTA) [2]. Chronic stress activates the HPA axis, which interferes with glucose metabolism and thyroid function, leading to central hypogonadism and muscle loss [1]. In cancer cachexia, glucocorticoids play a key role in mediating systemic inflammation and muscle wasting, highlighting the importance of targeting the HPA axis in this condition [3]. Berberine has been shown to regulate glucose and lipid metabolism by modulating the HPA axis pathway, suggesting potential therapeutic benefits for type 2 diabetes mellitus (T2DM) [4]. Central nervous system inflammation can induce muscle atrophy via activation of the HPA axis, highlighting the importance of targeting this pathway in muscle wasting diseases [5]. Finally, long-term DHEA substitution has been shown to improve body composition, fuel metabolism, and inflammatory markers in women with adrenal failure, suggesting potential benefits for hormone replacement therapy [6].\n\nIn terms of disease relevance, the HPA axis plays a critical role in regulating energy homeostasis and muscle mass, making it a promising target for the treatment of muscle wasting diseases such as cancer cachexia and T2DM. Additionally, the interaction between the adrenal glands and other pituitary axes highlights the complexity of energy regulation and the need for a comprehensive understanding of inter-organ communication.\n\nReferences:\n\n[1] PMID 42264997 (2026)\n[2] PMID 36735924 (2023)\n[3] PMID 35277933 (2022)\n[4] PMID 31564939 (2019)\n[5] PMID 22084407 (2011)\n[6] PMID 21606192 (2011)",
+    "generated_at": "2026-06-24T19:15:04.543300",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Adrenal Glands|Pancreas": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:57.249658",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXajRp1NxVp36ZFEmy'}"
+    "description": "The adrenal glands and pancreas are intricately connected through a complex axis that regulates metabolic function, hormone secretion, and organ development. The adrenal glands produce cortisol, aldosterone, and other hormones in response to stress signals from the hypothalamic-pituitary-adrenal (HPA) axis, which is also influenced by the pancreas's role in glucose regulation [1]. Cortisol, produced by the adrenal glands, plays a crucial role in glucose metabolism, with elevated levels contributing to insulin resistance and type 2 diabetes mellitus (T2DM) [1].\n\nIn addition, the pancreas produces insulin and glucagon, which regulate blood glucose levels. The pancreatic islets are sensitive to cortisol, which can suppress insulin secretion and promote glucagon production, leading to hyperglycemia [5]. Furthermore, the adrenal glands produce aldosterone, which regulates electrolyte balance and blood pressure, with dysregulation contributing to hypertension and cardiovascular disease [2].\n\nThe interplay between the adrenal glands and pancreas is also relevant in the context of transplantation. Simultaneous pancreas-kidney and adrenal gland allotransplantation has been performed in select cases, with excellent graft function outcomes [3]. However, the management of hormone replacement therapy after such transplants is challenging due to variable results in terms of functional activity [2].\n\nIn some cases, hypercortisolemia can be caused by ectopic adrenocorticotropic hormone (ACTH) production from a metastatic pancreatic neuroendocrine tumor, which may require stereotactic body radiotherapy as a treatment option [4]. The adrenal glands also play a role in managing hypercortisolemia, with bilateral adrenalectomy and steroid replacement therapy being effective treatments for Cushing's syndrome caused by ACTH-dependent hypercortisolism [6].\n\nIn conclusion, the metabolic and hormonal basis of the adrenal glands-pancreas axis is complex and involves key signaling molecules such as cortisol, aldosterone, insulin, and glucagon. Dysregulation of this axis can contribute to various diseases, including type 2 diabetes mellitus, hypertension, and cardiovascular disease.\n\nReferences:\n[1] PMID 41965599 (2026)\n[2] PMID 41085519 (2025)\n[3] PMID 38972929 (2024)\n[4] PMID 38721167 (2024)\n[5] PMID 38471570 (2024)\n[6] PMID 32231811 (2020)",
+    "generated_at": "2026-06-24T19:16:39.105338",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Adrenal Glands|Small Intestine": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:57.569319",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXc8kw6fp8AVuJitSC'}"
+    "description": "The adrenal glands and small intestine are intricately connected through various signaling molecules, metabolic substrates, hormones, and physiological mechanisms that regulate homeostasis in the body. The hypothalamic-pituitary-adrenal (HPA) axis plays a crucial role in this axis, with cortisol and other glucocorticoids produced by the adrenal glands influencing gut function and microbiota composition [1]. A high-fat diet can compromise gut health, behavior, and HPA axis function, with partial reversal when limited to adolescence [2]. Sleep deprivation disrupts lacrimal gland homeostasis via activation of the HPA axis, elevation of corticosterone, and alterations in gut microbiota and short-chain fatty acids [3]. In addition, vitamin D3 has been shown to improve HPA axis function, immunological responses, and gut dysbiosis in sleep desynchrony [5]. Heat stress affects dairy cow performance via oxidative stress, HPA axis, gut microbiota, and multi-dimensional mitigation strategies [6]. Probiotics have been found to play a role in depression by connecting the dots of the gut-brain-axis through the HPA axis and tryptophan/kynurenic pathway involving indoleamine-2,3-dioxygenase [7]. Furthermore, Alzheimer's disease pathophysiology has been reevaluated to include roles for the gut microbiome, adipocytes, HPA axis, melatonergic pathway, and astrocyte mitochondria in the emergence of autoimmunity [8].\n\nReferences:\n\n[1] PMID 42116487 (2026)\n[2] PMID 41962594 (2026)\n[3] PMID 41651994 (2026)\n[4] PMID 41614720 (2026)\n[5] PMID 41273001 (2025)\n[6] PMID 41180240 (2025)\n[7] PMID 39875781 (2025)\n[8] PMID 38179773 (2023)",
+    "generated_at": "2026-06-24T19:17:58.974115",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Adrenal Glands|WAT": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:57.951957",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXdXr5sGBp4BFV7U8t'}"
+    "description": "The Adrenal Glands–WAT (Visceral Adipose Tissue) axis is a complex interplay of metabolic substrates, hormones, and physiological mechanisms that regulate energy homeostasis and stress response. Glucocorticoids, secreted by the adrenal glands in response to stress, have been shown to have differential effects on various adipose tissue compartments [1]. The study found that MRI-based adrenal gland volume is associated with different adipose tissue compartments, suggesting a potential link between HPA axis activation and metabolic changes.\n\nIn addition, research has highlighted the role of leptin in mediating postprandial increases in body temperature through hypothalamus-adrenal medulla-adipose tissue crosstalk [5]. Leptin, an adipocyte-derived factor, stimulates adrenomedullary catecholamine secretion, which is necessary and sufficient to increase body temperature. Furthermore, studies have demonstrated that adipocyte-derived factors, such as Wnt proteins, CTRP-1, VLDL, LDL, HDL, and leptin, stimulate aldosterone secretion in the adrenal gland [6].\n\nThe expression of corticosteroid hormone receptors, prereceptors, and molecular chaperones in the hypothalamic-pituitary-adrenal axis and adipose tissue has been found to be regulated by growth promoters in veal calves [4]. This suggests that environmental factors can influence the development of metabolic disorders.\n\nIn addition, research has shown that epicardial adipose tissue (EAT) volume is associated with adrenal gland volume and chronic HPA axis activation in patients with borderline personality disorder [3]. The study found that EAT volume was a known early predictor of premature cardiovascular morbidity, cardiovascular risk indices, and adrenal gland volume.\n\nFinally, the overexpression of 11β-hydroxysteroid dehydrogenase 1 (11β-HSD1) in visceral adipose tissue and underexpression of endothelial nitric oxide synthase (eNOS) in the adrenal cortex have been found in dogs with hyperadrenocorticism [7]. This suggests that alterations in these enzymes may contribute to the development of metabolic syndrome, obesity, and hyperadrenocorticism.\n\nIn summary, the Adrenal Glands–WAT axis is a complex system that involves the interplay of glucocorticoids, leptin, adipocyte-derived factors, and molecular chaperones. Dysregulation of this axis has been implicated in various metabolic disorders, including obesity, hyperadrenocorticism, and cardiovascular disease.\n\nReferences:\n\n[1] PMID 38982517 (2024)\n[2] PMID 36096484 (2022)\n[3] PMID 34715600 (2021)\n[4] PMID 32361423 (2020)\n[5] PMID 32149734 (2020)\n[6] PMID 31613736 (2020)\n[7] PMID 29721436",
+    "generated_at": "2026-06-24T19:19:46.317573",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Bone Marrow|Brain": {
     "description": "",
-    "generated_at": "2026-06-23T11:17:58.271638",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXf8bGdydqoAt65R2k'}"
+    "generated_at": "2026-06-24T19:24:11.238115",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   },
   "Bone Marrow|Small Intestine": {
     "description": "",
-    "generated_at": "2026-06-23T11:17:58.620756",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXgXvzDvMo9bHWcDWC'}"
+    "generated_at": "2026-06-24T23:37:33.634065",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   },
   "Bone Marrow|Spleen": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:59.088537",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXi1UhgdQLk2AQF8Dj'}"
+    "description": "The Bone Marrow-Spleen axis is a complex inter-organ communication network that plays a crucial role in maintaining hematopoiesis, immune function, and overall metabolic homeostasis. The axis is mediated by key signaling molecules such as NF-κB-inducing kinase (NIK) [2], which regulates non-canonical NF-κB signaling essential for thymic reconstitution and secondary lymphoid organ development [2]. Additionally, ferritinophagy activation states determine the susceptibility to ferroptosis of macrophages in bone marrow and spleen [4], highlighting the importance of iron metabolism in this axis.\n\nATPase Inhibitory Factor 1 (ATPIF1) knockout mice exhibit impaired development of bone marrow terminal erythroid, accompanied by robust compensatory erythroid development in the spleen [3]. This suggests that the spleen acts as a compensatory organ for hematopoiesis when the bone marrow is compromised. Furthermore, hyperlipidemia-induced hematopoiesis is repressed by MLKL in endothelial cells of the splenic niche [8], highlighting the role of the spleen in regulating hematopoiesis during metabolic stress.\n\nThe Bone Marrow-Spleen axis also plays a critical role in immune function and disease. For example, diffusely increased 18F-FDG uptake in the spleen or bone marrow is associated with reticuloendothelial system activation and inflammation in lymphoma patients [1]. Additionally, disseminated carcinomatosis of the bone marrow with severe bone marrow fibrosis and acute splenomegaly can occur in invasive lobular carcinoma [5], highlighting the importance of the Bone Marrow-Spleen axis in cancer progression.\n\nIn summary, the Bone Marrow-Spleen axis is a critical inter-organ communication network that regulates hematopoiesis, immune function, and metabolic homeostasis. Key signaling molecules such as NIK, ferritinophagy activation states, ATPIF1, MLKL, and hepcidin regulate this axis, which plays a crucial role in maintaining overall health and preventing disease.\n\nReferences:\n\n[1] PMID 41547774 (2026)\n[2] PMID 41280889 (2025)\n[3] PMID 41181713 (2025)\n[4] PMID 40765825 (2025)\n[5] PMID 40420375 (2025)\n[6] PMID 40227986 (2025)\n[7] PMID 39273097 (2024)\n[8] PMID 39195940 (2024)",
+    "generated_at": "2026-06-24T23:39:30.781061",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Brain|Small Intestine": {
-    "description": "",
-    "generated_at": "2026-06-23T11:17:59.423083",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXk1HWbbtFZLsHK2vu'}"
+    "description": "The brain-small intestine axis is a complex interplay of metabolic and hormonal signals that underpin the intricate communication between the central nervous system and the gastrointestinal tract. Probiotic, prebiotic, and synbiotic interventions have been shown to modulate the gut microbiota, leading to changes in metabolites such as short-chain fatty acids (SCFAs) [PMID 42330779], which serve as energy sources for intestinal epithelial cells and influence neural signaling pathways. The gut-brain axis is also implicated in various neurological disorders, including Parkinson's disease, where the sodium-glucose cotransporter-2 inhibitor canagliflozin has been shown to modulate the gut-inflammasome-brain axis [PMID 42329290]. Fibromyalgia, a chronic pain condition, has been linked to alterations in the microbiota-gut-brain axis (MGBA), with potential implications for its pathophysiology [PMID 42328953]. The brain-gut axis is also involved in the regulation of stress hormones and sex hormones, which play a role in the development of rosacea, a chronic inflammatory skin disease [PMID 42325915]. Furthermore, early life stress has been shown to induce visceral hypersensitivity, leading to disorders of gut-brain interaction, such as irritable bowel syndrome [PMID 42326011]. The gut microbiota produces metabolites that influence neural signaling pathways, including the production of neurotransmitters such as serotonin and dopamine, which are involved in pain modulation and mood regulation. The brain-gut axis is also involved in the regulation of appetite and satiety hormones, such as ghrelin and leptin [PMID 42328654]. Overall, the brain-small intestine axis is a critical regulator of various physiological processes, including metabolism, immune function, and behavior, highlighting the importance of maintaining a healthy balance between these two organs.",
+    "generated_at": "2026-06-24T23:40:38.564956",
+    "model": "llama3.2",
+    "n_papers_used": 8
   },
   "Brain|Spleen": {
     "description": "",
-    "generated_at": "2026-06-23T11:17:59.736067",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXmRN53yyaKuWNtd4s'}"
+    "generated_at": "2026-06-25T03:09:56.257020",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   },
   "Brain|Thyroid": {
     "description": "",
-    "generated_at": "2026-06-23T11:18:00.088170",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXnnxzh6sBqcGMMGTH'}"
+    "generated_at": "2026-06-25T03:51:43.169325",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=120)"
   },
   "Colon|Small Intestine": {
     "description": "",
-    "generated_at": "2026-06-23T11:18:00.496286",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXpJW2styK6LG8WZbr'}"
-  },
-  "Heart|Kidney": {
-    "description": "",
-    "generated_at": "2026-06-23T11:18:00.836598",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwXr2RrPF5atiq9wHbg'}"
-  },
-  "Heart|Liver": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:10.680945",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwmqjxFkd2mfVfLRnby'}"
-  },
-  "Heart|Lung": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:11.017831",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwms9YQ9TPNdZgahHRZ'}"
-  },
-  "Heart|Thyroid": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:11.735851",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwmtwwCu1nf8uEPyB72'}"
-  },
-  "Liver|Spleen": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:12.169771",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwmwfQTWXp7ca1yKBvf'}"
-  },
-  "Muscle|Pancreas": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:12.606498",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwmyYWZfsVivDTEamqv'}"
-  },
-  "Muscle|Thyroid": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:13.053237",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwn1TrLhoAgkfEPnE15'}"
-  },
-  "Muscle|WAT": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:13.743877",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwn3LxcyKcfAZZj9Jb7'}"
-  },
-  "Pancreas|Thyroid": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:14.287726",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwn6JJv2pdzcvE6tk7a'}"
-  },
-  "Pancreas|WAT": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:14.776813",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwn8bDvxTGEXQYxd3oi'}"
-  },
-  "Small Intestine|Spleen": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:15.191334",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwnAezh8qpacRSNMXM9'}"
-  },
-  "Thyroid|WAT": {
-    "description": "",
-    "generated_at": "2026-06-23T11:21:15.680196",
-    "model": "claude-haiku-4-5",
-    "error": "Error code: 401 - {'type': 'error', 'error': {'type': 'authentication_error', 'message': 'invalid x-api-key'}, 'request_id': 'req_011CcKwnCc5N2xArKCDJKu9h'}"
+    "generated_at": "2026-06-25T03:51:47.255200",
+    "model": "llama3.2",
+    "n_papers_used": 0,
+    "error": "HTTPConnectionPool(host='localhost', port=11434): Max retries exceeded with url: /api/chat (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=11434): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
   }
 }

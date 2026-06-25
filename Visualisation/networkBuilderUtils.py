@@ -106,6 +106,7 @@ def export_network_to_cytoscape_dashboard(
             or parsed["key_players"]
         )
         all_kp_categories = merged.get("key_players_merged", {})
+        all_kp_counts     = merged.get("key_players_counts", {})
         pubmed = merged.get("pubmed", {})
 
         connection_type = (
@@ -130,6 +131,9 @@ def export_network_to_cytoscape_dashboard(
                 "key_players_metabolites": all_kp_categories.get("metabolites", []),
                 "key_players_hormones": all_kp_categories.get("hormones", []),
                 "key_players_proteins": all_kp_categories.get("proteins", []),
+                "key_players_counts_metabolites": all_kp_counts.get("metabolites", {}),
+                "key_players_counts_hormones": all_kp_counts.get("hormones", {}),
+                "key_players_counts_proteins": all_kp_counts.get("proteins", {}),
                 "notes": notes,
                 "sources": sources,
                 "ai_description": ai_description,
@@ -633,10 +637,14 @@ function runLayout(name) {{
   cy.layout({{ name, animate: true, padding: 60 }}).run();
 }}
 
-function chipsHtml(items, cls) {{
+function chipsHtml(items, cls, counts) {{
   if (!items || items.length === 0) return '<span style="color:#475569;font-size:12px">None identified</span>';
   return '<div class="chips-wrap">' +
-    items.map(t => `<span class="chip ${{cls}}">${{escHtml(t)}}</span>`).join('') +
+    items.map(t => {{
+      const n = counts && counts[t];
+      const badge = n ? `<span style="margin-left:4px;background:rgba(0,0,0,0.25);border-radius:8px;padding:0 5px;font-size:10px;font-weight:700">${{n}}×</span>` : '';
+      return `<span class="chip ${{cls}}" title="${{n ? n + ' mentions' : ''}}">${{escHtml(t)}}${{badge}}</span>`;
+    }}).join('') +
     '</div>';
 }}
 
@@ -665,28 +673,36 @@ function showEdgeSidebar(data) {{
   }}
 
   // Key players — hormones, metabolites, proteins
-  const hormones = data.key_players_hormones || [];
+  const hormones    = data.key_players_hormones    || [];
   const metabolites = data.key_players_metabolites || [];
-  const proteins = data.key_players_proteins || [];
-  const rawKP = data.key_players || [];
+  const proteins    = data.key_players_proteins    || [];
+  const rawKP       = data.key_players             || [];
+  const cntH = data.key_players_counts_hormones    || {{}};
+  const cntM = data.key_players_counts_metabolites || {{}};
+  const cntP = data.key_players_counts_proteins    || {{}};
 
   // If we have categorised players, show them; otherwise fall back to raw list
   if (hormones.length || metabolites.length || proteins.length) {{
     html += section('Key Players',
       '<div style="display:flex;flex-direction:column;gap:8px">' +
-      (hormones.length ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Hormones</span>' + chipsHtml(hormones, 'chip-hormone') + '</div>' : '') +
-      (metabolites.length ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Metabolites</span>' + chipsHtml(metabolites, 'chip-metabolite') + '</div>' : '') +
-      (proteins.length ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Proteins / Transporters</span>' + chipsHtml(proteins, 'chip-protein') + '</div>' : '') +
+      (hormones.length    ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Hormones</span>'              + chipsHtml(hormones,    'chip-hormone',    cntH) + '</div>' : '') +
+      (metabolites.length ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Metabolites</span>'           + chipsHtml(metabolites, 'chip-metabolite', cntM) + '</div>' : '') +
+      (proteins.length    ? '<div><span style="font-size:11px;color:#64748b;margin-bottom:3px;display:block">Proteins / Transporters</span>' + chipsHtml(proteins,    'chip-protein',    cntP) + '</div>' : '') +
       '</div>'
     );
   }} else if (rawKP.length) {{
-    html += section('Key Players', chipsHtml(rawKP, 'chip-general'));
+    html += section('Key Players', chipsHtml(rawKP, 'chip-general', {{}}));
   }}
 
   if (data.ai_description) {{
-    html += section('AI Summary',
-      `<p class="notes-text" style="line-height:1.6;border-left:3px solid #6366f1;padding-left:10px;color:#cbd5e1">`+
-      `${{escHtml(data.ai_description)}}</p>`);
+    // Turn [PMID 12345678] into clickable PubMed links
+    const linkedSummary = escHtml(data.ai_description).replace(
+      /\[PMID\s+(\d+)\]/gi,
+      (_, pmid) => `<a href="https://pubmed.ncbi.nlm.nih.gov/${{pmid}}/" target="_blank" rel="noopener"
+         style="color:#818cf8;text-decoration:underline dotted">[PMID ${{pmid}}]</a>`
+    );
+    html += section('Literature Summary',
+      `<div style="line-height:1.7;border-left:3px solid #6366f1;padding-left:10px;color:#cbd5e1;font-size:13px">${{linkedSummary}}</div>`);
   }}
 
   if (data.notes) {{

@@ -23,7 +23,7 @@ from Literature_Search.pubmed_search import run_literature_search
 CONNECTION_DATA = HERE / "metabolic_data" / "connection_data.csv"
 OUTPUT_PATH     = HERE / "metabolic_data" / "literature_results.json"
 
-MAX_PAPERS  = 25
+MAX_PAPERS  = 200
 YEARS_BACK  = 10
 MIN_PAPERS  = 5
 DELAY       = 0.4
