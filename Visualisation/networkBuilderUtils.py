@@ -87,10 +87,12 @@ def export_network_to_cytoscape_dashboard(
         color = attrs.get("color") or ORGAN_COLORS.get(str(node), DEFAULT_NODE_COLOR)
         elements.append({
             "data": {
-                "id": str(node),
-                "label": str(node),
-                "description": attrs.get("description", ""),
-                "color": color,
+                "id":              str(node),
+                "label":           str(node),
+                "description":     attrs.get("description", ""),
+                "llm_description": attrs.get("llm_description", ""),
+                "llm_papers":      attrs.get("llm_papers", []),
+                "color":           color,
             }
         })
 
@@ -695,14 +697,60 @@ function showEdgeSidebar(data) {{
   }}
 
   if (data.ai_description) {{
-    // Turn [PMID 12345678] into clickable PubMed links
+    const papers = data.pubmed_papers || [];
+
+    // Replace [1], [2,3], [1-3] etc. with superscript links and collect cited indices
+    const citedIndices = new Set();
     const linkedSummary = escHtml(data.ai_description).replace(
-      /\[PMID\s+(\d+)\]/gi,
-      (_, pmid) => `<a href="https://pubmed.ncbi.nlm.nih.gov/${{pmid}}/" target="_blank" rel="noopener"
-         style="color:#818cf8;text-decoration:underline dotted">[PMID ${{pmid}}]</a>`
+      /\[(\d[\d,\s-]*)\]/g,
+      (match, inner) => {{
+        // Parse individual numbers out of "1,2" or "1-3" or "1, 2"
+        const nums = [];
+        inner.split(/[,\s]+/).forEach(part => {{
+          const dash = part.match(/^(\d+)-(\d+)$/);
+          if (dash) {{
+            for (let i = parseInt(dash[1]); i <= parseInt(dash[2]); i++) nums.push(i);
+          }} else {{
+            const n = parseInt(part);
+            if (!isNaN(n)) nums.push(n);
+          }}
+        }});
+        nums.forEach(n => citedIndices.add(n));
+        const links = nums.map(n => {{
+          const p = papers[n - 1];
+          const href = p ? (p.doi ? `https://doi.org/${{p.doi}}` : `https://pubmed.ncbi.nlm.nih.gov/${{p.pmid}}/`) : '#';
+          return `<a href="${{href}}" target="_blank" rel="noopener"
+            style="color:#818cf8;text-decoration:none;font-size:10px;vertical-align:super;font-weight:700">${{n}}</a>`;
+        }}).join(',');
+        return `[${{links}}]`;
+      }}
     );
+
+    // Build bibliography only for cited papers
+    const bibEntries = [];
+    citedIndices.forEach(n => {{
+      const p = papers[n - 1];
+      if (!p) return;
+      const href = p.doi ? `https://doi.org/${{p.doi}}` : `https://pubmed.ncbi.nlm.nih.gov/${{p.pmid}}/`;
+      bibEntries.push({{ n, p, href }});
+    }});
+    bibEntries.sort((a, b) => a.n - b.n);
+
+    const bibHtml = bibEntries.length ? bibEntries.map(entry =>
+      `<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#94a3b8">
+        <span style="color:#818cf8;font-weight:700;flex-shrink:0">${{entry.n}}.</span>
+        <span><a href="${{entry.href}}" target="_blank" rel="noopener"
+          style="color:#cbd5e1;text-decoration:underline dotted">${{escHtml(entry.p.title)}}</a>
+          <span style="color:#475569"> · ${{entry.p.year}} · PMID ${{entry.p.pmid}}</span></span>
+      </div>`
+    ).join('') : '';
+
+    const summaryBlock =
+      `<div style="line-height:1.7;color:#cbd5e1;font-size:13px;margin-bottom:${{bibHtml ? '12px' : '0'}}">${{linkedSummary}}</div>` +
+      (bibHtml ? `<div style="border-top:1px solid #334155;padding-top:8px">${{bibHtml}}</div>` : '');
+
     html += section('Literature Summary',
-      `<div style="line-height:1.7;border-left:3px solid #6366f1;padding-left:10px;color:#cbd5e1;font-size:13px">${{linkedSummary}}</div>`);
+      `<div style="border-left:3px solid #6366f1;padding-left:10px">${{summaryBlock}}</div>`);
   }}
 
   if (data.notes) {{
@@ -718,22 +766,10 @@ function showEdgeSidebar(data) {{
     );
   }}
 
-  // PubMed section
-  if (data.pubmed_n > 0) {{
-    let papersHtml = `<div style="font-size:12px;color:#64748b;margin-bottom:8px">`+
-      `Found ${{data.pubmed_n}} papers in last 5 years</div>`;
-    if (data.pubmed_papers && data.pubmed_papers.length) {{
-      papersHtml += data.pubmed_papers.slice(0, 4).map(p => {{
-        const link = p.doi ? `https://doi.org/${{p.doi}}` : `https://pubmed.ncbi.nlm.nih.gov/${{p.pmid}}/`;
-        return `<div class="paper-card">
-          <div class="paper-title">${{escHtml(p.title)}}</div>
-          <div class="paper-meta">PMID: ${{p.pmid}} · ${{p.year}}</div>
-          ${{p.abstract ? `<div class="paper-abstract">${{escHtml(p.abstract)}}</div>` : ''}}
-          <a class="paper-link" href="${{link}}" target="_blank" rel="noopener">→ View on PubMed</a>
-        </div>`;
-      }}).join('');
-    }}
-    html += section('PubMed Literature', papersHtml);
+  // Show total paper count as a compact note (no cards)
+  if (data.pubmed_n > 0 && !data.ai_description) {{
+    html += section('PubMed Literature',
+      `<div style="font-size:12px;color:#64748b">Found ${{data.pubmed_n}} papers — run LLM step to generate summary.</div>`);
   }}
 
   document.getElementById('sidebar-body').innerHTML = html || '<p style="color:#475569;font-size:13px">No additional information available.</p>';
@@ -744,7 +780,55 @@ function showNodeSidebar(data) {{
   document.getElementById('sidebar-name').textContent = data.label;
 
   let html = '';
-  if (data.description) {{
+
+  if (data.llm_description) {{
+    const papers = data.llm_papers || [];
+    const citedIndices = new Set();
+    const linkedSummary = escHtml(data.llm_description).replace(
+      /\[(\d[\d,\s-]*)\]/g,
+      (match, inner) => {{
+        const nums = [];
+        inner.split(/[,\s]+/).forEach(part => {{
+          const dash = part.match(/^(\d+)-(\d+)$/);
+          if (dash) {{
+            for (let i = parseInt(dash[1]); i <= parseInt(dash[2]); i++) nums.push(i);
+          }} else {{
+            const n = parseInt(part);
+            if (!isNaN(n)) nums.push(n);
+          }}
+        }});
+        nums.forEach(n => citedIndices.add(n));
+        const links = nums.map(n => {{
+          const p = papers[n - 1];
+          const href = p ? (p.doi ? `https://doi.org/${{p.doi}}` : `https://pubmed.ncbi.nlm.nih.gov/${{p.pmid}}/`) : '#';
+          return `<a href="${{href}}" target="_blank" rel="noopener"
+            style="color:#818cf8;text-decoration:none;font-size:10px;vertical-align:super;font-weight:700">${{n}}</a>`;
+        }}).join(',');
+        return `[${{links}}]`;
+      }}
+    );
+    const bibEntries = [];
+    citedIndices.forEach(n => {{
+      const p = papers[n - 1];
+      if (!p) return;
+      const href = p.doi ? `https://doi.org/${{p.doi}}` : `https://pubmed.ncbi.nlm.nih.gov/${{p.pmid}}/`;
+      bibEntries.push({{ n, p, href }});
+    }});
+    bibEntries.sort((a, b) => a.n - b.n);
+    const bibHtml = bibEntries.map(entry =>
+      `<div style="display:flex;gap:6px;margin-bottom:6px;font-size:11px;color:#94a3b8">
+        <span style="color:#818cf8;font-weight:700;flex-shrink:0">${{entry.n}}.</span>
+        <span><a href="${{entry.href}}" target="_blank" rel="noopener"
+          style="color:#cbd5e1;text-decoration:underline dotted">${{escHtml(entry.p.title)}}</a>
+          <span style="color:#475569"> · ${{entry.p.year}} · PMID ${{entry.p.pmid}}</span></span>
+      </div>`
+    ).join('');
+    const summaryBlock =
+      `<div style="line-height:1.7;color:#cbd5e1;font-size:13px;margin-bottom:${{bibHtml ? '12px' : '0'}}">${{linkedSummary}}</div>` +
+      (bibHtml ? `<div style="border-top:1px solid #334155;padding-top:8px">${{bibHtml}}</div>` : '');
+    html += section('Metabolic Summary',
+      `<div style="border-left:3px solid #0ea5e9;padding-left:10px">${{summaryBlock}}</div>`);
+  }} else if (data.description) {{
     html += section('Description',
       `<p class="notes-text">${{escHtml(data.description)}}</p>`);
   }}

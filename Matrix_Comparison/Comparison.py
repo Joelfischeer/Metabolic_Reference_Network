@@ -6,7 +6,8 @@ def run_network_comparison(given_path: str,
                            connection_data: str,
                            threshold: float = 0.3,
                            literature_results_path: str | None = None,
-                           llm_descriptions_path: str | None = None):
+                           llm_descriptions_path: str | None = None,
+                           organ_descriptions_path: str | None = None):
 
     given_path = Path(given_path)
     print(f"[i] Input:     {given_path}")
@@ -47,8 +48,16 @@ def run_network_comparison(given_path: str,
     from Matrix_Comparison.Alignment import compare_networks
     comparison_matrix, graph = compare_networks(ref_aligned, given_aligned, threshold)
 
+    organ_descs = {}
+    if organ_descriptions_path:
+        from Literature_Search.organ_descriptions import load_organ_descriptions
+        organ_descs = load_organ_descriptions(organ_descriptions_path)
+
     for node in graph.nodes:
-        graph.nodes[node]['description'] = node_metadata.get(node, "")
+        organ_entry = organ_descs.get(node, {})
+        graph.nodes[node]['description']     = node_metadata.get(node, "")
+        graph.nodes[node]['llm_description'] = organ_entry.get("description", "")
+        graph.nodes[node]['llm_papers']      = organ_entry.get("papers", [])
     for u, v in graph.edges:
         graph.edges[u, v]['description'] = edge_metadata.get((u, v), "")
         graph.edges[u, v]['merged_data'] = merged_edge_data.get((u, v), {})

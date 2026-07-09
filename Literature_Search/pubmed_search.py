@@ -649,13 +649,17 @@ def merge_with_edge_metadata(
         )
         ai_description = llm_entry.get("description", "")
 
-        # Merge: curated key players first, then PubMed-extracted ones
         raw_kp = _filter_key_players(parsed.get("key_players_raw", []))
         lit_kp = lit.get("key_players", {})
+
+        # Categorised lists come purely from literature (ranked by mention count).
+        # raw_kp from the curated CSV is kept separate — it is NOT merged into
+        # the categorised lists because it would appear in all three categories
+        # with no mention-count evidence for this specific edge.
         merged_players = {
-            "metabolites": _merge_lists(raw_kp, lit_kp.get("metabolites", [])),
-            "hormones":    _merge_lists(raw_kp, lit_kp.get("hormones", [])),
-            "proteins":    _merge_lists(raw_kp, lit_kp.get("proteins", [])),
+            "metabolites": lit_kp.get("metabolites", []),
+            "hormones":    lit_kp.get("hormones", []),
+            "proteins":    lit_kp.get("proteins", []),
         }
         # Mention counts from PubMed extraction (may be absent in old cached results)
         counts = {
@@ -675,7 +679,7 @@ def merge_with_edge_metadata(
             "ai_description":        ai_description,
             "pubmed": {
                 "n_papers":     lit.get("n_papers_found", 0),
-                "papers":       lit.get("papers", [])[:5],
+                "papers":       lit.get("papers", [])[:10],
                 "query":        lit.get("pubmed_query", ""),
                 "strategy":     lit.get("strategy_used", ""),
             },
@@ -740,13 +744,3 @@ def _parse_edge_text(text: str) -> dict:
     return result
 
 
-def _merge_lists(*lists) -> list[str]:
-    seen: set[str] = set()
-    out: list[str] = []
-    for lst in lists:
-        for item in lst:
-            key = item.lower()
-            if key not in seen:
-                seen.add(key)
-                out.append(item)
-    return out

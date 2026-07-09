@@ -23,13 +23,15 @@ from pathlib import Path
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 
-ORGAN_DATA            = HERE / "metabolic_data" / "organ_data.csv"
-CONNECTION_DATA       = HERE / "metabolic_data" / "connection_data.csv"
-LITERATURE_RESULTS    = HERE / "metabolic_data" / "literature_results.json"
-LLM_DESCRIPTIONS      = HERE / "metabolic_data" / "llm_descriptions.json"
-GENERAL_AXIS_RESULTS  = HERE / "metabolic_data" / "general_axis_results.json"
-REFERENCE_HTML        = HERE / "metabolic_data" / "reference_network.html"
-GENERAL_AXIS_HTML     = HERE / "metabolic_data" / "general_organ_axis_network.html"
+ORGAN_DATA              = HERE / "metabolic_data" / "organ_data.csv"
+CONNECTION_DATA         = HERE / "metabolic_data" / "connection_data.csv"
+LITERATURE_RESULTS      = HERE / "metabolic_data" / "literature_results.json"
+LLM_DESCRIPTIONS        = HERE / "metabolic_data" / "llm_descriptions.json"
+ORGAN_SEARCH_RESULTS    = HERE / "metabolic_data" / "organ_search_results.json"
+ORGAN_LLM_DESCRIPTIONS  = HERE / "metabolic_data" / "organ_descriptions.json"
+GENERAL_AXIS_RESULTS    = HERE / "metabolic_data" / "general_axis_results.json"
+REFERENCE_HTML          = HERE / "metabolic_data" / "reference_network.html"
+GENERAL_AXIS_HTML       = HERE / "metabolic_data" / "general_organ_axis_network.html"
 
 
 def step(label: str) -> None:
@@ -66,6 +68,31 @@ def run_search(force_empty: bool, reset: bool) -> None:
     )
 
 
+def run_organ_llm(reset: bool, model: str) -> None:
+    from Data_Loader.load_data import load_node_metadata_from_csv
+    from Literature_Search.organ_descriptions import (
+        run_organ_search, generate_organ_llm_descriptions,
+    )
+
+    node_metadata = load_node_metadata_from_csv(str(ORGAN_DATA))
+    organs = list(node_metadata.keys())
+
+    search_results = run_organ_search(
+        organs=organs,
+        output_path=ORGAN_SEARCH_RESULTS,
+        resume=not reset,
+        reset=reset,
+    )
+    generate_organ_llm_descriptions(
+        organs=organs,
+        search_results=search_results,
+        output_path=ORGAN_LLM_DESCRIPTIONS,
+        model=model,
+        resume=not reset,
+        reset=reset,
+    )
+
+
 def run_llm(reset: bool, model: str) -> None:
     from Data_Loader.load_data import load_edge_metadata_from_csv
     from Literature_Search.pubmed_search import load_literature_results
@@ -95,17 +122,23 @@ def run_reference_viz() -> None:
     from Data_Loader.load_data import load_node_metadata_from_csv, load_edge_metadata_from_csv
     from Literature_Search.pubmed_search import load_literature_results, merge_with_edge_metadata
     from Literature_Search.llm_descriptions import load_llm_descriptions
+    from Literature_Search.organ_descriptions import load_organ_descriptions
     from Visualisation.networkBuilderUtils import export_network_to_cytoscape_dashboard
 
-    node_metadata = load_node_metadata_from_csv(str(ORGAN_DATA))
-    edge_metadata = load_edge_metadata_from_csv(str(CONNECTION_DATA))
-    lit_results   = load_literature_results(LITERATURE_RESULTS)
-    llm_descs     = load_llm_descriptions(LLM_DESCRIPTIONS)
-    merged        = merge_with_edge_metadata(edge_metadata, lit_results, llm_descs)
+    node_metadata  = load_node_metadata_from_csv(str(ORGAN_DATA))
+    edge_metadata  = load_edge_metadata_from_csv(str(CONNECTION_DATA))
+    lit_results    = load_literature_results(LITERATURE_RESULTS)
+    llm_descs      = load_llm_descriptions(LLM_DESCRIPTIONS)
+    organ_descs    = load_organ_descriptions(ORGAN_LLM_DESCRIPTIONS)
+    merged         = merge_with_edge_metadata(edge_metadata, lit_results, llm_descs)
 
     G = nx.Graph()
     for organ, desc in node_metadata.items():
-        G.add_node(organ, description=desc)
+        organ_entry = organ_descs.get(organ, {})
+        G.add_node(organ,
+                   description=desc,
+                   llm_description=organ_entry.get("description", ""),
+                   llm_papers=organ_entry.get("papers", []))
     for (o1, o2), text in edge_metadata.items():
         if o1 >= o2:
             continue
@@ -157,6 +190,7 @@ def run_comparison(input_path: Path, threshold: float) -> None:
         threshold=threshold,
         literature_results_path=str(LITERATURE_RESULTS),
         llm_descriptions_path=str(LLM_DESCRIPTIONS),
+        organ_descriptions_path=str(ORGAN_LLM_DESCRIPTIONS),
     )
 
 
@@ -168,51 +202,62 @@ def main() -> None:
                         help="Edge threshold for comparison (default 0.3).")
     parser.add_argument("--skip-search",  action="store_true",
                         help="Skip the PubMed literature search step.")
-    parser.add_argument("--skip-llm",     action="store_true",
-                        help="Skip the LLM description generation step.")
-    parser.add_argument("--skip-general", action="store_true",
+    parser.add_argument("--skip-llm",        action="store_true",
+                        help="Skip the LLM edge description step.")
+    parser.add_argument("--skip-organ-llm",  action="store_true",
+                        help="Skip the LLM organ description step.")
+    parser.add_argument("--skip-general",    action="store_true",
                         help="Skip the general organ-axis network step.")
-    parser.add_argument("--force-empty",  action="store_true",
+    parser.add_argument("--force-empty",     action="store_true",
                         help="Re-search edges that previously returned 0 papers.")
-    parser.add_argument("--reset-search", action="store_true",
+    parser.add_argument("--reset-search",    action="store_true",
                         help="Delete literature cache and search everything from scratch.")
-    parser.add_argument("--reset-llm",    action="store_true",
-                        help="Delete LLM description cache and regenerate everything.")
-    parser.add_argument("--llm-model",    default="north-mini-code-1.0",
+    parser.add_argument("--reset-llm",       action="store_true",
+                        help="Delete edge LLM cache and regenerate.")
+    parser.add_argument("--reset-organ-llm", action="store_true",
+                        help="Delete organ LLM cache and regenerate.")
+    parser.add_argument("--llm-model",       default="north-mini-code-1.0",
                         help="Ollama model for LLM summaries (default: north-mini-code-1.0).")
-    parser.add_argument("--reset-general", action="store_true",
+    parser.add_argument("--reset-general",   action="store_true",
                         help="Delete general-axis cache and re-search all pairs.")
-    parser.add_argument("--min-papers",   type=int, default=10,
-                        help="Min papers required to add an edge to the general network (default 2).")
+    parser.add_argument("--min-papers",      type=int, default=10,
+                        help="Min papers required for an edge in the general network (default 10).")
     args = parser.parse_args()
 
     # ── Step 1: Curated literature search ─────────────────────────────────
     if not args.skip_search:
-        step("Step 1 / 5  —  PubMed literature search (curated edges)")
+        step("Step 1 / 6  —  PubMed literature search (curated edges)")
         run_search(force_empty=args.force_empty, reset=args.reset_search)
     else:
         print("\n[i] Skipping literature search (--skip-search).")
 
-    # ── Step 2: LLM descriptions ───────────────────────────────────────────
+    # ── Step 2: LLM edge descriptions ─────────────────────────────────────
     if not args.skip_llm:
-        step("Step 2 / 5  —  LLM connection descriptions")
+        step("Step 2 / 6  —  LLM edge summaries")
         run_llm(reset=args.reset_llm, model=args.llm_model)
     else:
-        print("\n[i] Skipping LLM descriptions (--skip-llm).")
+        print("\n[i] Skipping edge LLM descriptions (--skip-llm).")
 
-    # ── Step 3: Reference network ──────────────────────────────────────────
-    step("Step 3 / 5  —  Reference network visualization")
+    # ── Step 3: LLM organ descriptions ────────────────────────────────────
+    if not args.skip_organ_llm:
+        step("Step 3 / 6  —  LLM organ descriptions")
+        run_organ_llm(reset=args.reset_organ_llm, model=args.llm_model)
+    else:
+        print("\n[i] Skipping organ LLM descriptions (--skip-organ-llm).")
+
+    # ── Step 4: Reference network ──────────────────────────────────────────
+    step("Step 4 / 6  —  Reference network visualization")
     run_reference_viz()
 
-    # ── Step 4: General organ-axis network ────────────────────────────────
+    # ── Step 5: General organ-axis network ────────────────────────────────
     if not args.skip_general:
-        step("Step 4 / 5  —  General organ-axis network (all-pairs search)")
+        step("Step 5 / 6  —  General organ-axis network (all-pairs search)")
         run_general_axis(reset=args.reset_general, min_papers=args.min_papers)
     else:
         print("\n[i] Skipping general organ-axis network (--skip-general).")
 
-    # ── Step 5: Comparison network ─────────────────────────────────────────
-    step("Step 5 / 5  —  Comparison network visualization")
+    # ── Step 6: Comparison network ─────────────────────────────────────────
+    step("Step 6 / 6  —  Comparison network visualization")
     if args.input:
         input_path = Path(args.input)
         if not input_path.exists():

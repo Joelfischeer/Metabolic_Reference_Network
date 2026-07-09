@@ -34,9 +34,10 @@ sys.path.insert(0, str(HERE))
 DEFAULT_OUTPUT     = HERE / "metabolic_data" / "llm_descriptions.json"
 DEFAULT_MODEL      = "north-mini-code-1.0"
 OLLAMA_URL         = "http://localhost:11434/api/chat"
-MAX_PAPERS_PROMPT  = 8     # how many papers to include in the prompt
-MAX_ABSTRACT_CHARS = 600   # truncate long abstracts to keep prompt lean
-OLLAMA_TIMEOUT     = 120   # seconds — local inference can be slow
+MAX_PAPERS_PROMPT  = 5     # how many papers to include in the prompt
+MAX_ABSTRACT_CHARS = 400   # truncate long abstracts to keep prompt lean
+OLLAMA_TIMEOUT     = 300   # seconds — local CPU inference can be slow
+OLLAMA_RETRIES     = 2
 
 
 # ---------------------------------------------------------------------------
@@ -69,12 +70,12 @@ def _build_prompt(organ1: str, organ2: str, papers: list[dict]) -> str:
     return textwrap.dedent(f"""
         You are an expert in metabolic physiology and inter-organ communication.
 
-        Task: Write a scientific summary (maximum 10 sentences) explaining the
-        metabolic and hormonal basis of the {organ1}–{organ2} axis based solely
-        on the research papers listed below. Cite papers using [PMID XXXXX]
-        inline. Focus on: key signalling molecules, metabolic substrates,
-        hormones, physiological mechanisms, and any disease relevance.
-        Write flowing prose — no bullet points, no headings.
+        Task: Write a concise scientific summary (3-4 sentences maximum) explaining
+        the metabolic and hormonal basis of the {organ1}–{organ2} axis based solely
+        on the research papers listed below. Cite papers using their number in
+        square brackets, e.g. [1] or [2,3], inline in the text.
+        Focus on the most important signalling molecules and mechanisms only.
+        Write flowing prose — no bullet points, no headings, no introduction sentence.
 
         Papers:
         {paper_block}
@@ -106,11 +107,19 @@ def _call_ollama(prompt: str, model: str) -> str:
         "model":    model,
         "messages": [{"role": "user", "content": prompt}],
         "stream":   False,
-        "options":  {"temperature": 0.3, "num_predict": 600},
+        "options":  {"temperature": 0.3, "num_predict": 200},
     }
-    resp = _requests.post(OLLAMA_URL, json=payload, timeout=OLLAMA_TIMEOUT)
-    resp.raise_for_status()
-    return resp.json()["message"]["content"].strip()
+    for attempt in range(1, OLLAMA_RETRIES + 1):
+        try:
+            resp = _requests.post(OLLAMA_URL, json=payload, timeout=OLLAMA_TIMEOUT)
+            resp.raise_for_status()
+            return resp.json()["message"]["content"].strip()
+        except _requests.exceptions.Timeout:
+            if attempt < OLLAMA_RETRIES:
+                print(f"\n    [!] Timeout (attempt {attempt}/{OLLAMA_RETRIES}), retrying…",
+                      end=" ", flush=True)
+            else:
+                raise
 
 
 # ---------------------------------------------------------------------------
