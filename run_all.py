@@ -120,10 +120,14 @@ def run_llm(reset: bool, model: str) -> None:
 def run_reference_viz() -> None:
     import networkx as nx
     from Data_Loader.load_data import load_node_metadata_from_csv, load_edge_metadata_from_csv
-    from Literature_Search.pubmed_search import load_literature_results, merge_with_edge_metadata
+    from Literature_Search.pubmed_search import (
+        load_literature_results, merge_with_edge_metadata, export_vocabulary_to_excel,
+    )
     from Literature_Search.llm_descriptions import load_llm_descriptions
     from Literature_Search.organ_descriptions import load_organ_descriptions
     from Visualisation.networkBuilderUtils import export_network_to_cytoscape_dashboard
+
+    export_vocabulary_to_excel(HERE / "metabolic_data" / "key_player_vocabulary.xlsx")
 
     node_metadata  = load_node_metadata_from_csv(str(ORGAN_DATA))
     edge_metadata  = load_edge_metadata_from_csv(str(CONNECTION_DATA))

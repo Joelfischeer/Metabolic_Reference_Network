@@ -170,8 +170,35 @@ def build_general_axis_viz(
         if G.has_edge(o1, o2):
             continue
 
-        kp    = data.get("key_players", {})
+        kp     = data.get("key_players", {})
         papers = data.get("papers", [])
+
+        # Recompute counts from stored papers (cache may predate counts storage)
+        from Literature_Search.pubmed_search import (
+            HORMONES, METABOLITES, PROTEINS,
+        )
+
+        def _counts_from_papers(vocab, plist):
+            counts = {}
+            for term in vocab:
+                n = sum(
+                    1 for p in plist
+                    if term.lower() in (
+                        p.get("title", "") + " " + p.get("abstract", "")
+                    ).lower()
+                )
+                if n > 0:
+                    counts[term] = n
+            return counts
+
+        hormones_counts    = _counts_from_papers(HORMONES,    papers)
+        metabolites_counts = _counts_from_papers(METABOLITES, papers)
+        proteins_counts    = _counts_from_papers(PROTEINS,    papers)
+
+        # Re-rank lists by descending count (cache may use old ordering)
+        hormones    = sorted(kp.get("hormones",    []), key=lambda t: -hormones_counts.get(t, 0))
+        metabolites = sorted(kp.get("metabolites", []), key=lambda t: -metabolites_counts.get(t, 0))
+        proteins    = sorted(kp.get("proteins",    []), key=lambda t: -proteins_counts.get(t, 0))
 
         # Build a merged_data structure matching what networkBuilderUtils expects
         merged_data = {
@@ -179,14 +206,14 @@ def build_general_axis_viz(
             "connection_type": data.get("connection_type", ""),
             "key_players_raw": [],
             "key_players_merged": {
-                "hormones":    kp.get("hormones", []),
-                "metabolites": kp.get("metabolites", []),
-                "proteins":    kp.get("proteins", []),
+                "hormones":    hormones,
+                "metabolites": metabolites,
+                "proteins":    proteins,
             },
             "key_players_counts": {
-                "hormones":    kp.get("hormones_counts", {}),
-                "metabolites": kp.get("metabolites_counts", {}),
-                "proteins":    kp.get("proteins_counts", {}),
+                "hormones":    hormones_counts,
+                "metabolites": metabolites_counts,
+                "proteins":    proteins_counts,
             },
             "notes":  "",
             "sources": [],
@@ -211,11 +238,85 @@ def build_general_axis_viz(
     n_edges = G.number_of_edges()
     print(f"[i] General axis network: {G.number_of_nodes()} organs, {n_edges} evidence-based edges.")
 
+    general_axis_tabs = [
+        {
+            "id": "search-guide", "label": "How to Search",
+            "content": """
+        <div class="info-h2">Search Resource</div>
+        <p class="info-p">
+          This network is a <strong>literature-based search resource</strong>.
+          Type any molecule, hormone, or protein name into the search bar to
+          instantly highlight all organ–organ connections where that molecule
+          was identified as a key player in the retrieved literature.
+        </p>
+        <div class="info-h2">Example Searches</div>
+        <ul style="margin:0 0 12px 16px;padding:0;color:#cbd5e1;line-height:1.8">
+          <li><strong style="color:#5eead4">bile acid</strong> — connections involving bile acid crosstalk</li>
+          <li><strong style="color:#5eead4">glucose</strong> — all axes where glucose metabolism is reported</li>
+          <li><strong style="color:#fdba74">insulin</strong> — edges where insulin signalling plays a role</li>
+          <li><strong style="color:#fdba74">GLP-1</strong> — incretin-mediated inter-organ communication</li>
+          <li><strong style="color:#a5b4fc">AMPK</strong> — energy-sensing kinase across organ axes</li>
+          <li><strong style="color:#a5b4fc">FGF21</strong> — hepatokine crosstalk connections</li>
+        </ul>
+        <div class="info-h2">Key Player Categories</div>
+        <ul style="margin:0 0 10px 16px;padding:0;color:#cbd5e1">
+          <li style="margin-bottom:4px"><strong style="color:#fdba74">Hormones</strong> — secreted signalling molecules: insulin, glucagon, leptin, GLP-1, cortisol, irisin, adiponectin, …</li>
+          <li style="margin-bottom:4px"><strong style="color:#5eead4">Metabolites</strong> — small molecules: glucose, lactate, fatty acids, bile acids, ketone bodies, amino acids, TCA intermediates, …</li>
+          <li style="margin-bottom:4px"><strong style="color:#a5b4fc">Proteins</strong> — enzymes, transporters, receptors: GLUT1–5, AMPK, mTOR, PPARs, PGC-1α, FGF21, LPL, CPT1, …</li>
+        </ul>
+        <div class="info-h2">Threshold Filter</div>
+        <p class="info-p">
+          Use the <strong>Key Players</strong> button to set a minimum mention count.
+          Only molecules mentioned at least that many times across all retrieved
+          abstracts for an edge will be shown as chips and matched by search.
+          This helps surface the most consistently reported signals.
+        </p>
+""",
+        },
+        {
+            "id": "data-collection", "label": "Data Collection",
+            "content": f"""
+        <div class="info-h2">Coverage</div>
+        <p class="info-p">
+          All <strong>91 possible organ–organ pairs</strong> from 14 organs were
+          searched regardless of any prior anatomical assumptions. An edge is drawn
+          only when the literature returns ≥{min_papers} papers for that pair.
+        </p>
+        <div class="info-stat-grid">
+          <div class="info-stat"><div class="info-stat-val">91</div><div class="info-stat-lbl">Organ pairs searched</div></div>
+          <div class="info-stat"><div class="info-stat-val">5 yrs</div><div class="info-stat-lbl">PubMed look-back window</div></div>
+          <div class="info-stat"><div class="info-stat-val">200</div><div class="info-stat-lbl">Max papers per pair</div></div>
+          <div class="info-stat"><div class="info-stat-val">≥{min_papers}</div><div class="info-stat-lbl">Papers required for an edge</div></div>
+        </div>
+        <div class="info-h2">Query Structure</div>
+        <p class="info-p">For each pair A–B, the primary PubMed query is:</p>
+        <div class="info-code">(MeSH_A OR organ_A_aliases)
+AND (MeSH_B OR organ_B_aliases)
+AND (metabolism OR metabolic OR substrate
+    OR glucose OR "fatty acid" OR insulin
+    OR energy OR oxidation OR hormone)</div>
+        <p class="info-p">
+          If this returns fewer than 5 papers, a <strong>cascade fallback</strong>
+          removes the metabolic keyword filter and searches by organ names + date only.
+          The strategy used is shown in the edge sidebar.
+        </p>
+        <div class="info-h2">Key Player Extraction</div>
+        <p class="info-p">
+          All retrieved abstracts are scanned against three curated vocabulary lists
+          (hormones, metabolites, proteins). Each term match across all abstracts for
+          an edge is counted and ranked. These counts drive the chip display and search.
+        </p>
+""",
+        },
+    ]
+
     export_network_to_cytoscape_dashboard(
         graph=G,
         filename=str(output_html),
         include_legend=False,
         title=f"General Organ Axis Network (≥{min_papers} papers, last 5 years)",
+        start_layout="circle",
+        info_panel_tabs=general_axis_tabs,
     )
     print(f"[ok] General axis network: {output_html}")
 

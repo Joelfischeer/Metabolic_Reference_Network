@@ -744,3 +744,46 @@ def _parse_edge_text(text: str) -> dict:
     return result
 
 
+# ---------------------------------------------------------------------------
+# Excel export of curated vocabulary lists
+# ---------------------------------------------------------------------------
+
+def export_vocabulary_to_excel(output_path: "str | Path" = None) -> Path:
+    """
+    Write the three curated key-player vocabulary lists to an Excel workbook.
+
+    Each category gets its own sheet:
+      - Hormones
+      - Metabolites
+      - Proteins
+
+    Terms are sorted alphabetically within each sheet.
+    """
+    import pandas as pd
+
+    if output_path is None:
+        output_path = Path(__file__).parent.parent / "metabolic_data" / "key_player_vocabulary.xlsx"
+    output_path = Path(output_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    sheets = {
+        "Hormones":    sorted(HORMONES,    key=str.lower),
+        "Metabolites": sorted(METABOLITES, key=str.lower),
+        "Proteins":    sorted(PROTEINS,    key=str.lower),
+    }
+
+    with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+        for sheet_name, terms in sheets.items():
+            df = pd.DataFrame({"Term": terms})
+            df.index = range(1, len(df) + 1)
+            df.to_excel(writer, sheet_name=sheet_name, index_label="No.")
+
+            # Basic column width
+            ws = writer.sheets[sheet_name]
+            ws.column_dimensions["A"].width = 6
+            ws.column_dimensions["B"].width = max(len(t) for t in terms) + 4
+
+    print(f"[ok] Vocabulary exported: {output_path}  "
+          f"({len(HORMONES)} hormones, {len(METABOLITES)} metabolites, {len(PROTEINS)} proteins)")
+    return output_path
+

@@ -75,7 +75,9 @@ def _build_prompt(organ1: str, organ2: str, papers: list[dict]) -> str:
         on the research papers listed below. Cite papers using their number in
         square brackets, e.g. [1] or [2,3], inline in the text.
         Focus on the most important signalling molecules and mechanisms only.
-        Write flowing prose — no bullet points, no headings, no introduction sentence.
+        Write flowing prose — no bullet points, no headings, no introduction sentence,
+        no closing notes, no "Note:", no meta-commentary about what you focused on or omitted.
+        Output only the scientific summary itself.
 
         Papers:
         {paper_block}
