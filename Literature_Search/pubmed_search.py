@@ -212,6 +212,78 @@ PROTEINS = {
     "cox-2", "cox2", "nos2", "inos",
 }
 
+# ---------------------------------------------------------------------------
+# Synonym / alias groups
+# Each entry maps a canonical display name → all vocabulary terms it covers.
+# Terms not listed here keep their raw vocabulary form as the display name.
+# ---------------------------------------------------------------------------
+
+HORMONE_SYNONYMS: dict[str, set[str]] = {
+    "epinephrine/adrenaline":        {"adrenaline", "epinephrine"},
+    "norepinephrine/noradrenaline":  {"noradrenaline", "norepinephrine"},
+    "T3 (triiodothyronine)":         {"t3", "triiodothyronine"},
+    "T4 (thyroxine)":                {"t4", "thyroxine"},
+    "TSH":                           {"tsh", "thyrotropin"},
+    "thyroid hormone":               {"thyroid hormone", "thyroid hormones"},
+    "IGF-1":                         {"igf-1", "igf1"},
+    "vasopressin/ADH":               {"vasopressin", "adh"},
+    "GLP-1":                         {"glp-1", "glp1"},
+    "IL-6":                          {"il-6", "il6", "interleukin-6"},
+    "TNF-α":                         {"tnf-alpha", "tnf", "tumor necrosis factor"},
+    "IL-1β":                         {"il-1beta", "il1b", "interleukin-1"},
+    "TGF-β":                         {"tgf-beta", "tgf-b"},
+    "erythropoietin (EPO)":          {"erythropoietin", "epo"},
+    "DHEA":                          {"dhea", "dhea-s"},
+}
+
+METABOLITE_SYNONYMS: dict[str, set[str]] = {
+    "fatty acids":       {"fatty acid", "fatty acids"},
+    "free fatty acids":  {"free fatty acid", "free fatty acids", "ffa", "nefa"},
+    "triglycerides":     {"triglyceride", "triglycerides"},
+    "ketone bodies":     {"ketone body", "ketone bodies"},
+    "amino acids":       {"amino acid", "amino acids"},
+    "bile acids":        {"bile acid", "bile acids"},
+}
+
+PROTEIN_SYNONYMS: dict[str, set[str]] = {
+    "mTOR":                  {"mtor", "mtorc1", "mtorc2"},
+    "IRS-1":                 {"irs-1", "irs1"},
+    "IRS-2":                 {"irs-2", "irs2"},
+    "PPARα":                 {"ppar-alpha", "ppara"},
+    "PPARγ":                 {"ppar-gamma", "pparg"},
+    "PGC-1α":                {"pgc-1alpha", "pgc1a", "pgc-1a", "pgc-1"},
+    "SREBP":                 {"srebp", "srebp-1c"},
+    "HIF-1α":                {"hif-1alpha", "hif1a"},
+    "NF-κB":                 {"nf-kb", "nfkb"},
+    "LPL":                   {"lpl", "lipoprotein lipase"},
+    "HSL":                   {"hsl", "hormone-sensitive lipase"},
+    "ATGL":                  {"atgl", "adipose triglyceride lipase"},
+    "fatty acid synthase":   {"fas", "fatty acid synthase"},
+    "hexokinase":            {"hexokinase", "hk1", "hk2"},
+    "FATP":                  {"fatp", "fatp1", "fatp4"},
+    "GLP-1 receptor":        {"glp-1 receptor", "glp1r"},
+    "FOXO":                  {"foxo1", "foxo"},
+    "COX-2":                 {"cox-2", "cox2"},
+    "iNOS":                  {"nos2", "inos"},
+    "ERK":                   {"erk1", "erk2"},
+}
+
+
+def _merge_synonyms(counts: dict[str, int],
+                    synonym_groups: dict[str, set[str]]) -> dict[str, int]:
+    """Sum counts for all synonym variants into their canonical display name."""
+    term_to_canon: dict[str, str] = {
+        term: canon
+        for canon, terms in synonym_groups.items()
+        for term in terms
+    }
+    merged: dict[str, int] = {}
+    for term, n in counts.items():
+        canon = term_to_canon.get(term, term)
+        merged[canon] = merged.get(canon, 0) + n
+    return merged
+
+
 NCBI_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 
 
@@ -439,32 +511,55 @@ def extract_key_players(papers: list[dict]) -> dict:
     """
     Scan titles, abstracts, and MeSH keywords for known biomedical terms.
 
+    Each term is counted at most once per paper regardless of how many times
+    it appears in that paper's text.
+
     Returns a dict with two parallel structures per category:
-      - "<cat>":        list of names sorted by descending mention count
-      - "<cat>_counts": dict of {name: mention_count}
+      - "<cat>":        list of names sorted by descending paper count
+      - "<cat>_counts": dict of {name: n_papers_containing_term}
     """
-    combined_text = " ".join(
+    paper_texts = [
         (
             p.get("title", "") + " " +
             p.get("abstract", "") + " " +
             " ".join(p.get("keywords", []))
         ).lower()
         for p in papers
-    )
+    ]
 
-    def find_terms(vocab: set[str]) -> tuple[list[str], dict[str, int]]:
-        counts: dict[str, int] = {}
+    def find_terms(vocab: set[str],
+                   synonyms: dict[str, set[str]]) -> tuple[list[str], dict[str, int]]:
+        # Group raw vocab terms by canonical name FIRST, then count each
+        # paper at most once per canonical term (across all its synonym
+        # variants) — not once per raw variant. Counting per-variant and
+        # summing afterward (the previous approach) double-counts any paper
+        # that happens to use two synonyms of the same term (e.g. "il-6" and
+        # "interleukin-6" in the same abstract), since the per-paper
+        # membership information is already lost by the time raw counts are
+        # merged. See threshold_utils.py-style discussion — synonym merging
+        # must happen at match time, not after aggregation.
+        term_to_canon = {
+            term: canon for canon, terms in synonyms.items() for term in terms
+        }
+        canon_to_terms: dict[str, list[str]] = {}
         for term in vocab:
-            pattern = r"\b" + re.escape(term) + r"\b"
-            n = len(re.findall(pattern, combined_text))
+            canon_to_terms.setdefault(term_to_canon.get(term, term), []).append(term)
+
+        counts: dict[str, int] = {}
+        for canon, terms in canon_to_terms.items():
+            patterns = [r"\b" + re.escape(t) + r"\b" for t in terms]
+            n = sum(
+                1 for txt in paper_texts
+                if any(re.search(p, txt) for p in patterns)
+            )
             if n > 0:
-                counts[term] = n
+                counts[canon] = n
         ranked = [t for t, _ in sorted(counts.items(), key=lambda x: -x[1])]
         return ranked, counts
 
-    metabolites, metabolites_counts = find_terms(METABOLITES)
-    hormones,    hormones_counts    = find_terms(HORMONES)
-    proteins,    proteins_counts    = find_terms(PROTEINS)
+    metabolites, metabolites_counts = find_terms(METABOLITES, METABOLITE_SYNONYMS)
+    hormones,    hormones_counts    = find_terms(HORMONES,    HORMONE_SYNONYMS)
+    proteins,    proteins_counts    = find_terms(PROTEINS,    PROTEIN_SYNONYMS)
 
     return {
         "metabolites":        metabolites,
@@ -479,24 +574,26 @@ def extract_key_players(papers: list[dict]) -> dict:
 def _infer_connection_type(key_players: dict[str, list[str]]) -> str:
     hormones    = set(key_players.get("hormones", []))
     metabolites = set(key_players.get("metabolites", []))
-    cytokines   = {"il-6", "il6", "tnf-alpha", "tnf", "il-1beta", "il1b",
-                   "tgf-beta", "il-10"}
 
-    if hormones & {"insulin", "glucagon", "cortisol", "corticosterone",
-                   "leptin", "adiponectin", "tsh", "t3", "t4",
-                   "thyroid hormone", "thyroid hormones",
-                   "ghrelin", "glp-1", "glp1", "fgf21", "igf-1", "igf1",
-                   "growth hormone"}:
-        if metabolites & {"glucose", "fatty acid", "fatty acids", "lactate",
-                          "triglyceride", "triglycerides", "ketone body",
-                          "ketone bodies", "beta-hydroxybutyrate"}:
+    # canonical names after synonym merging
+    cytokines = {"IL-6", "TNF-α", "IL-1β", "TGF-β", "il-10"}
+    classical_hormones = {
+        "insulin", "glucagon", "cortisol", "corticosterone",
+        "leptin", "adiponectin", "TSH", "T3 (triiodothyronine)", "T4 (thyroxine)",
+        "thyroid hormone", "ghrelin", "GLP-1", "fgf21", "IGF-1", "growth hormone",
+    }
+    fuel_metabolites = {
+        "glucose", "fatty acids", "free fatty acids", "lactate",
+        "triglycerides", "ketone bodies", "beta-hydroxybutyrate",
+    }
+
+    if hormones & classical_hormones:
+        if metabolites & fuel_metabolites:
             return "Hormonal-Metabolic"
         return "Hormonal"
     if hormones & cytokines:
         return "Inflammatory/Immune"
-    if metabolites & {"glucose", "fatty acid", "fatty acids", "lactate",
-                      "ketone body", "ketone bodies", "triglyceride",
-                      "bile acid", "bile acids"}:
+    if metabolites & (fuel_metabolites | {"bile acids"}):
         return "Metabolic Substrate Exchange"
     if hormones:
         return "Hormonal"

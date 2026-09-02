@@ -28,7 +28,7 @@ sys.path.insert(0, str(HERE))
 
 DEFAULT_SEARCH_OUTPUT = HERE / "metabolic_data" / "organ_search_results.json"
 DEFAULT_LLM_OUTPUT    = HERE / "metabolic_data" / "organ_descriptions.json"
-DEFAULT_MODEL         = "north-mini-code-1.0"
+DEFAULT_MODEL         = "llama3.2"
 MAX_PAPERS_PROMPT     = 6
 MAX_ABSTRACT_CHARS    = 400
 YEARS_BACK            = 5
@@ -37,10 +37,16 @@ DELAY                 = 0.4
 
 ORGAN_METABOLIC_QUERY = (
     "(metabolism[Title/Abstract] OR metabolic[Title/Abstract] "
-    "OR substrate[Title/Abstract] OR glucose[Title/Abstract] "
-    "OR fatty acid[Title/Abstract] OR insulin[Title/Abstract] "
-    "OR energy[Title/Abstract] OR oxidation[Title/Abstract] "
-    "OR hormone[Title/Abstract] OR gluconeogenesis[Title/Abstract])"
+    "OR catabolism[Title/Abstract] OR anabolism[Title/Abstract] "
+    "OR biosynthesis[Title/Abstract] OR metabolite[Title/Abstract] "
+    "OR flux[Title/Abstract] OR substrate[Title/Abstract] "
+    "OR nutrient[Title/Abstract] OR fuel[Title/Abstract] "
+    "OR glucose[Title/Abstract] OR \"glucose uptake\"[Title/Abstract] "
+    "OR glycolysis[Title/Abstract] OR gluconeogenesis[Title/Abstract] "
+    "OR energy[Title/Abstract] OR bioenergetics[Title/Abstract] "
+    "OR mitochondria[Title/Abstract] OR mitochondrial[Title/Abstract] "
+    "OR thermogenesis[Title/Abstract] OR \"Krebs cycle\"[Title/Abstract] "
+    "OR \"electron transport\"[Title/Abstract] OR oxidation[Title/Abstract])"
 )
 
 
@@ -291,12 +297,23 @@ def main():
                         help=f"Ollama model to use (default: {DEFAULT_MODEL}).")
     args = parser.parse_args()
 
-    from Data_Loader.load_data import load_node_metadata_from_csv
-    node_metadata = load_node_metadata_from_csv(
-        str(HERE / "metabolic_data" / "organ_data.csv")
-    )
-    organs = list(node_metadata.keys())
-    print(f"[i] {len(organs)} organs to process.")
+    import csv as _csv
+    _cohort_csv = HERE / "reference_network_only_metabolic" / "healthy_cohort_connections.csv"
+    if not _cohort_csv.exists():
+        print(f"[!] Edge filter not found: {_cohort_csv}")
+        sys.exit(1)
+    _organ_set: set[str] = set()
+    with open(_cohort_csv, encoding="utf-8") as _f:
+        _reader = _csv.reader(_f)
+        _header = next(_reader)
+        _col_organs = [c.strip() for c in _header[1:]]
+        _organ_set.update(_col_organs)
+        for _row in _reader:
+            if _row:
+                _organ_set.add(_row[0].strip())
+    _organ_set.discard("")
+    organs = sorted(_organ_set)
+    print(f"[i] Edge filter: {_cohort_csv.name} → {len(organs)} organs to process.")
 
     search_results = run_organ_search(
         organs=organs,

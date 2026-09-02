@@ -32,11 +32,16 @@ from itertools import combinations
 HERE = Path(__file__).parent.parent
 sys.path.insert(0, str(HERE))
 
-DEFAULT_OUTPUT      = HERE / "metabolic_data" / "lit_ref_results.json"
 DEFAULT_MIN_PAPERS  = 3
-DEFAULT_MAX_RESULTS = 200
+DEFAULT_MAX_RESULTS = 1000
 DEFAULT_YEARS_BACK  = 10
 DELAY               = 0.4
+
+INTERACTION_FILTER_TERMS: list[str] = [
+    "axis", "crosstalk", "cross-talk",
+    "interaction", "regulation", "signaling",
+    "communication", "coupling",
+]
 
 # ── Layer metadata ─────────────────────────────────────────────────────────────
 
@@ -107,10 +112,8 @@ LAYER_REQUIRED_PHRASES: dict[str, list[str]] = {
         "cytokine crosstalk", "immune axis",
     ],
     "metabolic": [
-        "metabolic crosstalk", "inter-organ", "organ crosstalk",
-        "organ communication", "substrate exchange", "metabolic communication",
-        "metabolic axis", "metabolic interplay", "metabolic interaction",
-        "metabolic relay",
+        "metabolism", "metabolic",
+        "glucose", "glucose uptake", "glycolysis", "gluconeogenesis",
     ],
     "mechanical": [
         "hemodynamic coupling", "blood flow-mediated", "flow-mediated",
@@ -326,13 +329,10 @@ def _search_pair(
         alias_q = "(" + " OR ".join(f'"{a}"[Title/Abstract]' for a in aliases) + ")"
         return f"({mesh} OR {alias_q})"
 
-    # Add a broad interaction filter to reduce completely unrelated papers
-    interaction_filter = (
-        '(axis[Title/Abstract] OR crosstalk[Title/Abstract] '
-        'OR interaction[Title/Abstract] OR regulation[Title/Abstract] '
-        'OR signaling[Title/Abstract] OR communication[Title/Abstract] '
-        'OR coupling[Title/Abstract] OR cross-talk[Title/Abstract])'
-    )
+    # Broad interaction filter — terms come from INTERACTION_FILTER_TERMS
+    # (overridable from run_lit_ref.py)
+    filter_parts = " OR ".join(f'{t}[Title/Abstract]' for t in INTERACTION_FILTER_TERMS)
+    interaction_filter = f"({filter_parts})"
 
     query = (
         f"{organ_clause(organ1)} AND {organ_clause(organ2)}"
@@ -356,128 +356,3 @@ def _search_pair(
         return []
     time.sleep(delay)
     return fetch_abstracts(pmids, delay=delay)
-
-
-# ── Main search runner ─────────────────────────────────────────────────────────
-
-def run_lit_ref_search(
-    organs: list[str],
-    output_path: "str | Path" = DEFAULT_OUTPUT,
-    min_papers: int  = DEFAULT_MIN_PAPERS,
-    max_results: int = DEFAULT_MAX_RESULTS,
-    years_back: int  = DEFAULT_YEARS_BACK,
-    delay: float     = DELAY,
-    resume: bool     = True,
-    reset: bool      = False,
-) -> dict:
-    """
-    Search all organ pairs with co-occurrence filtering and layer classification.
-    Cache format: one entry per "organ1|organ2" key.
-    """
-    output_path = Path(output_path)
-    results: dict = {}
-
-    if reset and output_path.exists():
-        output_path.unlink()
-        print(f"[i] Cache deleted: {output_path.name}")
-    elif resume and output_path.exists():
-        with open(output_path, encoding="utf-8") as f:
-            results = json.load(f)
-        # Detect old format (keys contain two '|') and warn
-        old_keys = [k for k in results if k.count("|") == 2]
-        if old_keys:
-            print(
-                f"[!] Cache uses old per-layer format ({len(results)} entries). "
-                "Run with --reset to rebuild with the new co-occurrence approach."
-            )
-            return results
-        print(f"[i] Resuming: {len(results)} pairs already cached.")
-
-    pairs  = all_organ_pairs(organs)
-    total  = len(pairs)
-
-    for idx, (o1, o2) in enumerate(pairs, 1):
-        key = f"{o1}|{o2}"
-        if key in results:
-            d  = results[key]
-            nc = d.get("n_papers_cooccur", 0)
-            print(f"  [{idx:3d}/{total}] cached ({nc} co-occur): {o1} ↔ {o2}")
-            continue
-
-        print(f"  [{idx:3d}/{total}] {o1} ↔ {o2} … ", end="", flush=True)
-        papers = _search_pair(o1, o2, years_back, max_results, delay)
-        time.sleep(delay)
-
-        # Post-filter: co-occurrence in same sentence or compound term
-        cooccur = [p for p in papers if _paper_cooccurs(p, o1, o2)]
-
-        # Classify each co-occurring paper into layers
-        layer_papers: dict[str, list] = {lyr: [] for lyr in ALL_LAYERS}
-        for p in cooccur:
-            for lyr in _classify_paper(p):
-                if lyr in layer_papers:
-                    layer_papers[lyr].append(p)
-
-        layer_counts = {lyr: len(ps) for lyr, ps in layer_papers.items()}
-        active_layers = [lyr for lyr, n in layer_counts.items() if n >= 1]
-
-        print(
-            f"{len(papers)} fetched → {len(cooccur)} co-occur "
-            f"| layers: {', '.join(f'{lyr}:{layer_counts[lyr]}' for lyr in active_layers) or 'none'}"
-        )
-
-        results[key] = {
-            "organ1":           o1,
-            "organ2":           o2,
-            "n_papers_fetched": len(papers),
-            "n_papers_cooccur": len(cooccur),
-            "layer_papers":     {lyr: ps[:20] for lyr, ps in layer_papers.items()},
-            "layer_counts":     layer_counts,
-            "search_date":      datetime.now().isoformat(),
-        }
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
-
-    n_edges = sum(
-        1 for v in results.values()
-        if isinstance(v, dict) and v.get("n_papers_cooccur", 0) >= min_papers
-    )
-    print(
-        f"\n[ok] Done. {n_edges}/{total} pairs have ≥{min_papers} co-occurring papers."
-        f"\n     Saved to: {output_path}"
-    )
-    return results
-
-
-# ── Standalone entry point ─────────────────────────────────────────────────────
-
-def main():
-    parser = argparse.ArgumentParser(
-        description="Literature-derived organ network: co-occurrence + layer classification."
-    )
-    parser.add_argument("--reset",       action="store_true", help="Delete cache and restart.")
-    parser.add_argument("--min-papers",  type=int, default=DEFAULT_MIN_PAPERS)
-    parser.add_argument("--max-results", type=int, default=DEFAULT_MAX_RESULTS)
-    parser.add_argument("--years-back",  type=int, default=DEFAULT_YEARS_BACK)
-    args = parser.parse_args()
-
-    from Data_Loader.load_data import load_node_metadata_from_csv
-    organ_data    = HERE / "metabolic_data" / "organ_data.csv"
-    node_metadata = load_node_metadata_from_csv(str(organ_data))
-    organs        = list(node_metadata.keys())
-    print(f"[i] {len(organs)} organs → {len(organs)*(len(organs)-1)//2} pairs.")
-
-    run_lit_ref_search(
-        organs      = organs,
-        output_path = DEFAULT_OUTPUT,
-        min_papers  = args.min_papers,
-        max_results = args.max_results,
-        years_back  = args.years_back,
-        resume      = not args.reset,
-        reset       = args.reset,
-    )
-
-
-if __name__ == "__main__":
-    main()
