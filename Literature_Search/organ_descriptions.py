@@ -26,6 +26,13 @@ import requests as _requests
 HERE = Path(__file__).parent.parent
 sys.path.insert(0, str(HERE))
 
+# Windows console/redirected-output encoding defaults to cp1252, which can't
+# encode the arrows/ellipses used in progress prints below — force UTF-8 so
+# the run doesn't crash mid-way through (e.g. when stdout is piped to a file).
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 DEFAULT_SEARCH_OUTPUT = HERE / "metabolic_data" / "organ_search_results.json"
 DEFAULT_LLM_OUTPUT    = HERE / "metabolic_data" / "organ_descriptions.json"
 DEFAULT_MODEL         = "llama3.2"

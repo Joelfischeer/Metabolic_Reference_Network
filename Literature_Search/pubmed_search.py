@@ -1,22 +1,21 @@
 """
-PubMed literature search for organ-organ metabolic connections.
+Shared PubMed/NCBI E-utilities helpers and biomedical vocabulary used by all
+three organ cross-talk pipelines (Edge_cosine_met_reference_network,
+Edge_cosine_general_reference_network, reference_network_only_metabolic).
 
-Uses NCBI E-utilities (no API key required, but email recommended).
-Results are saved as JSON per edge and can be resumed incrementally.
-
-Search strategy (cascade — moves to next level if too few results):
-  1. Both organ names in Title with metabolic context keywords
-  2. Both names anywhere in Title/Abstract
-  3. MeSH terms for both organs
-  4. All organ aliases, no metabolic filter — just co-occurrence
-  5. PMC full-text search (broader coverage)
+Each pipeline builds and issues its own PubMed queries (see each pipeline's
+run_network.py / run_metabolic_lit_search.py); this module provides the
+lower-level pieces they share: organ name aliases and MeSH terms
+(ORGAN_ALIASES / ORGAN_MESH), abstract fetching (fetch_abstracts), key-player
+extraction against curated hormone/metabolite/protein vocabularies
+(extract_key_players), and synonym merging (_merge_synonyms).
 """
 
 import json
 import time
 import re
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import requests
 
@@ -26,35 +25,34 @@ import requests
 
 ORGAN_ALIASES: dict[str, list[str]] = {
     "Adrenal Glands":   ["adrenal gland", "adrenal cortex", "adrenal medulla",
-                         "adrenocortical", "HPA axis", "hypothalamic-pituitary-adrenal"],
+                         "adrenocortical"],
     "Bone Marrow":      ["bone marrow", "hematopoietic", "haematopoietic",
                          "hematopoiesis", "bone marrow niche"],
-    "Brain":            ["brain", "cerebral", "hypothalamus", "hypothalamic",
-                         "central nervous system", "CNS", "neuronal"],
+    "Brain":            ["brain", "cerebral", "hypothalamus", "hypothalamic", "pituitary", "pituitary gland",
+                         "arcuate nucleus", "paraventricular nucleus", "nucleus tractus solitarius",
+                         "area postrema", "hippocampus", "hippocampal", "amygdala", "brainstem", "brain stem",
+                         "cerebellum", "cerebellar", "thalamus", "thalamic", "basal ganglia",
+                         "prefrontal cortex", "cerebral cortex", "medulla oblongata", "pons",
+                         "forebrain", "midbrain", "hindbrain", "central nervous system", "CNS",
+                         "neuronal", "neuroendocrine"],
     "Colon":            ["colon", "large intestine", "colorectal",
                          "colonic", "gut microbiota", "microbiome"],
     "Heart":            ["heart", "cardiac", "myocardial", "cardiomyocyte",
-                         "left ventricle", "myocardium"],
-    "Kidney":           ["kidney", "renal", "nephron", "glomerular",
-                         "tubular", "nephrology"],
-    "Liver":            ["liver", "hepatic", "hepatocyte", "hepatocellular",
-                         "nonalcoholic fatty liver", "NAFLD", "NASH"],
-    "Lung":             ["lung", "pulmonary", "alveolar", "bronchial",
-                         "respiratory", "pneumocyte"],
-    "Muscle":           ["skeletal muscle", "muscle", "myocyte", "myofiber",
-                         "sarcopenia", "muscular"],
-    "Pancreas":         ["pancreas", "pancreatic", "islet", "beta cell",
-                         "beta-cell", "insulin secretion", "exocrine pancreas"],
+                         "myocardium", "cardiac muscle"],
+    "Kidney":           ["kidney", "renal", "nephron", "glomerular", "kidneys",
+                         "tubular"],
+    "Liver":            ["liver", "hepatic", "hepatocyte", "hepatocellular"],
+    "Lung":             ["lung", "pulmonary", "alveolar", "bronchial"],
+    "Muscle":           ["skeletal muscle", "myocyte"],
+    "Pancreas":         ["pancreas", "pancreatic"],
     "Small Intestine":  ["small intestine", "duodenum", "jejunum", "ileum",
-                         "intestinal", "gut", "enterocyte", "Peyer's patches",
-                         "gut-brain axis", "enteroendocrine"],
+                         "intestinal", "gut", "enterocyte", "Peyer's patches"],
     "Spleen":           ["spleen", "splenic", "splenomegaly",
                          "lymphoid organ", "immune organ"],
-    "Thyroid":          ["thyroid", "thyroid gland", "thyroid hormone",
-                         "T3", "T4", "TSH", "hypothyroidism", "hyperthyroidism"],
-    "WAT":              ["adipose tissue", "white adipose tissue", "fat tissue",
+    "Thyroid":          ["thyroid", "thyroid gland"],
+    "WAT":              ["adipose tissue", "white adipose tissue", "white fat tissue",
                          "adipocyte", "adipogenesis", "visceral fat",
-                         "subcutaneous fat", "WAT", "lipogenesis"],
+                         "subcutaneous fat", "WAT"],
 }
 
 # MeSH terms for organ MeSH-based queries
@@ -74,16 +72,6 @@ ORGAN_MESH: dict[str, str] = {
     "Thyroid":         "Thyroid Gland[MeSH Terms]",
     "WAT":             "Adipose Tissue[MeSH Terms]",
 }
-
-METABOLIC_CONTEXT = (
-    "(metabolism[Title/Abstract] OR metabolic[Title/Abstract] "
-    "OR crosstalk[Title/Abstract] OR signaling[Title/Abstract] "
-    "OR communication[Title/Abstract] OR axis[Title/Abstract] "
-    "OR interaction[Title/Abstract] OR regulation[Title/Abstract] "
-    "OR hormone[Title/Abstract] OR glucose[Title/Abstract] "
-    "OR insulin[Title/Abstract] OR lipid[Title/Abstract] "
-    "OR energy[Title/Abstract])"
-)
 
 # ---------------------------------------------------------------------------
 # Curated biomedical vocabulary for key-player extraction
@@ -306,55 +294,6 @@ def _ncbi_get(endpoint: str, params: dict, retries: int = 3) -> "requests.Respon
     return None
 
 
-def search_pubmed_raw(query: str, max_results: int, years_back: int,
-                      db: str = "pubmed") -> list[str]:
-    """Return PMIDs from a single PubMed/PMC query."""
-    min_date = (datetime.now() - timedelta(days=365 * years_back)).strftime("%Y/%m/%d")
-    params = {
-        "db": db,
-        "term": query,
-        "retmax": max_results,
-        "retmode": "json",
-        "mindate": min_date,
-        "datetype": "pdat",
-    }
-    resp = _ncbi_get("esearch.fcgi", params)
-    if resp is None:
-        return []
-    data = resp.json()
-    ids = data.get("esearchresult", {}).get("idlist", [])
-
-    # PMC returns PMC IDs — convert to PubMed IDs via elink
-    if db == "pmc" and ids:
-        ids = _pmc_to_pubmed(ids)
-    return ids
-
-
-def _pmc_to_pubmed(pmc_ids: list[str]) -> list[str]:
-    """Convert PMC IDs to PubMed IDs via elink."""
-    params = {
-        "dbfrom": "pmc",
-        "db": "pubmed",
-        "id": ",".join(pmc_ids),
-        "retmode": "json",
-        "cmd": "neighbor",
-    }
-    resp = _ncbi_get("elink.fcgi", params)
-    if resp is None:
-        return []
-    try:
-        data = resp.json()
-        linksets = data.get("linksets", [])
-        pmids = []
-        for ls in linksets:
-            for lsdb in ls.get("linksetdbs", []):
-                if lsdb.get("dbto") == "pubmed":
-                    pmids.extend(lsdb.get("links", []))
-        return list(dict.fromkeys(pmids))  # deduplicate, preserve order
-    except Exception:
-        return []
-
-
 def fetch_abstracts(pmids: list[str], batch_size: int = 200, delay: float = 0.4) -> list[dict]:
     """
     Fetch title + abstract + keywords for a list of PMIDs.
@@ -411,96 +350,6 @@ def fetch_abstracts(pmids: list[str], batch_size: int = 200, delay: float = 0.4)
             all_papers.extend(parse_xml_batch(resp.text))
 
     return all_papers
-
-
-# ---------------------------------------------------------------------------
-# Query builders — cascade from strict to broad
-# ---------------------------------------------------------------------------
-
-def _alias_clause(organ: str, fields: str = "Title/Abstract") -> str:
-    """Build an OR clause for all aliases of an organ."""
-    aliases = ORGAN_ALIASES.get(organ, [organ])
-    terms = [f'"{a}"[{fields}]' for a in aliases]
-    return "(" + " OR ".join(terms) + ")"
-
-
-def build_queries(organ1: str, organ2: str) -> list[tuple[str, str]]:
-    """
-    Return a list of (label, query_string) in order of decreasing strictness.
-    The search cascade tries them in order and stops when enough results are found.
-    """
-    a1 = _alias_clause(organ1, "Title")
-    a2 = _alias_clause(organ2, "Title")
-    ab1 = _alias_clause(organ1, "Title/Abstract")
-    ab2 = _alias_clause(organ2, "Title/Abstract")
-    mesh1 = ORGAN_MESH.get(organ1, f'"{organ1}"[MeSH Terms]')
-    mesh2 = ORGAN_MESH.get(organ2, f'"{organ2}"[MeSH Terms]')
-
-    return [
-        # Strategy 1: both organs in Title + metabolic context
-        ("title+context",
-         f"{a1} AND {a2} AND {METABOLIC_CONTEXT}"),
-
-        # Strategy 2: both organs in Title/Abstract + metabolic context
-        ("abstract+context",
-         f"{ab1} AND {ab2} AND {METABOLIC_CONTEXT}"),
-
-        # Strategy 3: MeSH terms + metabolic context
-        ("mesh+context",
-         f"({mesh1} OR {ab1}) AND ({mesh2} OR {ab2}) AND {METABOLIC_CONTEXT}"),
-
-        # Strategy 4: MeSH terms alone (broad)
-        ("mesh+aliases",
-         f"({mesh1} OR {ab1}) AND ({mesh2} OR {ab2})"),
-
-        # Strategy 5: PMC full-text search (uses pmc db in caller)
-        ("pmc-fulltext",
-         f"{ab1} AND {ab2} AND {METABOLIC_CONTEXT}"),
-    ]
-
-
-# ---------------------------------------------------------------------------
-# Main search function with cascade
-# ---------------------------------------------------------------------------
-
-def search_with_cascade(
-    organ1: str,
-    organ2: str,
-    max_results: int = 25,
-    years_back: int = 10,
-    min_papers: int = 5,
-    delay: float = 0.4,
-) -> tuple[list[str], str, str]:
-    """
-    Try query strategies in order until `min_papers` PMIDs are found.
-
-    Returns:
-        (pmids, strategy_used, query_used)
-    """
-    queries = build_queries(organ1, organ2)
-    best_pmids: list[str] = []
-    best_strategy = ""
-    best_query = ""
-
-    for label, query in queries:
-        db = "pmc" if label == "pmc-fulltext" else "pubmed"
-        print(f"    [?] Strategy '{label}' (db={db})…", end=" ", flush=True)
-        time.sleep(delay)
-
-        pmids = search_pubmed_raw(query, max_results=max_results,
-                                  years_back=years_back, db=db)
-        print(f"{len(pmids)} results")
-
-        # Keep the best result so far (most papers)
-        if len(pmids) > len(best_pmids):
-            best_pmids = pmids
-            best_strategy = label
-            best_query = query
-
-        if len(pmids) >= min_papers:
-            break  # good enough — stop cascade
-
-    return best_pmids, best_strategy, best_query
 
 
 # ---------------------------------------------------------------------------
@@ -569,139 +418,6 @@ def extract_key_players(papers: list[dict]) -> dict:
         "proteins":           proteins,
         "proteins_counts":    proteins_counts,
     }
-
-
-def _infer_connection_type(key_players: dict[str, list[str]]) -> str:
-    hormones    = set(key_players.get("hormones", []))
-    metabolites = set(key_players.get("metabolites", []))
-
-    # canonical names after synonym merging
-    cytokines = {"IL-6", "TNF-α", "IL-1β", "TGF-β", "il-10"}
-    classical_hormones = {
-        "insulin", "glucagon", "cortisol", "corticosterone",
-        "leptin", "adiponectin", "TSH", "T3 (triiodothyronine)", "T4 (thyroxine)",
-        "thyroid hormone", "ghrelin", "GLP-1", "fgf21", "IGF-1", "growth hormone",
-    }
-    fuel_metabolites = {
-        "glucose", "fatty acids", "free fatty acids", "lactate",
-        "triglycerides", "ketone bodies", "beta-hydroxybutyrate",
-    }
-
-    if hormones & classical_hormones:
-        if metabolites & fuel_metabolites:
-            return "Hormonal-Metabolic"
-        return "Hormonal"
-    if hormones & cytokines:
-        return "Inflammatory/Immune"
-    if metabolites & (fuel_metabolites | {"bile acids"}):
-        return "Metabolic Substrate Exchange"
-    if hormones:
-        return "Hormonal"
-    if metabolites:
-        return "Metabolic"
-    return "Unknown"
-
-
-# ---------------------------------------------------------------------------
-# Public run function
-# ---------------------------------------------------------------------------
-
-def run_literature_search(
-    organ_pairs: list[tuple[str, str]],
-    output_path: "str | Path",
-    max_results_per_pair: int = 25,
-    years_back: int = 10,
-    min_papers: int = 5,
-    delay: float = 0.4,
-    resume: bool = True,
-    force_research_empty: bool = False,
-) -> dict:
-    """
-    Run PubMed searches for all organ pairs with a multi-strategy cascade.
-
-    Parameters
-    ----------
-    organ_pairs : list of (organ1, organ2)
-    output_path : JSON file for storing results (auto-saved after each pair)
-    max_results_per_pair : max PMIDs to retrieve per strategy per pair
-    years_back : how many years back to search
-    min_papers : cascade stops when this many papers are found
-    delay : seconds between HTTP requests
-    resume : skip already-searched pairs (cached in output_path)
-    force_research_empty : re-search pairs that previously returned 0 papers
-    """
-    output_path = Path(output_path)
-    results: dict = {}
-
-    if resume and output_path.exists():
-        with open(output_path, encoding="utf-8") as f:
-            results = json.load(f)
-        n_cached = len(results)
-        n_empty  = sum(1 for v in results.values() if v.get("n_papers_found", 0) == 0)
-        print(f"[i] Resuming: {n_cached} cached ({n_empty} empty).")
-        if force_research_empty:
-            # Delete empty entries so they get re-searched
-            empty_keys = [k for k, v in results.items() if v.get("n_papers_found", 0) == 0]
-            for k in empty_keys:
-                del results[k]
-            print(f"[i] Cleared {len(empty_keys)} empty entries for re-search.")
-
-    total = len(organ_pairs)
-    for idx, (o1, o2) in enumerate(organ_pairs):
-        edge_key = f"{o1}|{o2}"
-        sym_key  = f"{o2}|{o1}"
-
-        if edge_key in results or sym_key in results:
-            existing = results.get(edge_key) or results.get(sym_key, {})
-            n = existing.get("n_papers_found", 0)
-            print(f"  [{idx+1}/{total}] Cached ({n} papers): {o1} <-> {o2}")
-            continue
-
-        print(f"\n  [{idx+1}/{total}] Searching: {o1} <-> {o2}")
-        pmids, strategy, query = search_with_cascade(
-            o1, o2,
-            max_results=max_results_per_pair,
-            years_back=years_back,
-            min_papers=min_papers,
-            delay=delay,
-        )
-        time.sleep(delay)
-
-        papers = fetch_abstracts(pmids, delay=delay)
-        time.sleep(delay)
-
-        key_players     = extract_key_players(papers)
-        connection_type = _infer_connection_type(key_players)
-
-        n = len(papers)
-        summary = (
-            f"    => {n} papers via strategy '{strategy}'"
-            f" | hormones: {len(key_players['hormones'])}"
-            f" | metabolites: {len(key_players['metabolites'])}"
-            f" | proteins: {len(key_players['proteins'])}"
-        )
-        print(summary)
-
-        results[edge_key] = {
-            "organ1":          o1,
-            "organ2":          o2,
-            "pubmed_query":    query,
-            "strategy_used":   strategy,
-            "n_papers_found":  n,
-            "papers":          papers,
-            "key_players":     key_players,
-            "connection_type": connection_type,
-            "search_date":     datetime.now().isoformat(),
-        }
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
-
-    total_papers = sum(v.get("n_papers_found", 0) for v in results.values())
-    empty = sum(1 for v in results.values() if v.get("n_papers_found", 0) == 0)
-    print(f"\n[ok] Done. {len(results)} edges | {total_papers} total papers | {empty} still empty.")
-    print(f"     Saved to: {output_path}")
-    return results
 
 
 # ---------------------------------------------------------------------------

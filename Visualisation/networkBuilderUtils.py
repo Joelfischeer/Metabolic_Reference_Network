@@ -204,7 +204,7 @@ def export_network_to_cytoscape_dashboard(
             merged.get("connection_type")
             or parsed["connection_type"]
         )
-        connection_type_secondary = merged.get("connection_type_secondary", "")
+        connection_type_others = merged.get("connection_type_others", [])
         notes = merged.get("notes") or parsed["notes"]
         sources = merged.get("sources") or parsed["sources"]
         ai_description = merged.get("ai_description", "")
@@ -226,8 +226,8 @@ def export_network_to_cytoscape_dashboard(
                 "source": str(u),
                 "target": str(v),
                 "color": edge_color,
-                "connection_type":           connection_type,
-                "connection_type_secondary": connection_type_secondary,
+                "connection_type":        connection_type,
+                "connection_type_others": connection_type_others,
                 "bootstrapMean": bootstrap_mean,
                 "isRefEdge":     is_ref_edge,
                 "refNPapers":    ref_n_papers,
@@ -1605,14 +1605,12 @@ function renderEdgeSidebarContent(data) {{
   let summaryHtml = '';
 
   if (data.connection_type) {{
-    const secAttr = data.connection_type_secondary
-      ? ` title="Alternative: ${{escHtml(data.connection_type_secondary)}}"`
-      : '';
-    summaryHtml += section('Type',
-      `<span class="connection-type-badge"${{secAttr}} style="cursor:${{data.connection_type_secondary?'help':'default'}}">${{escHtml(data.connection_type)}}</span>` +
-      (data.connection_type_secondary
-        ? `<div style="margin-top:4px;font-size:11px;color:#64748b">Alternative: ${{escHtml(data.connection_type_secondary)}}</div>`
-        : ''));
+    const allTypes = [data.connection_type, ...(data.connection_type_others || [])];
+    const badges = allTypes.map(t =>
+      `<span class="connection-type-badge" style="margin:0 6px 6px 0">${{escHtml(t)}}</span>`
+    ).join('');
+    summaryHtml += section(allTypes.length > 1 ? 'Types' : 'Type',
+      `<div style="display:flex;flex-wrap:wrap">${{badges}}</div>`);
   }}
 
   if (data.ai_description) {{
