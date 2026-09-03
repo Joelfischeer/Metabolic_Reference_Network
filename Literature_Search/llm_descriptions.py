@@ -33,6 +33,13 @@ import requests as _requests   # already a project dependency
 HERE = Path(__file__).parent.parent
 sys.path.insert(0, str(HERE))
 
+# Windows console/redirected-output encoding defaults to cp1252, which can't
+# encode the arrows/ellipses used in progress prints below — force UTF-8 so
+# the run doesn't crash mid-way through (e.g. when stdout is piped to a file).
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+
 DEFAULT_OUTPUT     = HERE / "metabolic_data" / "llm_descriptions.json"
 DEFAULT_MODEL      = "llama3.2"
 OLLAMA_URL         = "http://localhost:11434/api/chat"
@@ -280,7 +287,7 @@ def generate_llm_descriptions(
     if not _check_ollama(model):
         print(f"[!] Ollama not reachable or model '{model}' not found.")
         print(f"    Start Ollama and run:  ollama pull {model}")
-        print(f"    Then re-run with:      uv run python run_all.py --skip-search")
+        print(f"    Then re-run this same command.")
         return descriptions
 
     print(f"[i] Using model: {model}")
