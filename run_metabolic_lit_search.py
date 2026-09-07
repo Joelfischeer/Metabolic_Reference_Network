@@ -632,17 +632,17 @@ AND ({crosstalk_kw_block})</div>
         </p>
         <ol style="margin:0 0 12px 16px;padding:0;color:#cbd5e1;font-size:13px;line-height:1.7">
           <li style="margin-bottom:6px">
-            <strong style="color:#e2e8f0">Sample</strong> — up to
+            <strong style="color:#e2e8f0">Sample</strong>: up to
             <strong>25 papers</strong> are randomly sampled from the full PubMed result
             set for that pair (if fewer papers exist, all are used).
           </li>
           <li style="margin-bottom:6px">
-            <strong style="color:#e2e8f0">Select</strong> — the LLM reads the 25 paper
+            <strong style="color:#e2e8f0">Select</strong>: the LLM reads the 25 paper
             titles and abstracts and identifies the <strong>5 most relevant</strong> ones
             for the specific metabolic or hormonal interaction between the two organs.
           </li>
           <li>
-            <strong style="color:#e2e8f0">Summarise</strong> — the LLM writes a
+            <strong style="color:#e2e8f0">Summarise</strong>: the LLM writes a
             3–4 sentence cited summary based solely on those 5 papers.
             Citations in the text correspond to paper numbers <strong>[1]–[5]</strong>
             shown in the edge panel.
@@ -659,12 +659,12 @@ AND ({crosstalk_kw_block})</div>
         </p>
         <ol style="margin:0 0 12px 16px;padding:0;color:#cbd5e1;font-size:13px;line-height:1.7">
           <li style="margin-bottom:6px">
-            <strong style="color:#e2e8f0">Search</strong> — PubMed is queried for the
+            <strong style="color:#e2e8f0">Search</strong>: PubMed is queried for the
             organ combined with metabolic keywords, retrieving up to <strong>50 papers</strong>
             from the last <strong>5 years</strong>.
           </li>
           <li style="margin-bottom:6px">
-            <strong style="color:#e2e8f0">Summarise</strong> — the LLM writes exactly
+            <strong style="color:#e2e8f0">Summarise</strong>: the LLM writes exactly
             <strong>5 sentences</strong> covering the organ's primary metabolic substrates,
             energy production pathways, and key hormonal regulation signals.
           </li>
