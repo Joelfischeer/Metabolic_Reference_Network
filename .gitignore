@@ -8,3 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Generated data caches (large, regenerable via the pipeline scripts —
+# see each config.py's "HOW TO RUN" section) — not needed on GitHub,
+# and too large for a single push.
+Edge_cosine_met_reference_network/*/*.json
+Edge_cosine_general_reference_network/*/*.json
+reference_network_only_metabolic/*.json*
+metabolic_data/*.json

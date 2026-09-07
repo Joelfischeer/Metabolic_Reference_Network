@@ -132,7 +132,8 @@ HORMONES = {
     "prolactin", "oxytocin", "vasopressin", "adh",
     # Adipokines
     "leptin", "adiponectin", "resistin", "visfatin", "chemerin",
-    "omentin", "apelin",
+    "omentin", "apelin", "adipsin", "complement factor d",
+    "asp", "acylation-stimulating protein",
     # Gut hormones
     "ghrelin", "glp-1", "glp1", "gip", "pyy", "cck",
     "secretin", "motilin", "gastrin", "neurotensin",
@@ -155,6 +156,8 @@ HORMONES = {
     "il-10", "il-4", "tgf-beta", "tgf-b",
     # Vitamin D (acts as hormone)
     "calcitriol", "vitamin d",
+    # Chemokines / interleukins (immune cell recruitment & activation)
+    "mcp-1", "ccl2", "eotaxin", "ccl11", "il-5", "il5",
 }
 
 # Enzymes, transporters, receptors, and intracellular signalling proteins
@@ -198,6 +201,46 @@ PROTEINS = {
     "cyp7a1", "cyp27a1",
     # Inflammation-related enzymes
     "cox-2", "cox2", "nos2", "inos",
+    "cox-1", "cox1", "5-lox", "5-lipoxygenase",
+    # Inflammasome / innate immune signalling
+    "nlrp3", "caspase-1", "tlr4", "myd88",
+    # Cytokine / adipokine intracellular signalling
+    "jak2", "stat3", "socs3",
+    # Immune cell adhesion & infiltration markers
+    "cd68", "vcam-1", "vcam1", "icam-1", "icam1",
+    # Macrophage polarization markers (M1 = cd11c/inos, M2 = arg1/cd206)
+    "arginase-1", "arg1", "cd206", "mrc1", "cd11c",
+    # Regulatory T cell marker
+    "foxp3",
+    # Complement system
+    "complement c3",
+    # Immune-metabolic proteases
+    "dpp4", "dpp-4", "cd26", "fap",
+    # Renin-angiotensin enzymes
+    "ace", "ace2",
+    # Fibrosis / immune-metabolic lectin
+    "galectin-3",
+    # Coagulation-linked adipokine regulator
+    "pai-1", "pai1",
+    # Circadian clock components
+    "bmal1", "clock", "per1", "per2", "cry1", "cry2",
+    "rev-erb-alpha", "rev-erba",
+    # Neural / autonomic signalling markers
+    "tyrosine hydroxylase", "th", "choline acetyltransferase", "chat",
+    "c-fos", "cfos",
+    # Mineral/electrolyte receptors and channels
+    "pth1r", "calcium-sensing receptor", "casr",
+    "vitamin d receptor", "vdr", "trpv5", "trpv6", "napi-iia",
+    # FGF21/FGF19 receptor complex
+    "fgfr1c", "fgfr1", "beta-klotho", "klb",
+    # Short-chain fatty acid receptors (gut microbiome signalling)
+    "gpr41", "ffar3", "gpr43", "ffar2",
+    # Gut/appetite hormone receptors
+    "ghsr", "ghrelin receptor", "mc4r",
+    # Bile acid transporters (enterohepatic circulation)
+    "asbt", "ntcp", "bsep",
+    # Angiotensin receptor
+    "at1r",
 }
 
 # ---------------------------------------------------------------------------
@@ -222,6 +265,11 @@ HORMONE_SYNONYMS: dict[str, set[str]] = {
     "TGF-β":                         {"tgf-beta", "tgf-b"},
     "erythropoietin (EPO)":          {"erythropoietin", "epo"},
     "DHEA":                          {"dhea", "dhea-s"},
+    "adipsin":                       {"adipsin", "complement factor d"},
+    "ASP":                           {"asp", "acylation-stimulating protein"},
+    "MCP-1/CCL2":                    {"mcp-1", "ccl2"},
+    "eotaxin/CCL11":                 {"eotaxin", "ccl11"},
+    "IL-5":                          {"il-5", "il5"},
 }
 
 METABOLITE_SYNONYMS: dict[str, set[str]] = {
@@ -254,6 +302,25 @@ PROTEIN_SYNONYMS: dict[str, set[str]] = {
     "COX-2":                 {"cox-2", "cox2"},
     "iNOS":                  {"nos2", "inos"},
     "ERK":                   {"erk1", "erk2"},
+    "COX-1":                 {"cox-1", "cox1"},
+    "5-LOX":                 {"5-lox", "5-lipoxygenase"},
+    "VCAM-1":                {"vcam-1", "vcam1"},
+    "ICAM-1":                {"icam-1", "icam1"},
+    "arginase-1":            {"arginase-1", "arg1"},
+    "CD206/MRC1":            {"cd206", "mrc1"},
+    "DPP4/CD26":             {"dpp4", "dpp-4", "cd26"},
+    "PAI-1":                 {"pai-1", "pai1"},
+    "REV-ERBα":              {"rev-erb-alpha", "rev-erba"},
+    "tyrosine hydroxylase":  {"tyrosine hydroxylase", "th"},
+    "choline acetyltransferase": {"choline acetyltransferase", "chat"},
+    "c-Fos":                 {"c-fos", "cfos"},
+    "calcium-sensing receptor":  {"calcium-sensing receptor", "casr"},
+    "vitamin D receptor":    {"vitamin d receptor", "vdr"},
+    "FGFR1c":                {"fgfr1c", "fgfr1"},
+    "β-Klotho":              {"beta-klotho", "klb"},
+    "GPR41/FFAR3":           {"gpr41", "ffar3"},
+    "GPR43/FFAR2":           {"gpr43", "ffar2"},
+    "GHSR":                  {"ghsr", "ghrelin receptor"},
 }
 
 
