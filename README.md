@@ -1,32 +1,6 @@
-This Script creates a metabolic network based on an annotated reference network and a
-provided network.
+This Script creates a literature based metabolic reference network based on organ-organ connections of healthy subjects
+from [Geist et. al.](https://www.cell.com/med/fulltext/S2666-6340(25)00308-3). For each connection the PubMed database 
+is searched with a structured query to extract relevant information on the biological/metabolic clues for a this connection.
 
-Input: A top-right-corner connection matrix of the network which should be compared to the reference:
-Name: metabolic_network.csv
+The output is visualized as [Github Page](https://joelfischeer.github.io/Metabolic_Reference_Network/).
 
-Row/column names or organs: 
-Adrenal Glands
-Bone Marrow	
-Brain	
-Colon	
-Heart	
-Kidney	
-Liver	
-Lung	
-Muscle	
-Pancreas	
-Small Intestine	
-Spleen	
-Thyroid	
-WAT
-
-The provided network can also have only some of these organs.
-
-Parameters:
-threshold: Edge values above this value will be considered in the reference network building.
-default = 0.3.
-
-Output:
-reference_network.html: The reference network.
-metabolic_network_comparison.html: The comparison network between the provided and reference network.
-metabolic_network_comparison.csv: The connection matrix of the comparison network.
