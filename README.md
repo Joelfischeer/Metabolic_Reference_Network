@@ -15,5 +15,6 @@ The Reference Network is accessible as an interactive [Github Page](https://joel
 The provided information is not manually verified and should only be used for hypothesis generation.
 
 
-## Sources
+## Contributors
+This tool was created by Joel Fischer in the Computational Nuclear Medicine Department at the Medical University of Vienna.
 
