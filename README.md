@@ -12,7 +12,8 @@ The Reference Network is accessible as an interactive [Github Page](https://joel
 </p>
 
 ## Caveats
-The provided information is not manually verified and should only be used for hypothesis generation.
+The provided information and the LLM-based descriptions are not manually verified and should only be used for hypothesis generation and further checked
+for validity.
 
 
 ## Contributors
