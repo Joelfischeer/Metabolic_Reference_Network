@@ -66,12 +66,42 @@ LLM_MODEL          = _cfg.LLM_MODEL
 LLM_MAX_PAPERS     = _cfg.LLM_MAX_PAPERS
 VIZ_TITLE          = _cfg.VIZ_TITLE
 
+# Condition keyword filters -- see config.py for the exact lists and why
+# these are applied locally (post-extraction) instead of as a PubMed
+# query-time filter like Edge_cosine_met/general_reference_network.
+CONDITION_KEYWORDS = {
+    "healthy": _cfg.CONDITION_KEYWORDS_HEALTHY,
+    "obese":   _cfg.CONDITION_KEYWORDS_OBESE,
+}
+
 OUTPUT_JSON         = OUTPUT_DIR / "metabolic_literature_results.json"
 OUTPUT_HTML         = OUTPUT_DIR / "metabolic_literature_network.html"
 OUTPUT_LLM_TYPES    = OUTPUT_DIR / "metabolic_connection_types.json"
-EDGE_FILTER_CSV     = OUTPUT_DIR / "healthy_cohort_connections.csv"
+# Search scope: every pair across the full 14-organ set (91 pairs). The
+# healthy cohort CSV is no longer a search-time filter -- it's read
+# separately in build_viz() to flag which pairs/organs belong to the
+# "Healthy" display toggle in the dashboard.
+EDGE_FILTER_CSV     = OUTPUT_DIR / "all_organ_connections.csv"
+HEALTHY_FILTER_CSV  = OUTPUT_DIR / "healthy_cohort_connections.csv"
+OBESE_FILTER_CSV    = OUTPUT_DIR / "obese_cohort_connections.csv"
 LLM_DESCRIPTIONS    = OUTPUT_DIR / "metabolic_llm_descriptions.json"
 ORGAN_DESCRIPTIONS  = HERE / "metabolic_data" / "organ_descriptions.json"
+
+# Per-condition cohort CSV + output files -- kept fully separate from the
+# "all" outputs above (OUTPUT_JSON/OUTPUT_LLM_TYPES/LLM_DESCRIPTIONS), which
+# stay untouched by --condition runs.
+CONDITION_COHORT_CSV = {
+    "healthy": HEALTHY_FILTER_CSV,
+    "obese":   OBESE_FILTER_CSV,
+}
+
+
+def condition_output_paths(condition: str) -> dict[str, Path]:
+    return {
+        "results":     OUTPUT_DIR / f"metabolic_literature_results_{condition}.json",
+        "llm_types":   OUTPUT_DIR / f"metabolic_connection_types_{condition}.json",
+        "llm_descs":   OUTPUT_DIR / f"metabolic_llm_descriptions_{condition}.json",
+    }
 
 def load_edge_filter(csv_path: Path) -> list[tuple[str, str]]:
     """
@@ -197,6 +227,74 @@ def _filter_same_sentence_crosstalk(papers: list[dict], organ1_patterns: list,
                 kept.append(paper)
                 break
     return kept
+
+
+def _filter_by_condition(papers: list[dict], condition_patterns: list) -> list[dict]:
+    """
+    Keep only papers whose title+abstract contains at least one condition
+    keyword (e.g. "healthy", "obesity") anywhere in the text.
+
+    Applied locally to papers that have ALREADY been fetched and passed
+    through _filter_same_sentence_crosstalk -- no new PubMed query. This
+    mirrors the Edge_cosine CONDITION_FILTER's matching semantics (whole
+    title/abstract, not restricted to one sentence) but as a post-hoc
+    filter on already-cached papers instead of a query-time clause.
+    """
+    kept = []
+    for paper in papers:
+        text = (paper.get("title", "") + ". " + paper.get("abstract", "")).lower()
+        if _any_match(condition_patterns, text):
+            kept.append(paper)
+    return kept
+
+
+def build_condition_results(condition: str, base_results: dict, pairs: list[tuple[str, str]]) -> dict:
+    """
+    Build a condition-specific results dict from the already-searched "all"
+    results: for each pair in `pairs`, filter its already-extracted papers
+    down to those also matching one of that condition's keywords, then
+    recompute key players from the smaller, condition-filtered paper set.
+
+    Pairs with no cached entry in base_results, or that have zero papers
+    after the condition filter, still get an entry (n_papers_found=0) so
+    downstream steps (key player counts, LLM classification/description)
+    see a consistent pair set matching `pairs`.
+    """
+    condition_patterns = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    base_by_pair: dict[tuple[str, str], dict] = {}
+    for entry in base_results.values():
+        o1, o2 = entry.get("organ1", ""), entry.get("organ2", "")
+        if o1 and o2:
+            base_by_pair[(min(o1, o2), max(o1, o2))] = entry
+
+    results: dict = {}
+    for (o1, o2) in pairs:
+        base_entry = base_by_pair.get((o1, o2))
+        if base_entry is None:
+            print(f"  [!] no cached 'all' entry for {o1} <-> {o2} -- run the base search first")
+            continue
+
+        all_papers = base_entry.get("papers", [])
+        cond_papers = _filter_by_condition(all_papers, condition_patterns)
+        key_players = extract_key_players(cond_papers)
+
+        print(f"  {o1} <-> {o2}: {len(all_papers)} papers -> {len(cond_papers)} after "
+              f"'{condition}' filter")
+
+        results[f"{o1}|{o2}"] = {
+            "organ1":                 o1,
+            "organ2":                 o2,
+            "pubmed_query":           base_entry.get("pubmed_query", ""),
+            "strategy_used":          f"{base_entry.get('strategy_used', '')}+condition:{condition}",
+            "n_papers_found":         len(cond_papers),
+            "n_papers_found_raw":     len(all_papers),
+            "papers":                 cond_papers,
+            "key_players":            key_players,
+            "search_date":            datetime.now().isoformat(),
+        }
+
+    return results
 
 
 # ── PubMed search ─────────────────────────────────────────────────────────────
@@ -677,6 +775,69 @@ AND ({crosstalk_kw_block})</div>
     ]
 
 
+def _index_results_by_pair(results: dict) -> dict[tuple[str, str], dict]:
+    by_pair: dict[tuple[str, str], dict] = {}
+    for v in results.values():
+        o1, o2 = v.get("organ1", ""), v.get("organ2", "")
+        if o1 and o2:
+            by_pair[(min(o1, o2), max(o1, o2))] = v
+    return by_pair
+
+
+def _compute_edge_display_data(o1: str, o2: str, edge_data: dict,
+                                llm_types: dict, llm_descs: dict,
+                                get_connection_types, CONNECTION_TYPES) -> dict:
+    """
+    Build the display-ready dict for one edge (key players, connection
+    type, LLM description, papers) from a given set of literature/LLM
+    sources. Reused for both the "all" baseline and each condition variant
+    (healthy/obese) -- same shape, different source data.
+    """
+    papers  = edge_data.get("papers", [])
+    _kp_raw = edge_data.get("key_players", {})
+
+    def _remerge(raw_counts, synonyms):
+        merged = _merge_synonyms(raw_counts, synonyms)
+        ranked = [t for t, _ in sorted(merged.items(), key=lambda x: -x[1])]
+        return ranked, merged
+
+    _h_list, _h_counts = _remerge(_kp_raw.get("hormones_counts", {}), HORMONE_SYNONYMS)
+    _m_list, _m_counts = _remerge(_kp_raw.get("metabolites_counts", {}), METABOLITE_SYNONYMS)
+    _p_list, _p_counts = _remerge(_kp_raw.get("proteins_counts", {}), PROTEIN_SYNONYMS)
+
+    type_labels = get_connection_types(llm_types, o1, o2, CONNECTION_TYPES)
+    conn_type        = type_labels[0] if type_labels else ""
+    conn_type_others = type_labels[1:]
+
+    llm_entry = (
+        llm_descs.get(f"{o1}|{o2}")
+        or llm_descs.get(f"{o2}|{o1}")
+        or {}
+    )
+    # When an LLM summary exists, its citation numbers [1]-[5] index into
+    # its OWN selected_papers list, not the full evidence list -- "papers"
+    # below must match whichever text is actually shown, or citation links
+    # resolve to the wrong paper / nothing.
+    llm_description = llm_entry.get("description", "")
+    citation_papers = llm_entry.get("papers") if llm_description else None
+
+    return {
+        "pubmed_query":              edge_data.get("pubmed_query", ""),
+        "n_papers_found":            edge_data.get("n_papers_found", 0),
+        "papers":                    citation_papers if citation_papers else papers,
+        "connection_type":        conn_type,
+        "connection_type_others": conn_type_others,
+        "search_date":               edge_data.get("search_date", ""),
+        "ai_description":            llm_description,
+        "key_players_hormones":           _h_list,
+        "key_players_metabolites":        _m_list,
+        "key_players_proteins":           _p_list,
+        "key_players_counts_hormones":    _h_counts,
+        "key_players_counts_metabolites": _m_counts,
+        "key_players_counts_proteins":    _p_counts,
+    }
+
+
 def build_viz(results: dict, output_path: Path):
     """Build the interactive HTML network visualization."""
     try:
@@ -691,98 +852,79 @@ def build_viz(results: dict, output_path: Path):
         allowed_pairs  = set(load_edge_filter(EDGE_FILTER_CSV))
         allowed_organs = {o for pair in allowed_pairs for o in pair}
 
+        # Healthy cohort subset used only to flag which nodes/edges the
+        # dashboard's "Healthy" display toggle should show -- it no longer
+        # restricts what was searched (see EDGE_FILTER_CSV above).
+        healthy_pairs  = set(load_edge_filter(HEALTHY_FILTER_CSV)) if HEALTHY_FILTER_CSV.exists() else set()
+        healthy_organs = {o for pair in healthy_pairs for o in pair}
+        obese_pairs    = set(load_edge_filter(OBESE_FILTER_CSV)) if OBESE_FILTER_CSV.exists() else set()
+        obese_organs   = {o for pair in obese_pairs for o in pair}
+
         llm_types   = load_connection_type_classifications(OUTPUT_LLM_TYPES)
         llm_descs   = load_llm_descriptions(LLM_DESCRIPTIONS)
         organ_descs = load_organ_descriptions(ORGAN_DESCRIPTIONS)
 
         # Index results by canonical pair key for fast lookup
-        results_by_pair: dict[tuple[str, str], dict] = {}
-        for v in results.values():
-            o1, o2 = v.get("organ1", ""), v.get("organ2", "")
-            if o1 and o2:
-                results_by_pair[(min(o1, o2), max(o1, o2))] = v
+        results_by_pair = _index_results_by_pair(results)
+
+        # Condition-specific sources (healthy/obese), built by
+        # run_metabolic_lit_search.py --condition healthy|obese. Missing
+        # files just mean no condition_variants get attached for that
+        # condition (the toggle still shows/hides pairs, just without
+        # condition-specific key players/connection type/description).
+        condition_sources: dict[str, tuple | None] = {}
+        for cond in ("healthy", "obese"):
+            paths = condition_output_paths(cond)
+            if not paths["results"].exists():
+                condition_sources[cond] = None
+                continue
+            with open(paths["results"], encoding="utf-8") as f:
+                cond_results = json.load(f)
+            cond_results_by_pair = _index_results_by_pair(cond_results)
+            cond_llm_types = (load_connection_type_classifications(paths["llm_types"])
+                               if paths["llm_types"].exists() else {})
+            cond_llm_descs = (load_llm_descriptions(paths["llm_descs"])
+                               if paths["llm_descs"].exists() else {})
+            condition_sources[cond] = (cond_results_by_pair, cond_llm_types, cond_llm_descs)
 
         G = nx.Graph()
         for organ in sorted(allowed_organs):
             organ_entry = organ_descs.get(organ, {})
             G.add_node(organ,
                        llm_description=organ_entry.get("description", ""),
-                       llm_papers=organ_entry.get("papers", []))
+                       llm_papers=organ_entry.get("papers", []),
+                       is_healthy=organ in healthy_organs,
+                       is_obese=organ in obese_organs)
 
         for (o1, o2) in allowed_pairs:
             G.add_edge(o1, o2)
+            is_h = (o1, o2) in healthy_pairs
+            is_o = (o1, o2) in obese_pairs
+            G.edges[o1, o2]['is_healthy'] = is_h
+            G.edges[o1, o2]['is_obese']   = is_o
 
             edge_data = results_by_pair.get((o1, o2), {})
-            papers    = edge_data.get("papers", [])
-            _kp_raw   = edge_data.get("key_players", {})
-
-            # Re-apply synonym merging at viz time so existing caches benefit
-            # from updated synonym groups without needing a full re-search.
-            def _remerge(raw_list, raw_counts, synonyms):
-                merged = _merge_synonyms(raw_counts, synonyms)
-                ranked = [t for t, _ in sorted(merged.items(), key=lambda x: -x[1])]
-                return ranked, merged
-
-            _h_list, _h_counts = _remerge(
-                _kp_raw.get("hormones", []),
-                _kp_raw.get("hormones_counts", {}),
-                HORMONE_SYNONYMS,
+            G.edges[o1, o2]['merged_data'] = _compute_edge_display_data(
+                o1, o2, edge_data, llm_types, llm_descs,
+                get_connection_types, CONNECTION_TYPES,
             )
-            _m_list, _m_counts = _remerge(
-                _kp_raw.get("metabolites", []),
-                _kp_raw.get("metabolites_counts", {}),
-                METABOLITE_SYNONYMS,
-            )
-            _p_list, _p_counts = _remerge(
-                _kp_raw.get("proteins", []),
-                _kp_raw.get("proteins_counts", {}),
-                PROTEIN_SYNONYMS,
-            )
-            kp = {
-                "hormones":           _h_list,
-                "hormones_counts":    _h_counts,
-                "metabolites":        _m_list,
-                "metabolites_counts": _m_counts,
-                "proteins":           _p_list,
-                "proteins_counts":    _p_counts,
-            }
-
-            type_labels = get_connection_types(
-                llm_types, o1, o2, CONNECTION_TYPES
-            )
-            conn_type        = type_labels[0] if type_labels else ""
-            conn_type_others = type_labels[1:]
-
-            llm_entry = (
-                llm_descs.get(f"{o1}|{o2}")
-                or llm_descs.get(f"{o2}|{o1}")
-                or {}
-            )
-            # When an LLM summary exists, its citation numbers [1]-[5] index
-            # into its OWN selected_papers list (llm_descriptions.json), not
-            # the full evidence list — "papers" below must match whichever
-            # text is actually shown (ai_description takes priority in the
-            # sidebar), or citation links resolve to the wrong paper / nothing.
-            llm_description = llm_entry.get("description", "")
-            citation_papers = llm_entry.get("papers") if llm_description else None
-
-            G.edges[o1, o2]['merged_data'] = {
-                "pubmed_query":              edge_data.get("pubmed_query", ""),
-                "n_papers_found":            edge_data.get("n_papers_found", 0),
-                "papers":                    citation_papers if citation_papers else papers,
-                "connection_type":        conn_type,
-                "connection_type_others": conn_type_others,
-                "search_date":               edge_data.get("search_date", ""),
-                "ai_description":            llm_description,
-                # Categorised key players + per-paper mention counts
-                "key_players_hormones":           kp.get("hormones", []),
-                "key_players_metabolites":        kp.get("metabolites", []),
-                "key_players_proteins":           kp.get("proteins", []),
-                "key_players_counts_hormones":    kp.get("hormones_counts", {}),
-                "key_players_counts_metabolites": kp.get("metabolites_counts", {}),
-                "key_players_counts_proteins":    kp.get("proteins_counts", {}),
-            }
             G.edges[o1, o2]['color'] = "#64748b"
+
+            # Condition variants: only computed for pairs that actually
+            # belong to that condition's cohort, and only if that
+            # condition's pipeline has been run at least once.
+            variants = {}
+            for cond, is_member in (("healthy", is_h), ("obese", is_o)):
+                if not is_member or condition_sources[cond] is None:
+                    continue
+                cr_by_pair, c_types, c_descs = condition_sources[cond]
+                cond_edge_data = cr_by_pair.get((o1, o2), {})
+                variants[cond] = _compute_edge_display_data(
+                    o1, o2, cond_edge_data, c_types, c_descs,
+                    get_connection_types, CONNECTION_TYPES,
+                )
+            if variants:
+                G.edges[o1, o2]['condition_variants'] = variants
 
         export_network_to_cytoscape_dashboard(
             graph=G,
@@ -790,12 +932,86 @@ def build_viz(results: dict, output_path: Path):
             include_legend=False,
             title=VIZ_TITLE,
             info_panel_tabs=_build_info_tabs(sorted(allowed_organs), results_by_pair, allowed_pairs),
+            healthy_toggle_label="Healthy",
+            obese_toggle_label="Obese",
+            comparison_upload_label="Upload comparison network",
         )
         print(f"[ok] Visualization saved: {output_path}")
     except Exception as e:
         import traceback
         print(f"[!] Visualization failed: {e}")
         traceback.print_exc()
+
+
+# ── Condition pipeline (--condition healthy|obese) ─────────────────────────────
+
+def run_condition_pipeline(condition: str, args) -> None:
+    """
+    Build a condition-filtered results file from the already-cached "all"
+    search results (no new PubMed calls), then run LLM connection-type
+    classification and LLM connection descriptions against it.
+
+    Entirely separate from the normal flow below: does not touch
+    OUTPUT_JSON/OUTPUT_LLM_TYPES/LLM_DESCRIPTIONS and does not rebuild the
+    dashboard -- the "all" case stays exactly as it is today.
+    """
+    if not OUTPUT_JSON.exists():
+        print(f"[!] No base results file found at {OUTPUT_JSON}.")
+        print(f"    Run without --condition first to build the base 'all' search.")
+        sys.exit(1)
+    with open(OUTPUT_JSON, encoding="utf-8") as f:
+        base_results = json.load(f)
+    print(f"[i] Loaded {len(base_results)} cached 'all' edges.")
+
+    cohort_csv = CONDITION_COHORT_CSV[condition]
+    if not cohort_csv.exists():
+        print(f"[!] Cohort CSV not found: {cohort_csv}")
+        sys.exit(1)
+    cond_pairs = load_edge_filter(cohort_csv)
+    print(f"[i] Condition: {condition} | Cohort: {cohort_csv.name} → {len(cond_pairs)} pairs")
+    print(f"[i] Condition keywords: {', '.join(CONDITION_KEYWORDS[condition])}\n")
+
+    out_paths = condition_output_paths(condition)
+
+    print("[i] Building condition-filtered results (filtering already-fetched papers, "
+          "no new PubMed queries)...")
+    cond_results = build_condition_results(condition, base_results, cond_pairs)
+    with open(out_paths["results"], "w", encoding="utf-8") as f:
+        json.dump(cond_results, f, indent=2, ensure_ascii=False)
+    total_papers = sum(v.get("n_papers_found", 0) for v in cond_results.values())
+    print(f"\n[ok] {len(cond_results)} edges | {total_papers} papers after condition filter.")
+    print(f"     Saved: {out_paths['results']}")
+
+    if not args.skip_llm_type:
+        print(f"\n[i] Running LLM connection-type classification ({condition})...")
+        from Literature_Search.llm_connection_type import generate_connection_type_classifications
+        generate_connection_type_classifications(
+            organ_pairs         = cond_pairs,
+            literature_results  = cond_results,
+            connection_types    = CONNECTION_TYPES,
+            output_path         = out_paths["llm_types"],
+            model               = LLM_MODEL,
+            max_papers          = LLM_MAX_PAPERS,
+            resume              = not args.reset_llm_type,
+            reset               = args.reset_llm_type,
+        )
+    else:
+        print("[i] Skipping LLM type classification (using cache).")
+
+    print(f"\n[i] Running LLM connection descriptions ({condition})...")
+    from Literature_Search.llm_descriptions import generate_llm_descriptions
+    generate_llm_descriptions(
+        organ_pairs         = cond_pairs,
+        literature_results  = cond_results,
+        output_path         = out_paths["llm_descs"],
+        model               = LLM_MODEL,
+        resume              = not args.reset,
+        reset               = args.reset,
+    )
+
+    print(f"\n[ok] Condition pipeline done for '{condition}'.")
+    print("     Note: the dashboard is not yet wired to these condition-specific files -- "
+          "it still shows the same 'all' data regardless of the Healthy/Obese toggle.")
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -813,7 +1029,16 @@ def main():
                         help="Delete LLM type cache and reclassify all pairs.")
     parser.add_argument("--viz-only",       action="store_true",
                         help="Skip search and LLM; just rebuild the visualization.")
+    parser.add_argument("--condition", choices=["healthy", "obese"],
+                        help="Build a condition-filtered results file from the already-cached "
+                             "'all' search (no new PubMed queries) plus its own LLM "
+                             "connection-type classification and descriptions. Separate "
+                             "pipeline -- does not touch the 'all' case or the dashboard.")
     args = parser.parse_args()
+
+    if args.condition:
+        run_condition_pipeline(args.condition, args)
+        return
 
     if args.reset and OUTPUT_JSON.exists():
         OUTPUT_JSON.unlink()

@@ -85,6 +85,9 @@ def export_network_to_cytoscape_dashboard(
     comparison_lit_label: str | None = None,
     comparison_ref_label: str = "Reference Network",
     threshold_control: dict | None = None,
+    healthy_toggle_label: str | None = None,
+    obese_toggle_label: str | None = None,
+    comparison_upload_label: str | None = None,
 ):
     """
     Export a NetworkX graph to an interactive Cytoscape.js dashboard.
@@ -143,6 +146,38 @@ def export_network_to_cytoscape_dashboard(
     the slider) — this only filters edges from callers that opt in. The
     "Robust edges" stat (id="stat-val-edges") tracks the live count.
 
+    healthy_toggle_label / obese_toggle_label (optional): render a
+    mutually-exclusive pair of topbar toggle buttons (pass either or both).
+    Requires each node/edge attrs dict to carry `is_healthy`/`is_obese`
+    (bool) accordingly. Default: every node/edge is shown ("all" mode.
+    Clicking one button switches to showing only nodes/edges flagged
+    is_healthy=True (or is_obese=True); clicking the active button again,
+    or the other button, switches mode — only one of the two is ever
+    active at once. A pure display filter, unrelated to
+    comparison_toggle_label/threshold_control above. Independent of
+    comparison_upload_label below except that switching modes while a
+    comparison CSV is loaded live-recomputes the comparison (see below).
+
+    comparison_upload_label (optional): renders a topbar file-upload button
+    with this label plus a hidden CSV file input. Entirely client-side (no
+    server/backend involved — required for static hosting) via the
+    browser's FileReader API. The CSV must be an organ x organ 0/1
+    adjacency matrix (same format as this project's other edge-filter
+    CSVs: blank top-left cell, header row of organ names, one row per
+    organ). Organ names are matched case-insensitively against this
+    graph's node ids; an unrecognized organ name aborts the upload with a
+    visible error banner (no partial application). On a valid upload, the
+    graph recolors in place using the SAME 3-way categories as
+    comparison_toggle_label (green=shared, blue=only in the currently
+    displayed network, amber=only in the uploaded network), but computed
+    live from the uploaded matrix intersected with whatever is CURRENTLY
+    displayed (i.e. respecting healthy_toggle_label's on/off state) rather
+    than from a Python-baked is_ref_edge flag — this is a separate
+    mechanism from comparison_toggle_label/threshold_control and can be
+    used together with healthy_toggle_label but not with
+    comparison_toggle_label in the same dashboard (both drive the same
+    edge `color`/`connection_type` fields).
+
     Returns the assembled HTML as a string. Pass filename=None to get the
     string back without writing a file (e.g. to embed it inline elsewhere
     via <iframe srcdoc>) — otherwise it's written to `filename` as before.
@@ -165,6 +200,8 @@ def export_network_to_cytoscape_dashboard(
                 "llm_description": attrs.get("llm_description", ""),
                 "llm_papers":      attrs.get("llm_papers", []),
                 "color":           color,
+                "isHealthy":       bool(attrs.get("is_healthy", False)),
+                "isObese":         bool(attrs.get("is_obese", False)),
             }
         })
 
@@ -219,7 +256,36 @@ def export_network_to_cytoscape_dashboard(
         is_ref_edge    = bool(merged.get("is_ref_edge", False))
         ref_n_papers   = merged.get("ref_n_papers", 0)
 
+        # Condition variants (healthy/obese) -- see condition_variants in
+        # run_metabolic_lit_search.py's build_viz(). Same split as the rest
+        # of this loop: light fields (key players, connection type, paper
+        # count) go eagerly into elements.data under conditionVariants[cond]
+        # so the Healthy/Obese toggle can swap them in instantly; heavy
+        # fields (LLM description, full paper list) go into edge_details
+        # under a "{edge_id}::{cond}" key, decompressed lazily on click same
+        # as the "all" case.
+        condition_variants_raw = attrs.get("condition_variants") or {}
+        condition_variants_light = {}
+
         edge_id = f"{u}__{v}"
+        for cond, cdata in condition_variants_raw.items():
+            condition_variants_light[cond] = {
+                "connection_type":                cdata.get("connection_type", ""),
+                "connection_type_others":         cdata.get("connection_type_others", []),
+                "key_players_hormones":           cdata.get("key_players_hormones", []),
+                "key_players_metabolites":        cdata.get("key_players_metabolites", []),
+                "key_players_proteins":           cdata.get("key_players_proteins", []),
+                "key_players_counts_hormones":    cdata.get("key_players_counts_hormones", {}),
+                "key_players_counts_metabolites": cdata.get("key_players_counts_metabolites", {}),
+                "key_players_counts_proteins":    cdata.get("key_players_counts_proteins", {}),
+                "pubmed_n":                       cdata.get("n_papers_found", 0),
+            }
+            edge_details[f"{edge_id}::{cond}"] = {
+                "ai_description": cdata.get("ai_description", ""),
+                "pubmed_papers":  cdata.get("papers", []),
+                "pubmed_query":   cdata.get("pubmed_query", ""),
+            }
+
         elements.append({
             "data": {
                 "id": edge_id,
@@ -231,6 +297,9 @@ def export_network_to_cytoscape_dashboard(
                 "bootstrapMean": bootstrap_mean,
                 "isRefEdge":     is_ref_edge,
                 "refNPapers":    ref_n_papers,
+                "isHealthy":     bool(attrs.get("is_healthy", False)),
+                "isObese":       bool(attrs.get("is_obese", False)),
+                "conditionVariants": condition_variants_light,
                 # Key players stay eager (not in edge_details below) because
                 # the search bar indexes every edge's key players at page
                 # load, before any edge has been clicked.
@@ -538,6 +607,35 @@ function toggleComparisonMode() {{
 
 applyThresholdAndComparison();
 """
+
+    # Healthy/Obese display filter (mutually exclusive) + CSV-upload
+    # comparison — see docstring above. Independent of
+    # threshold_control/comparison_toggle_label; both may be used on their
+    # own or together.
+    healthy_toggle_html = ""
+    if healthy_toggle_label:
+        healthy_toggle_html = (
+            f'<button id="healthy-toggle-btn" class="ctrl-btn" '
+            f'title="Show only the {_html_attr_escape(healthy_toggle_label)} subset" '
+            f'onclick="setDisplayMode(\'healthy\')">🩺 {_html_attr_escape(healthy_toggle_label)}</button>'
+        )
+
+    obese_toggle_html = ""
+    if obese_toggle_label:
+        obese_toggle_html = (
+            f'<button id="obese-toggle-btn" class="ctrl-btn" '
+            f'title="Show only the {_html_attr_escape(obese_toggle_label)} subset" '
+            f'onclick="setDisplayMode(\'obese\')">⚖️ {_html_attr_escape(obese_toggle_label)}</button>'
+        )
+
+    comparison_upload_html = ""
+    if comparison_upload_label:
+        comparison_upload_html = f"""
+<button id="upload-comparison-btn" class="ctrl-btn" title="Upload a comparison network CSV"
+        onclick="document.getElementById('comparison-file-input').click()">📁 {_html_attr_escape(comparison_upload_label)}</button>
+<input type="file" id="comparison-file-input" accept=".csv" style="display:none">
+<button id="upload-comparison-clear-btn" class="ctrl-btn" title="Clear uploaded comparison"
+        style="display:none" onclick="clearUploadedComparison()">✕ Clear comparison</button>"""
 
     layer_overlay_css = ""
     layer_overlay_markup = ""
@@ -1020,7 +1118,7 @@ function closeLayerOverlay() {
     border-radius: 999px;
     font-size: 12px;
     font-weight: 500;
-    cursor: default;
+    cursor: pointer;
     transition: opacity 0.15s;
   }}
   .chip:hover {{ opacity: 0.85; }}
@@ -1235,6 +1333,9 @@ function closeLayerOverlay() {
   <button id="info-btn" onclick="toggleInfoPanel()" title="How it works">i</button>
   {threshold_html}
   {comparison_toggle_html}
+  {healthy_toggle_html}
+  {obese_toggle_html}
+  {comparison_upload_html}
   {topbar_extra_buttons_html}
   {layer_content_html}
 
@@ -1257,7 +1358,7 @@ function closeLayerOverlay() {
     <div id="kp-filter-dropdown">
       <label>Min. mentions per key player</label>
       <div class="kp-input-row">
-        <input id="kp-threshold-input" type="number" min="0" step="1" value="0"
+        <input id="kp-threshold-input" type="number" min="0" step="1" value="2"
                placeholder="0 = show all">
         <button class="ctrl-btn" onclick="resetKpThreshold()" title="Reset to 0">✕ Reset</button>
       </div>
@@ -1269,6 +1370,10 @@ function closeLayerOverlay() {
   <button class="ctrl-btn" onclick="runLayout('grid')" title="Grid layout">⊞ Grid</button>
   <button class="ctrl-btn" onclick="cy.fit()" title="Fit all">⤢ Fit</button>
 </div>
+
+<div id="upload-error-banner" style="display:none;position:fixed;top:48px;left:50%;transform:translateX(-50%);
+     z-index:1200;background:#7f1d1d;color:#fecaca;border:1px solid #b91c1c;border-radius:8px;
+     padding:8px 16px;font-size:0.8rem;max-width:80vw;box-shadow:0 4px 12px rgba(0,0,0,0.4)"></div>
 
 <!-- Main area -->
 <div id="main">
@@ -1461,7 +1566,7 @@ const cy = cytoscape({{
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-let kpThreshold = 0;
+let kpThreshold = 2;  // default: hide key players with fewer than 2 mentions
 let currentEdgeData = null;  // last edge displayed in sidebar
 
 function runLayout(name) {{
@@ -1480,11 +1585,12 @@ function chipsHtml(items, cls, counts, unit) {{
     visible.map(t => {{
       const n = counts && counts[t];
       const label = isBootstrap ? (n != null ? n + '%' : '') : (n ? n + '×' : '');
-      const title = isBootstrap
+      const baseTitle = isBootstrap
         ? (n != null ? `appeared in ${{n}}% of bootstrap iterations` : '')
         : (n ? n + ' mentions' : '');
+      const title = (baseTitle ? baseTitle + ' — ' : '') + 'double-click to search Google';
       const badge = label ? `<span style="margin-left:4px;background:rgba(0,0,0,0.25);border-radius:8px;padding:0 5px;font-size:10px;font-weight:700">${{label}}</span>` : '';
-      return `<span class="chip ${{cls}}" title="${{title}}">${{escHtml(t)}}${{badge}}</span>`;
+      return `<span class="chip ${{cls}}" title="${{title}}" data-term="${{escHtml(t)}}">${{escHtml(t)}}${{badge}}</span>`;
     }}).join('') +
     '</div>';
 }}
@@ -1671,21 +1777,26 @@ function showEdgeSidebar(data) {{
   renderEdgeSidebarContent(data);
 
   // Heavy fields (papers, LLM summary, notes/sources) aren't in `data` yet —
-  // see edge_details_gz_b64 / getEdgeDetails() above. Fetch (or reuse the
-  // already-decompressed cache) and re-render in place once attached.
-  if (!data._detailsLoaded) {{
-    getEdgeDetails().then(details => {{
-      const heavy = details[data.id];
-      const e = cy.getElementById(data.id);
-      if (!e.length) return;
-      if (heavy) Object.keys(heavy).forEach(k => e.data(k, heavy[k]));
-      e.data('_detailsLoaded', true);
-      if (currentEdgeData && currentEdgeData.id === data.id) {{
-        currentEdgeData = e.data();
-        renderEdgeSidebarContent(currentEdgeData);
-      }}
-    }});
-  }}
+  // see edge_details_gz_b64 / getEdgeDetails() above. getEdgeDetails()
+  // decompresses once and caches the promise, so this is cheap even though
+  // it runs on every open — that's needed (not just once per edge) because
+  // which key we read depends on the CURRENT Healthy/Obese mode: an edge
+  // with a condition variant stores its heavy fields under
+  // "{{edgeId}}::{{mode}}" (see conditionVariants in build_viz()/
+  // export_network_to_cytoscape_dashboard), falling back to the plain
+  // "all" entry if that mode has no variant for this edge.
+  getEdgeDetails().then(details => {{
+    const mode = window.__currentDisplayMode || 'all';
+    const condKey = data.id + '::' + mode;
+    const heavy = (mode !== 'all' && details[condKey]) ? details[condKey] : details[data.id];
+    const e = cy.getElementById(data.id);
+    if (!e.length) return;
+    if (heavy) Object.keys(heavy).forEach(k => e.data(k, heavy[k]));
+    if (currentEdgeData && currentEdgeData.id === data.id) {{
+      currentEdgeData = e.data();
+      renderEdgeSidebarContent(currentEdgeData);
+    }}
+  }});
 }}
 
 function showNodeSidebar(data) {{
@@ -1984,6 +2095,242 @@ function resetKpThreshold() {{
 document.getElementById('kp-threshold-input').addEventListener('input', function() {{
   applyKpThreshold(this.value);
 }});
+// Sync the filter badge/button with the input's default value at load.
+applyKpThreshold(document.getElementById('kp-threshold-input').value);
+
+// Double-click a key-player chip to search it on Google in a new tab.
+// Event delegation on document (not per-chip listeners) since chips are
+// re-rendered on every sidebar open/threshold change.
+document.addEventListener('dblclick', function(e) {{
+  const chip = e.target.closest('.chip');
+  if (!chip || !chip.dataset.term) return;
+  window.open('https://www.google.com/search?q=' + encodeURIComponent(chip.dataset.term),
+              '_blank', 'noopener');
+}});
+
+// ── Healthy/Obese display filter + CSV-upload comparison ────────────────
+// See healthy_toggle_label / obese_toggle_label / comparison_upload_label
+// in export_network_to_cytoscape_dashboard's docstring. Independent of the
+// threshold/comparison-toggle feature above (that one recolors based on a
+// Python-baked is_ref_edge flag; this one recolors live from a CSV the
+// visitor loads in their own browser — nothing is ever uploaded anywhere).
+(function() {{
+  const HAS_HEALTHY = {("true" if healthy_toggle_label else "false")};
+  const HAS_OBESE   = {("true" if obese_toggle_label else "false")};
+  const HAS_UPLOAD  = {("true" if comparison_upload_label else "false")};
+  if (!HAS_HEALTHY && !HAS_OBESE && !HAS_UPLOAD) return;
+
+  const CMP_COLOR_SHARED = '#22c55e', CMP_COLOR_ONLY_LIT = '#38bdf8', CMP_COLOR_ONLY_REF = '#f97316';
+
+  // Fields that differ per condition (see conditionVariants in
+  // export_network_to_cytoscape_dashboard's docstring / build_viz()).
+  // Baseline ("all") values are captured once so switching back to "all"
+  // (or to a condition an edge has no variant for) always restores them.
+  const CONDITION_LIGHT_FIELDS = [
+    'connection_type', 'connection_type_others',
+    'key_players_hormones', 'key_players_metabolites', 'key_players_proteins',
+    'key_players_counts_hormones', 'key_players_counts_metabolites', 'key_players_counts_proteins',
+    'pubmed_n',
+  ];
+
+  cy.edges().forEach(e => {{
+    if (e.data('baseColor') === undefined) e.data('baseColor', e.data('color'));
+    if (e.data('origConnType') === undefined) e.data('origConnType', e.data('connection_type'));
+    if (e.data('_condBaseline') === undefined) {{
+      const baseline = {{}};
+      CONDITION_LIGHT_FIELDS.forEach(f => {{ baseline[f] = e.data(f); }});
+      e.data('_condBaseline', baseline);
+    }}
+  }});
+
+  function applyConditionVariant(e) {{
+    const variants = e.data('conditionVariants') || {{}};
+    const variant  = (displayMode !== 'all') ? variants[displayMode] : null;
+    const source   = variant || e.data('_condBaseline') || {{}};
+    CONDITION_LIGHT_FIELDS.forEach(f => {{
+      if (source[f] !== undefined) e.data(f, source[f]);
+    }});
+    // origConnType tracks whichever connection_type is "live" right now, so
+    // the CSV-comparison feature's "not comparing" restore path (below)
+    // reflects this edge's current condition, not always the "all" one.
+    e.data('origConnType', e.data('connection_type'));
+  }}
+
+  const ALL_ORGANS = cy.nodes().map(n => n.data('id'));
+  const HEALTHY_ORGANS = cy.nodes().filter(n => n.data('isHealthy')).map(n => n.data('id'));
+  const OBESE_ORGANS   = cy.nodes().filter(n => n.data('isObese')).map(n => n.data('id'));
+
+  let displayMode = 'all'; // 'all' | 'healthy' | 'obese' — mutually exclusive
+  let uploadedRefPairs = null; // Set of "OrganA__OrganB" (alphabetically sorted) or null
+
+  function normPairKey(a, b) {{ return [a, b].sort().join('__'); }}
+  function currentOrgans() {{
+    if (displayMode === 'healthy') return HEALTHY_ORGANS;
+    if (displayMode === 'obese')   return OBESE_ORGANS;
+    return ALL_ORGANS;
+  }}
+  function edgeInCurrentMode(e) {{
+    if (displayMode === 'healthy') return !!e.data('isHealthy');
+    if (displayMode === 'obese')   return !!e.data('isObese');
+    return true;
+  }}
+
+  function showUploadError(msg) {{
+    const banner = document.getElementById('upload-error-banner');
+    if (banner) {{ banner.textContent = '⚠ ' + msg; banner.style.display = 'block'; }}
+  }}
+  function clearUploadError() {{
+    const banner = document.getElementById('upload-error-banner');
+    if (banner) banner.style.display = 'none';
+  }}
+
+  function applyDisplay() {{
+    const curOrgans = new Set(currentOrgans());
+    let visibleOrgans = curOrgans;
+    if (uploadedRefPairs) {{
+      const uploadedOrgans = new Set();
+      uploadedRefPairs.forEach(k => k.split('__').forEach(o => uploadedOrgans.add(o)));
+      visibleOrgans = new Set([...curOrgans].filter(o => uploadedOrgans.has(o)));
+    }}
+
+    cy.nodes().forEach(n => {{
+      n.style('display', visibleOrgans.has(n.data('id')) ? 'element' : 'none');
+    }});
+
+    cy.edges().forEach(e => {{
+      applyConditionVariant(e);
+
+      const u = e.data('source'), v = e.data('target');
+      if (!visibleOrgans.has(u) || !visibleOrgans.has(v)) {{
+        e.style('display', 'none');
+        return;
+      }}
+
+      if (!uploadedRefPairs) {{
+        const shown = edgeInCurrentMode(e);
+        e.style('display', shown ? 'element' : 'none');
+        e.data('color', e.data('baseColor'));
+        e.data('connection_type', e.data('origConnType'));
+        return;
+      }}
+
+      const displayed = edgeInCurrentMode(e);
+      const inUpload  = uploadedRefPairs.has(normPairKey(u, v));
+
+      if (!displayed && !inUpload) {{ e.style('display', 'none'); return; }}
+
+      e.style('display', 'element');
+      if (displayed && inUpload) {{
+        e.data('color', CMP_COLOR_SHARED);
+        e.data('connection_type', 'SHARED — in both networks');
+      }} else if (displayed) {{
+        e.data('color', CMP_COLOR_ONLY_LIT);
+        e.data('connection_type', 'ONLY in the currently displayed network');
+      }} else {{
+        e.data('color', CMP_COLOR_ONLY_REF);
+        e.data('connection_type', 'ONLY in the uploaded reference network');
+      }}
+    }});
+
+    if (typeof currentEdgeData !== 'undefined' && currentEdgeData) {{
+      const refreshed = cy.getElementById(currentEdgeData.id);
+      if (refreshed && refreshed.length) showEdgeSidebar(refreshed.data());
+    }}
+  }}
+
+  window.setDisplayMode = function(mode) {{
+    displayMode = (displayMode === mode) ? 'all' : mode;
+    window.__currentDisplayMode = displayMode;  // read by showEdgeSidebar() for heavy fields
+    const healthyBtn = document.getElementById('healthy-toggle-btn');
+    const obeseBtn   = document.getElementById('obese-toggle-btn');
+    if (healthyBtn) healthyBtn.classList.toggle('active', displayMode === 'healthy');
+    if (obeseBtn)   obeseBtn.classList.toggle('active', displayMode === 'obese');
+    applyDisplay();
+  }};
+
+  function parseComparisonCsv(text) {{
+    const lines = text.split(/\\r?\\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) throw new Error('CSV has no data rows.');
+
+    const lookup = {{}};
+    ALL_ORGANS.forEach(o => {{ lookup[o.toLowerCase()] = o; }});
+
+    const header = lines[0].split(',').slice(1).map(s => s.trim()).filter(s => s.length > 0);
+    const unknown = [];
+    const canonHeader = header.map(h => {{
+      const c = lookup[h.toLowerCase()];
+      if (!c) unknown.push(h);
+      return c || null;
+    }});
+
+    const pairs = new Set();
+    for (let i = 1; i < lines.length; i++) {{
+      const cells = lines[i].split(',');
+      const rowRaw = (cells[0] || '').trim();
+      if (!rowRaw) continue;
+      const rowOrgan = lookup[rowRaw.toLowerCase()];
+      if (!rowOrgan) unknown.push(rowRaw);
+      for (let j = 1; j < cells.length && rowOrgan; j++) {{
+        const val = (cells[j] || '').trim();
+        if (val !== '1') continue;
+        const colOrgan = canonHeader[j - 1];
+        if (colOrgan && colOrgan !== rowOrgan) pairs.add(normPairKey(rowOrgan, colOrgan));
+      }}
+    }}
+
+    if (unknown.length) {{
+      const uniq = [...new Set(unknown)];
+      throw new Error('Unrecognized organ(s): ' + uniq.join(', ') +
+        '. Known organs: ' + ALL_ORGANS.join(', ') + '.');
+    }}
+    return pairs;
+  }}
+
+  window.clearUploadedComparison = function() {{
+    uploadedRefPairs = null;
+    clearUploadError();
+    const clearBtn = document.getElementById('upload-comparison-clear-btn');
+    if (clearBtn) clearBtn.style.display = 'none';
+    const uploadBtn = document.getElementById('upload-comparison-btn');
+    if (uploadBtn) uploadBtn.classList.remove('active');
+    const fileInput = document.getElementById('comparison-file-input');
+    if (fileInput) fileInput.value = '';
+    applyDisplay();
+  }};
+
+  const fileInput = document.getElementById('comparison-file-input');
+  if (fileInput) {{
+    fileInput.addEventListener('change', function() {{
+      const file = this.files && this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {{
+        try {{
+          uploadedRefPairs = parseComparisonCsv(evt.target.result);
+          clearUploadError();
+          const clearBtn = document.getElementById('upload-comparison-clear-btn');
+          if (clearBtn) clearBtn.style.display = '';
+          const uploadBtn = document.getElementById('upload-comparison-btn');
+          if (uploadBtn) uploadBtn.classList.add('active');
+          applyDisplay();
+        }} catch (err) {{
+          uploadedRefPairs = null;
+          showUploadError(err.message);
+          fileInput.value = '';
+          const clearBtn = document.getElementById('upload-comparison-clear-btn');
+          if (clearBtn) clearBtn.style.display = 'none';
+          const uploadBtn = document.getElementById('upload-comparison-btn');
+          if (uploadBtn) uploadBtn.classList.remove('active');
+          applyDisplay();
+        }}
+      }};
+      reader.onerror = function() {{ showUploadError('Could not read the file.'); }};
+      reader.readAsText(file);
+    }});
+  }}
+
+  applyDisplay();
+}})();
 
 </script>
 </body>

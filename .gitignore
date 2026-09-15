@@ -16,3 +16,4 @@ Edge_cosine_met_reference_network/*/*.json
 Edge_cosine_general_reference_network/*/*.json
 reference_network_only_metabolic/*.json*
 metabolic_data/*.json
+.claude/

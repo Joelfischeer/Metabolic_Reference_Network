@@ -305,7 +305,7 @@ def main():
     args = parser.parse_args()
 
     import csv as _csv
-    _cohort_csv = HERE / "reference_network_only_metabolic" / "healthy_cohort_connections.csv"
+    _cohort_csv = HERE / "reference_network_only_metabolic" / "all_organ_connections.csv"
     if not _cohort_csv.exists():
         print(f"[!] Edge filter not found: {_cohort_csv}")
         sys.exit(1)

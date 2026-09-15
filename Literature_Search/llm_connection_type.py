@@ -24,9 +24,9 @@ OLLAMA_URL       = "http://localhost:11434/api/chat"
 OLLAMA_TIMEOUT   = 180
 OLLAMA_RETRIES   = 2
 MAX_ABSTRACT_CHARS = 400
-VOTE_RUNS        = 3     # independent classification passes per pair
-VOTE_TEMPERATURE = 0.5   # higher than a single-shot call, so the 3 runs can
-                          # actually disagree — a majority vote over 3 near-
+VOTE_RUNS        = 5     # independent classification passes per pair
+VOTE_TEMPERATURE = 0.5   # higher than a single-shot call, so the runs can
+                          # actually disagree — a majority vote over near-
                           # identical low-temperature replies is meaningless
 MAX_TYPES        = 3
 
@@ -117,14 +117,23 @@ def _build_prompt(
         {paper_block}
 
         Instructions:
-        - Reply with one to three lines and nothing else.
+        - Reply with ONLY the required lines below — no explanation, no
+          preamble, no extra text of any kind.
         - Line 1 (required): TYPE_1: <key>
         - Line 2 (optional):  TYPE_2: <key>
         - Line 3 (optional):  TYPE_3: <key>
-        - <key> must be one of: {valid_keys}
+        - <key> must be reply only with one of these exact tokens, copied
+          character-for-character — do not paraphrase, translate, combine,
+          or invent a new label under any circumstances:
+          {valid_keys}
+        - If no type fits perfectly, you MUST still pick the closest one
+          from the exact token list above. Inventing a new category name
+          (e.g. "gut-heart axis") or leaving <key> blank is not allowed.
         - Order matters: TYPE_1 must be the best-matching type.
         - Omit TYPE_2/TYPE_3 entirely (do not write the line) if no further
           type clearly applies.
+
+        Remember: <key> must be exactly one of: {valid_keys}
 
         Reply:
     """).strip()
@@ -260,9 +269,16 @@ def generate_connection_type_classifications(
         key = f"{o1}|{o2}"
         sym = f"{o2}|{o1}"
 
-        if (key in cache or sym in cache) and resume and not reset:
-            entry = cache.get(key) or cache.get(sym, {})
-            shown = "+".join(entry.get("types", [])) or entry.get("primary", "?")
+        cached_entry = cache.get(key) or cache.get(sym)
+        lit_entry = literature_results.get(key) or literature_results.get(sym) or {}
+        # Only skip if the cached run actually produced a type (or there were
+        # genuinely no papers to classify) -- a pair with papers but an empty
+        # "types" list (e.g. the LLM didn't follow the required token format)
+        # is treated as unfinished so a resumed run retries it automatically.
+        if cached_entry and resume and not reset and (
+            cached_entry.get("types") or not lit_entry.get("papers")
+        ):
+            shown = "+".join(cached_entry.get("types", [])) or cached_entry.get("primary", "?")
             print(f"  [{idx+1}/{total}] Cached ({shown}): {o1} <-> {o2}")
             continue
 

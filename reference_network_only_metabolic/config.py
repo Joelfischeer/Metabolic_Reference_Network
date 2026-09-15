@@ -95,6 +95,44 @@ CROSSTALK_KEYWORDS: list[str] = [
 ]
 
 # -----------------------------------------------------------------------------
+#  Condition keyword filters (Healthy / Obese)
+# -----------------------------------------------------------------------------
+#  Applied LOCALLY, after a pair's papers have already been fetched and
+#  passed through the metabolic/crosstalk/same-sentence filters above -- NOT
+#  as a PubMed query-time filter (unlike Edge_cosine_met/general_reference_
+#  network, where CONDITION_KEYWORDS is baked into the search query itself,
+#  requiring a separate search per condition). Here, the single shared
+#  search stays condition-agnostic; a paper is kept for a given condition
+#  only if at least one of that condition's keywords also appears in its
+#  title/abstract. Same wording as the Edge_cosine configs, plus four
+#  "overweight" terms added to the obese list.
+# -----------------------------------------------------------------------------
+
+CONDITION_KEYWORDS_HEALTHY: list[str] = [
+    "healthy",
+    "healthy subjects",
+    "healthy individuals",
+    "healthy volunteers",
+    "healthy adults",
+    "normal physiology",
+    "healthy controls",
+]
+
+CONDITION_KEYWORDS_OBESE: list[str] = [
+    "obesity",
+    "obese subjects",
+    "obese patients",
+    "obese volunteers",
+    "obese adults",
+    "adiposity",
+    "patients with adiposity",
+    "overweight subjects",
+    "overweight patients",
+    "overweight volunteers",
+    "overweight adults",
+]
+
+# -----------------------------------------------------------------------------
 #  LLM connection-type classification
 # -----------------------------------------------------------------------------
 #  For each organ pair the LLM reads up to LLM_MAX_PAPERS paper abstracts and
@@ -213,8 +251,11 @@ VIZ_TITLE = "Metabolic Reference Network — Metabolic Query"
 #
 #      python run_metabolic_lit_search.py --skip-llm-type --viz-only
 #
-#      Fetches PubMed papers for all pairs in healthy_cohort_connections.csv.
-#      Already-cached pairs are skipped automatically.
+#      Fetches PubMed papers for all 91 pairs across the full 14-organ set
+#      (all_organ_connections.csv). Already-cached pairs are skipped
+#      automatically. healthy_cohort_connections.csv is no longer a search
+#      filter -- it's read separately (in build_viz) to flag which of the
+#      91 pairs/organs the dashboard's "Healthy" display toggle shows.
 #      Add --reset to wipe the search cache and re-fetch everything.
 #      Add --force-empty to re-search pairs that previously returned 0 papers.
 #
