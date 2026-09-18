@@ -9,10 +9,10 @@
 #  PubMed search parameters
 # -----------------------------------------------------------------------------
 
-MAX_PAPERS = 1000   # Maximum papers fetched per organ pair.
+MAX_PAPERS = 20000  # Maximum papers fetched per organ pair.
                     # Higher = better recall, slower run.
 
-YEARS_BACK = 10     # How many years back to search in PubMed.
+YEARS_BACK = 20     # How many years back to search in PubMed.
 
 DELAY = 0.4         # Seconds between NCBI API requests.
                     # Keep at ≥ 0.34 to avoid rate-limiting.

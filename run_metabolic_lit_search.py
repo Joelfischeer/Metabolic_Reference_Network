@@ -205,8 +205,87 @@ def _any_match(patterns: list, text: str) -> bool:
     return any(p.search(text) for p in patterns)
 
 
+# ── Multi-organ same-sentence disambiguation ────────────────────────────────
+# A qualifying sentence (organ1 + organ2 + crosstalk keyword co-present) can
+# still be a false positive for the pair (organ1, organ2) specifically when a
+# THIRD organ is also named in that sentence, e.g. "the pancreas modulates
+# ... the heart and colon" -- Pancreas is the true agent, Heart/Colon are
+# just co-listed targets, not a Heart<->Colon relationship. These helpers add
+# a purely positional/lexical check (no LLM, no parsing) that generalizes to
+# any number of organs mentioned in one sentence:
+#
+#  1. _list_groups() groups organ mentions that are joined ONLY by
+#     enumeration glue (",", "and", "or", "/", "&", "as well as", articles)
+#     with nothing else between them -- "heart, colon, and kidney" becomes
+#     one group regardless of how many members it has. Two organs in the
+#     same group are siblings in a list, not claimed to interact with each
+#     other.
+#  2. For organs in different groups, a pair is rejected if some OTHER organ
+#     (not a fellow list-member of either side) is mentioned before the
+#     later of the two -- the classic "X regulates ... A and B" pattern --
+#     while organs mentioned only AFTER both (e.g. a trailing contrastive
+#     "...unlike the kidney") are not held against the pair.
+ALL_ORGAN_PATTERNS = {o: _compile_patterns(aliases) for o, aliases in ORGAN_ALIASES.items()}
+
+_LIST_GLUE_RE = re.compile(r"^\s*(,|;|&|/)?\s*(and|or|as well as|&|/)?\s*(the|a|an)?\s*$")
+
+
+def _find_organ_mentions(sent: str, all_organ_patterns: dict) -> list[tuple[int, int, str]]:
+    """All (start, end, organ_name) mentions in sent, sorted by position."""
+    hits = [(m.start(), m.end(), organ)
+            for organ, pats in all_organ_patterns.items()
+            for p in pats for m in p.finditer(sent)]
+    hits.sort(key=lambda t: t[0])
+    return hits
+
+
+def _list_groups(mentions: list[tuple[int, int, str]], sent: str) -> dict[str, int]:
+    """Assign each organ an enumeration-list group id. Consecutive mentions
+    (in sentence order) separated only by list glue ("," "and" "/" ...) get
+    the same id; anything else (a verb, a clause) starts a new group."""
+    groups: dict[str, int] = {}
+    group_id = 0
+    prev_end = None
+    for start, end, organ in mentions:
+        if prev_end is not None and not _LIST_GLUE_RE.match(sent[prev_end:start]):
+            group_id += 1
+        groups.setdefault(organ, group_id)
+        prev_end = end
+    return groups
+
+
+def _passes_multi_organ_check(sent: str, organ1: str, organ2: str,
+                               all_organ_patterns: dict) -> bool:
+    """False if the sentence's phrasing indicates organ1/organ2 are not
+    directly linked to each other (see module comment above)."""
+    mentions = _find_organ_mentions(sent, all_organ_patterns)
+    if len(mentions) <= 2:
+        return True  # nothing else mentioned -- no ambiguity to resolve
+
+    groups = _list_groups(mentions, sent)
+    if groups.get(organ1) == groups.get(organ2):
+        return False  # co-listed siblings ("...in the heart and colon")
+
+    first_pos: dict[str, int] = {}
+    for start, _end, organ in mentions:
+        first_pos.setdefault(organ, start)
+    later = max(first_pos[organ1], first_pos[organ2])
+    own_groups = {groups[organ1], groups[organ2]}
+
+    for start, _end, organ in mentions:
+        if organ in (organ1, organ2) or start >= later:
+            continue
+        if groups.get(organ) in own_groups:
+            continue  # fellow list-member of organ1/organ2, not a third party
+        return False  # a genuine third organ precedes the later of the two
+    return True
+
+
 def _filter_same_sentence_crosstalk(papers: list[dict], organ1_patterns: list,
-                                    organ2_patterns: list, crosstalk_patterns: list) -> list[dict]:
+                                    organ2_patterns: list, crosstalk_patterns: list,
+                                    organ1_name: str | None = None,
+                                    organ2_name: str | None = None,
+                                    all_organ_patterns: dict | None = None) -> list[dict]:
     """
     Keep only papers where both organs' aliases AND at least one crosstalk
     keyword (network, axis, interplay, ...) appear together in the same
@@ -215,17 +294,28 @@ def _filter_same_sentence_crosstalk(papers: list[dict], organ1_patterns: list,
     match somewhere in the document (cheap pre-filter, fewer papers
     fetched); this is the strict local check that actually enforces
     three-way co-location.
+
+    When organ1_name/organ2_name/all_organ_patterns are given, a qualifying
+    sentence is further required to pass _passes_multi_organ_check() --
+    guarding against sentences that mention a third organ and are really
+    describing that third organ's relationship to organ1/organ2, not a
+    direct organ1<->organ2 link (see module comment above).
     """
     kept = []
     for paper in papers:
         text = (paper.get("title", "") + ". " + paper.get("abstract", "")).lower()
         sentences = re.split(r"(?<=[.!?;])\s+", text)
         for sent in sentences:
-            if (_any_match(organ1_patterns, sent)
+            if not (_any_match(organ1_patterns, sent)
                     and _any_match(organ2_patterns, sent)
                     and _any_match(crosstalk_patterns, sent)):
-                kept.append(paper)
-                break
+                continue
+            if (all_organ_patterns is not None and organ1_name and organ2_name
+                    and not _passes_multi_organ_check(sent, organ1_name, organ2_name,
+                                                       all_organ_patterns)):
+                continue
+            kept.append(paper)
+            break
     return kept
 
 
@@ -364,7 +454,9 @@ def run_search(organ_pairs, output_path, resume=True, force_empty=False):
         organ1_patterns = _compile_patterns(ORGAN_ALIASES.get(o1, [o1]))
         organ2_patterns = _compile_patterns(ORGAN_ALIASES.get(o2, [o2]))
         papers = _filter_same_sentence_crosstalk(papers_raw, organ1_patterns,
-                                                 organ2_patterns, crosstalk_patterns)
+                                                 organ2_patterns, crosstalk_patterns,
+                                                 organ1_name=o1, organ2_name=o2,
+                                                 all_organ_patterns=ALL_ORGAN_PATTERNS)
         key_players = extract_key_players(papers)
 
         n = len(papers)
@@ -400,17 +492,24 @@ def run_search(organ_pairs, output_path, resume=True, force_empty=False):
 
 # ── Visualization ─────────────────────────────────────────────────────────────
 
-def _literature_stats_section(organs: list[str], results_by_pair: dict, allowed_pairs: set) -> str:
+def _literature_stats_section(organs: list[str], results_by_pair: dict, allowed_pairs: set,
+                               variant_id: str = "all") -> str:
     """
-    "Literature Statistics" tab: per-organ and per-connection paper counts,
-    plus a canvas-drawn circular Sankey diagram. Ribbon width =
-    same-sentence co-occurring paper count for that organ pair.
+    "Literature Statistics" content for one variant (all/healthy/obese):
+    per-organ and per-connection paper counts, plus a canvas-drawn circular
+    Sankey diagram. Ribbon width = same-sentence co-occurring paper count
+    for that organ pair (further condition-filtered for the healthy/obese
+    variants -- see condition_variants in build_viz()).
 
     Unlike the per-organ cosine pipelines, this pipeline searches per PAIR,
     not per organ, so there's no single fetch a "papers per organ" count
     could be read directly from. It's derived here as the union of PMIDs
     across every pair touching that organ (a paper supporting two of an
     organ's connections is only counted once).
+
+    variant_id must be unique across the three calls in one page (used to
+    namespace the canvas element id -- otherwise three "lit-sankey" ids in
+    one DOM would collide and only one canvas would ever get its diagram).
     """
     from Visualisation.networkBuilderUtils import ORGAN_COLORS, DEFAULT_NODE_COLOR
 
@@ -462,20 +561,20 @@ def _literature_stats_section(organs: list[str], results_by_pair: dict, allowed_
     }
     sankey_json = json.dumps(sankey_data, ensure_ascii=False)
 
+    canvas_id = f"lit-sankey-{variant_id}"
     return f"""
-    <div class="info-h2">Literature Statistics</div>
     <div class="info-h2">Organ Cross-Talk Sankey</div>
     <p class="info-p" style="color:#94a3b8">
       Ribbon thickness = number of same-sentence co-occurring papers for that
       organ pair.
     </p>
     <div style="overflow-x:auto">
-      <canvas id="lit-sankey" style="display:block"></canvas>
+      <canvas id="{canvas_id}" style="display:block"></canvas>
     </div>
     <script>
     (function() {{
       const D = {sankey_json};
-      const canvas = document.getElementById('lit-sankey');
+      const canvas = document.getElementById('{canvas_id}');
       if (!D.links.length) {{ canvas.style.display = 'none'; return; }}
       const ctx = canvas.getContext('2d');
 
@@ -604,8 +703,93 @@ def _literature_stats_section(organs: list[str], results_by_pair: dict, allowed_
 """
 
 
-def _build_info_tabs(organs: list[str], results_by_pair: dict, allowed_pairs: set) -> list[dict]:
-    """Build info panel content dynamically from the current configuration."""
+def _literature_stats_tab_content(organs: list[str], results_by_pair: dict, allowed_pairs: set,
+                                   condition_data: dict[str, tuple | None] | None) -> str:
+    """
+    Wraps three _literature_stats_section() variants (All / Healthy /
+    Obese) with a small selector so the Literature Statistics tab can show
+    condition-filtered stats side by side with the full search -- same
+    layout and Sankey diagram for each, just computed from different data
+    (see condition_data in _build_info_tabs()).
+    """
+    condition_data = condition_data or {}
+
+    variant_sections = {
+        "all": _literature_stats_section(organs, results_by_pair, allowed_pairs, variant_id="all"),
+    }
+    for cond in ("healthy", "obese"):
+        data = condition_data.get(cond)
+        if data is None:
+            variant_sections[cond] = (
+                f'<p class="info-p" style="color:#64748b">'
+                f'The {cond} condition pipeline has not been run yet '
+                f'(<code>uv run python run_metabolic_lit_search.py --condition {cond}</code>) '
+                f'-- no condition-filtered literature statistics are available.</p>'
+            )
+        else:
+            cond_organs, cond_results_by_pair, cond_pairs = data
+            variant_sections[cond] = _literature_stats_section(
+                cond_organs, cond_results_by_pair, cond_pairs, variant_id=cond
+            )
+
+    labels = {"all": "All", "healthy": "Healthy", "obese": "Obese"}
+    selector_buttons = "".join(
+        f'<button class="lit-stats-selector-btn{" active" if key == "all" else ""}" '
+        f'data-variant="{key}" onclick="showLitStatsVariant(\'{key}\')">{labels[key]}</button>'
+        for key in ("all", "healthy", "obese")
+    )
+    variant_panels = "".join(
+        f'<div class="lit-stats-variant" id="lit-stats-variant-{key}" '
+        f'style="display:{"block" if key == "all" else "none"}">{content}</div>'
+        for key, content in variant_sections.items()
+    )
+
+    return f"""
+    <div class="info-h2">Literature Statistics</div>
+    <p class="info-p" style="color:#94a3b8">
+      Choose which paper set these statistics are computed from: the full
+      condition-agnostic search, or one of the two condition-filtered views
+      (see "Condition Filter" under Literature Search).
+    </p>
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      {selector_buttons}
+    </div>
+    {variant_panels}
+    <style>
+      .lit-stats-selector-btn {{
+        background:#1e293b;border:1px solid #334155;color:#94a3b8;
+        border-radius:6px;padding:5px 12px;font-size:0.76rem;cursor:pointer;
+      }}
+      .lit-stats-selector-btn:hover {{ background:#334155;color:#e2e8f0; }}
+      .lit-stats-selector-btn.active {{ background:#6366f1;border-color:#6366f1;color:#fff; }}
+    </style>
+    <script>
+    function showLitStatsVariant(variant) {{
+      document.querySelectorAll('.lit-stats-variant').forEach(el => {{
+        el.style.display = (el.id === 'lit-stats-variant-' + variant) ? 'block' : 'none';
+      }});
+      document.querySelectorAll('.lit-stats-selector-btn').forEach(btn => {{
+        btn.classList.toggle('active', btn.dataset.variant === variant);
+      }});
+    }}
+    </script>
+"""
+
+
+def _build_info_tabs(organs: list[str], results_by_pair: dict, allowed_pairs: set,
+                      condition_data: dict[str, tuple | None] | None = None) -> list[dict]:
+    """
+    Build info panel content dynamically from the current configuration.
+
+    condition_data (optional): {"healthy": (organs, results_by_pair, pairs) | None,
+    "obese": (...) | None} -- when present, the Literature Statistics tab
+    gets an All/Healthy/Obese selector using this data for the latter two
+    (see build_condition_results() / run_metabolic_lit_search.py
+    --condition). A condition mapped to None (pipeline not yet run for it)
+    is shown as unavailable rather than omitted, so the selector's presence
+    doesn't silently depend on which steps happen to have been run.
+    """
+    condition_data = condition_data or {}
     kw_block = " OR ".join(
         f'"{kw}"' if (" " in kw or "-" in kw) else kw
         for kw in METABOLIC_KEYWORDS
@@ -614,6 +798,10 @@ def _build_info_tabs(organs: list[str], results_by_pair: dict, allowed_pairs: se
         f'"{kw}"' if (" " in kw or "-" in kw) else kw
         for kw in CROSSTALK_KEYWORDS
     )
+    healthy_kw_block = ", ".join(f'"{kw}"' for kw in CONDITION_KEYWORDS["healthy"])
+    obese_kw_block = ", ".join(f'"{kw}"' for kw in CONDITION_KEYWORDS["obese"])
+    from Literature_Search.llm_connection_type import VOTE_RUNS as vote_runs
+    vote_majority = vote_runs // 2 + 1
     ct_rows = "".join(
         f'<tr><td style="padding:3px 8px 3px 0;color:#94a3b8;white-space:nowrap">'
         f'<strong style="color:#e2e8f0">{v["label"]}</strong></td>'
@@ -628,11 +816,13 @@ def _build_info_tabs(organs: list[str], results_by_pair: dict, allowed_pairs: se
         <div class="info-h2">Overview</div>
         <p class="info-p">
           This is the <strong>glucose metabolism-based reference network</strong>.
-          Organ–organ connections are based on the partial correlation network from a healthy cohort
-          (n=241, BMI &lt;24.4 kg/m²) from
+          Organ–organ connections (both the Healthy and Obese predefined edge sets
+          selectable via the topbar toggle) are based on partial correlation networks
+          from
           <a href="https://doi.org/10.1016/j.medj.2025.100881" target="_blank"
              style="color:#818cf8;text-decoration:underline"
-             title="Geist, B. K. et al. The metabolic organ connectome: A novel approach to measure allostatic load during health-to-disease transition. Med 6, 100881 (2025)">Geist et al. (2025)</a>.
+             title="Geist, B. K. et al. The metabolic organ connectome: A novel approach to measure allostatic load during health-to-disease transition. Med 6, 100881 (2025)">Geist et al. (2025)</a>
+          -- the Healthy cohort is n=241, BMI &lt;24.4 kg/m².
           For each included pair the pipeline issues
           <strong>one PubMed query</strong> requiring both organs, at least one
           metabolic keyword, and at least one crosstalk keyword to all
@@ -676,6 +866,27 @@ AND ({crosstalk_kw_block})</div>
           organ B in a completely separate one no longer counts as evidence
           for that pair, even though it passed the PubMed query.
         </p>
+        <div class="info-h2">Condition Filter (Healthy / Obese)</div>
+        <p class="info-p">
+          The Healthy and Obese views shown via the topbar toggle are <strong>not</strong>
+          separate PubMed searches — there is only ever one shared, condition-agnostic
+          search per pair (above). Instead, a condition-specific view is built by taking
+          that pair's already same-sentence-filtered papers and keeping only the ones
+          whose title/abstract <strong>also</strong> contains at least one of that
+          condition's keywords, matched as a whole word anywhere in the text (not
+          restricted to the same sentence as the organ/crosstalk match):
+        </p>
+        <div class="info-code">Healthy keywords: {healthy_kw_block}
+Obese keywords:   {obese_kw_block}</div>
+        <p class="info-p">
+          This condition-filtered paper set is what feeds the key player counts,
+          LLM connection-type classification, and LLM edge descriptions shown when
+          Healthy or Obese is selected — each condition can therefore show a different
+          paper count, different key players, and even a different connection type or
+          description for the same organ pair than the All view. A pair with no papers
+          left after this filter is dropped from that condition's view (but stays
+          available under All).
+        </p>
         <div class="info-h2">Key Player Extraction</div>
         <p class="info-p">All abstracts are scanned against three curated vocabulary lists:</p>
         <ul style="margin:0 0 10px 16px;padding:0;color:#cbd5e1">
@@ -689,7 +900,7 @@ AND ({crosstalk_kw_block})</div>
         {
             "id": "literature_stats",
             "label": "Literature Statistics",
-            "content": _literature_stats_section(organs, results_by_pair, allowed_pairs),
+            "content": _literature_stats_tab_content(organs, results_by_pair, allowed_pairs, condition_data),
         },
         {
             "id": "llm",
@@ -705,10 +916,10 @@ AND ({crosstalk_kw_block})</div>
         </p>
         <p class="info-p">
           To reduce single-sample noise, the classification is run
-          <strong>3 times independently</strong> per pair; only types that appear in at
-          least 2 of the 3 runs are kept (majority vote). If the 3 runs disagree on
-          everything, the single most-voted type is kept, so every pair always ends up
-          with at least one type.
+          <strong>{vote_runs} times independently</strong> per pair; only types that appear
+          in at least {vote_majority} of the {vote_runs} runs are kept (majority vote). If the
+          runs disagree on everything, the single most-voted type is kept, so every pair
+          always ends up with at least one type.
         </p>
         <div class="info-h2">Connection Type Categories</div>
         <table style="width:100%;border-collapse:collapse;font-size:12px">
@@ -926,12 +1137,22 @@ def build_viz(results: dict, output_path: Path):
             if variants:
                 G.edges[o1, o2]['condition_variants'] = variants
 
+        info_condition_data = {}
+        for cond, cond_organs, cond_pairs in (("healthy", healthy_organs, healthy_pairs),
+                                               ("obese", obese_organs, obese_pairs)):
+            if condition_sources[cond] is None:
+                info_condition_data[cond] = None
+            else:
+                cr_by_pair, _c_types, _c_descs = condition_sources[cond]
+                info_condition_data[cond] = (sorted(cond_organs), cr_by_pair, cond_pairs)
+
         export_network_to_cytoscape_dashboard(
             graph=G,
             filename=str(output_path),
             include_legend=False,
             title=VIZ_TITLE,
-            info_panel_tabs=_build_info_tabs(sorted(allowed_organs), results_by_pair, allowed_pairs),
+            info_panel_tabs=_build_info_tabs(sorted(allowed_organs), results_by_pair, allowed_pairs,
+                                             condition_data=info_condition_data),
             healthy_toggle_label="Healthy",
             obese_toggle_label="Obese",
             comparison_upload_label="Upload comparison network",

@@ -1,0 +1,38 @@
+=== distinct term counts ===
+all {'hormones': 78, 'metabolites': 187, 'proteins': 3401}
+healthy {'hormones': 52, 'metabolites': 92, 'proteins': 400}
+obese {'hormones': 47, 'metabolites': 43, 'proteins': 204}
+
+=== obese top proteins (full, utf8 safe) ===
+  ampk                             19 (4.6%)
+  Interleukin 6                    18 (4.3%)
+  akt                              15 (3.6%)
+  Tumor necrosis factor            12 (2.9%)
+  glut4                            11 (2.7%)
+  insulin receptor                  9 (2.2%)
+  Myostatin                         8 (1.9%)
+  PGC-1α                            8 (1.9%)
+  ucp1                              8 (1.9%)
+  mTOR                              7 (1.7%)
+
+=== insulin / glucose / leptin / glucagon ===
+Insulin    [all     ] n= 4740 pct=27.9%  rank=#1
+Insulin    [healthy ] n=  174 pct=29.1%  rank=#1
+Insulin    [obese   ] n=  155 pct=38.5%  rank=#1
+
+glucose    [all     ] n= 5145 pct=18.2%  rank=#1
+glucose    [healthy ] n=  176 pct=18.4%  rank=#1
+glucose    [obese   ] n=  117 pct=42.5%  rank=#1
+
+Leptin     [all     ] n= 1017 pct=6.0%  rank=#2
+Leptin     [healthy ] n=   36 pct=6.0%  rank=#4
+Leptin     [obese   ] n=   41 pct=10.2%  rank=#2
+
+Glucagon   [all     ] n=  932 pct=5.5%  rank=#3
+Glucagon   [healthy ] n=   44 pct=7.4%  rank=#2
+Glucagon   [obese   ] n=   18 pct=4.5%  rank=#3
+
+max single protein pct per condition:
+all ('Tumor necrosis factor', 1378) 3.9%
+healthy ('Interleukin 6', 31) 3.8%
+obese ('ampk', 19) 4.6%

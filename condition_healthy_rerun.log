@@ -1,0 +1,123 @@
+[i] Loaded 91 cached 'all' edges.
+[i] Condition: healthy | Cohort: healthy_cohort_connections.csv → 33 pairs
+[i] Condition keywords: healthy, healthy subjects, healthy individuals, healthy volunteers, healthy adults, normal physiology, healthy controls
+
+[i] Building condition-filtered results (filtering already-fetched papers, no new PubMed queries)...
+  Adrenal Glands <-> Bone Marrow: 0 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> Brain: 408 papers -> 32 after 'healthy' filter
+  Adrenal Glands <-> Kidney: 9 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> Liver: 9 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> Muscle: 1 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> Pancreas: 0 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> Small Intestine: 1 papers -> 0 after 'healthy' filter
+  Adrenal Glands <-> WAT: 8 papers -> 1 after 'healthy' filter
+  Bone Marrow <-> Brain: 70 papers -> 6 after 'healthy' filter
+  Bone Marrow <-> Kidney: 21 papers -> 0 after 'healthy' filter
+  Bone Marrow <-> Small Intestine: 58 papers -> 4 after 'healthy' filter
+  Bone Marrow <-> Spleen: 22 papers -> 0 after 'healthy' filter
+  Brain <-> Kidney: 282 papers -> 15 after 'healthy' filter
+  Brain <-> Liver: 1103 papers -> 39 after 'healthy' filter
+  Brain <-> Pancreas: 250 papers -> 11 after 'healthy' filter
+  Brain <-> Small Intestine: 4986 papers -> 499 after 'healthy' filter
+  Brain <-> WAT: 572 papers -> 22 after 'healthy' filter
+  Kidney <-> Liver: 774 papers -> 34 after 'healthy' filter
+  Kidney <-> Muscle: 42 papers -> 2 after 'healthy' filter
+  Kidney <-> Pancreas: 53 papers -> 6 after 'healthy' filter
+  Kidney <-> Small Intestine: 624 papers -> 51 after 'healthy' filter
+  Kidney <-> Thyroid: 31 papers -> 1 after 'healthy' filter
+  Kidney <-> WAT: 48 papers -> 2 after 'healthy' filter
+  Liver <-> Small Intestine: 3171 papers -> 172 after 'healthy' filter
+  Liver <-> Spleen: 78 papers -> 5 after 'healthy' filter
+  Liver <-> WAT: 920 papers -> 35 after 'healthy' filter
+  Muscle <-> Thyroid: 28 papers -> 1 after 'healthy' filter
+  Muscle <-> WAT: 330 papers -> 25 after 'healthy' filter
+  Pancreas <-> Small Intestine: 213 papers -> 12 after 'healthy' filter
+  Pancreas <-> WAT: 101 papers -> 6 after 'healthy' filter
+  Small Intestine <-> Spleen: 49 papers -> 2 after 'healthy' filter
+  Small Intestine <-> WAT: 256 papers -> 21 after 'healthy' filter
+  Thyroid <-> WAT: 62 papers -> 6 after 'healthy' filter
+
+[ok] 33 edges | 1010 papers after condition filter.
+     Saved: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_literature_results_healthy.json
+
+[i] Running LLM connection-type classification (healthy)...
+[i] LLM type cache deleted: metabolic_connection_types_healthy.json
+[i] LLM type classification using model: llama3.2
+  [1/33] Adrenal Glands <-> Bone Marrow  (0 papers) … skipped (no papers)
+  [2/33] Adrenal Glands <-> Brain  (32 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [3/33] Adrenal Glands <-> Kidney  (0 papers) … skipped (no papers)
+  [4/33] Adrenal Glands <-> Liver  (0 papers) … skipped (no papers)
+  [5/33] Adrenal Glands <-> Muscle  (0 papers) … skipped (no papers)
+  [6/33] Adrenal Glands <-> Pancreas  (0 papers) … skipped (no papers)
+  [7/33] Adrenal Glands <-> Small Intestine  (0 papers) … skipped (no papers)
+  [8/33] Adrenal Glands <-> WAT  (1 papers) … types=hormonal_glucose_control  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'other_physical_connection'], ['hormonal_glucose_control', 'adipokine_myokine_signaling']])
+  [9/33] Bone Marrow <-> Brain  (6 papers) … types=nerve_connection  (votes: [['nerve_connection'], ['nerve_connection'], ['nerve_connection'], ['nerve_connection', 'adipokine_myokine_signaling'], ['nerve_connection']])
+  [10/33] Bone Marrow <-> Kidney  (0 papers) … skipped (no papers)
+  [11/33] Bone Marrow <-> Small Intestine  (4 papers) … types=hormonal_glucose_control  (votes: [[], ['hormonal_glucose_control'], ['other_physical_connection'], ['hormonal_glucose_control'], ['inflammatory_cytokine_crosstalk']])
+  [12/33] Bone Marrow <-> Spleen  (0 papers) … skipped (no papers)
+  [13/33] Brain <-> Kidney  (15 papers) … types=nerve_connection  (votes: [['nerve_connection'], ['hormonal_glucose_control'], ['nerve_connection'], ['nerve_connection'], ['hormonal_glucose_control']])
+  [14/33] Brain <-> Liver  (39 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [15/33] Brain <-> Pancreas  (11 papers) … types=nerve_connection  (votes: [['nerve_connection', 'hormonal_glucose_control'], ['nerve_connection'], ['hormonal_glucose_control', 'nerve_connection'], ['nerve_connection'], ['nerve_connection', 'other_physical_connection']])
+  [16/33] Brain <-> Small Intestine  (499 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [17/33] Brain <-> WAT  (22 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling', 'circadian_clock_synchronization'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [18/33] Kidney <-> Liver  (34 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [19/33] Kidney <-> Muscle  (2 papers) … types=nerve_connection  (votes: [['hormonal_glucose_control', 'nerve_connection'], ['nerve_connection', 'adipokine_myokine_signaling'], ['nerve_connection'], ['hormonal_glucose_control', 'nerve_connection'], ['nerve_connection']])
+  [20/33] Kidney <-> Pancreas  (6 papers) … types=hormonal_glucose_control  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control', 'nerve_connection']])
+  [21/33] Kidney <-> Small Intestine  (51 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [22/33] Kidney <-> Thyroid  (1 papers) … types=hormonal_glucose_control  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control']])
+  [23/33] Kidney <-> WAT  (2 papers) … 
+    [!] Timeout (attempt 1/2), retrying… types=other_physical_connection  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['other_physical_connection'], ['other_physical_connection', 'inflammatory_cytokine_crosstalk'], ['other_physical_connection']])
+  [24/33] Liver <-> Small Intestine  (172 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [25/33] Liver <-> Spleen  (5 papers) … types=hormonal_glucose_control+inflammatory_cytokine_crosstalk  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control', 'inflammatory_cytokine_crosstalk'], ['hormonal_glucose_control', 'inflammatory_cytokine_crosstalk'], ['ketone_body_exchange', 'inflammatory_cytokine_crosstalk']])
+  [26/33] Liver <-> WAT  (35 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [27/33] Muscle <-> Thyroid  (1 papers) … types=hormonal_glucose_control+adipokine_myokine_signaling  (votes: [['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control', 'adipokine_myokine_signaling']])
+  [28/33] Muscle <-> WAT  (25 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [29/33] Pancreas <-> Small Intestine  (12 papers) … types=hormonal_glucose_control  (votes: [['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control']])
+  [30/33] Pancreas <-> WAT  (6 papers) … types=hormonal_glucose_control+adipokine_myokine_signaling  (votes: [['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'adipokine_myokine_signaling']])
+  [31/33] Small Intestine <-> Spleen  (2 papers) … types=hormonal_glucose_control  (votes: [['other_physical_connection'], ['hormonal_glucose_control', 'other_physical_connection'], ['hormonal_glucose_control'], ['hormonal_glucose_control'], ['hormonal_glucose_control']])
+  [32/33] Small Intestine <-> WAT  (21 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [33/33] Thyroid <-> WAT  (6 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling', 'hormonal_glucose_control'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling', 'mineral_electrolyte_regulation'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling', 'other_physical_connection']])
+
+[ok] 25/33 pairs classified. Saved: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_connection_types_healthy.json
+
+[i] Running LLM connection descriptions (healthy)...
+[i] Cache deleted: metabolic_llm_descriptions_healthy.json
+[i] Using model: llama3.2
+  [1/33] Adrenal Glands <-> Bone Marrow  (0 papers) … skipped (no papers)
+  [2/33] Adrenal Glands <-> Brain  (32 papers) … ok (113 words, 5 papers)
+  [3/33] Adrenal Glands <-> Kidney  (0 papers) … skipped (no papers)
+  [4/33] Adrenal Glands <-> Liver  (0 papers) … skipped (no papers)
+  [5/33] Adrenal Glands <-> Muscle  (0 papers) … skipped (no papers)
+  [6/33] Adrenal Glands <-> Pancreas  (0 papers) … skipped (no papers)
+  [7/33] Adrenal Glands <-> Small Intestine  (0 papers) … skipped (no papers)
+  [8/33] Adrenal Glands <-> WAT  (1 papers) … ok (36 words, 1 papers)
+  [9/33] Bone Marrow <-> Brain  (6 papers) … ok (150 words, 5 papers)
+  [10/33] Bone Marrow <-> Kidney  (0 papers) … skipped (no papers)
+  [11/33] Bone Marrow <-> Small Intestine  (4 papers) … ok (134 words, 4 papers)
+  [12/33] Bone Marrow <-> Spleen  (0 papers) … skipped (no papers)
+  [13/33] Brain <-> Kidney  (15 papers) … ok (170 words, 5 papers)
+  [14/33] Brain <-> Liver  (39 papers) … ok (138 words, 5 papers)
+  [15/33] Brain <-> Pancreas  (11 papers) … ok (146 words, 5 papers)
+  [16/33] Brain <-> Small Intestine  (499 papers) … ok (125 words, 5 papers)
+  [17/33] Brain <-> WAT  (22 papers) … ok (132 words, 5 papers)
+  [18/33] Kidney <-> Liver  (34 papers) … ok (156 words, 5 papers)
+  [19/33] Kidney <-> Muscle  (2 papers) … ok (102 words, 2 papers)
+  [20/33] Kidney <-> Pancreas  (6 papers) … ok (169 words, 5 papers)
+  [21/33] Kidney <-> Small Intestine  (51 papers) … ok (144 words, 5 papers)
+  [22/33] Kidney <-> Thyroid  (1 papers) … ok (142 words, 1 papers)
+  [23/33] Kidney <-> WAT  (2 papers) … ok (121 words, 2 papers)
+  [24/33] Liver <-> Small Intestine  (172 papers) … ok (124 words, 5 papers)
+  [25/33] Liver <-> Spleen  (5 papers) … ok (140 words, 5 papers)
+  [26/33] Liver <-> WAT  (35 papers) … ok (136 words, 5 papers)
+  [27/33] Muscle <-> Thyroid  (1 papers) … ok (184 words, 1 papers)
+  [28/33] Muscle <-> WAT  (25 papers) … ok (112 words, 5 papers)
+  [29/33] Pancreas <-> Small Intestine  (12 papers) … ok (146 words, 5 papers)
+  [30/33] Pancreas <-> WAT  (6 papers) … ok (141 words, 5 papers)
+  [31/33] Small Intestine <-> Spleen  (2 papers) … ok (134 words, 2 papers)
+  [32/33] Small Intestine <-> WAT  (21 papers) … ok (163 words, 5 papers)
+  [33/33] Thyroid <-> WAT  (6 papers) … ok (128 words, 5 papers)
+
+[ok] 25/33 pairs have summaries. Saved to: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_llm_descriptions_healthy.json
+
+[ok] Condition pipeline done for 'healthy'.
+     Note: the dashboard is not yet wired to these condition-specific files -- it still shows the same 'all' data regardless of the Healthy/Obese toggle.

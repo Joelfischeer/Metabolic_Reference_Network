@@ -1,0 +1,53 @@
+[i] Loaded 91 cached 'all' edges.
+[i] Condition: obese | Cohort: obese_cohort_connections.csv → 10 pairs
+[i] Condition keywords: obesity, obese subjects, obese patients, obese volunteers, obese adults, adiposity, patients with adiposity, overweight subjects, overweight patients, overweight volunteers, overweight adults
+
+[i] Building condition-filtered results (filtering already-fetched papers, no new PubMed queries)...
+  Adrenal Glands <-> Brain: 408 papers -> 28 after 'obese' filter
+  Adrenal Glands <-> Pancreas: 0 papers -> 0 after 'obese' filter
+  Bone Marrow <-> Kidney: 21 papers -> 1 after 'obese' filter
+  Bone Marrow <-> Small Intestine: 58 papers -> 5 after 'obese' filter
+  Brain <-> Kidney: 282 papers -> 17 after 'obese' filter
+  Brain <-> Muscle: 133 papers -> 18 after 'obese' filter
+  Brain <-> Pancreas: 250 papers -> 52 after 'obese' filter
+  Liver <-> Spleen: 78 papers -> 9 after 'obese' filter
+  Muscle <-> WAT: 330 papers -> 148 after 'obese' filter
+  Pancreas <-> Spleen: 7 papers -> 2 after 'obese' filter
+
+[ok] 10 edges | 280 papers after condition filter.
+     Saved: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_literature_results_obese.json
+
+[i] Running LLM connection-type classification (obese)...
+[i] LLM type cache deleted: metabolic_connection_types_obese.json
+[i] LLM type classification using model: llama3.2
+  [1/10] Adrenal Glands <-> Brain  (28 papers) … types=inflammatory_cytokine_crosstalk  (votes: [['inflammatory_cytokine_crosstalk', 'adipokine_myokine_signaling'], ['nerve_connection', 'adipokine_myokine_signaling'], ['hormonal_glucose_control', 'inflammatory_cytokine_crosstalk'], ['nerve_connection', 'other_physical_connection'], ['inflammatory_cytokine_crosstalk']])
+  [2/10] Adrenal Glands <-> Pancreas  (0 papers) … skipped (no papers)
+  [3/10] Bone Marrow <-> Kidney  (1 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['other_physical_connection'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [4/10] Bone Marrow <-> Small Intestine  (5 papers) … types=adipokine_myokine_signaling  (votes: [['adipokine_myokine_signaling', 'other_physical_connection'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['other_physical_connection', 'adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [5/10] Brain <-> Kidney  (17 papers) … types=adipokine_myokine_signaling  (votes: [['hormonal_glucose_control', 'other_physical_connection'], ['hormonal_glucose_control', 'adipokine_myokine_signaling'], ['adipokine_myokine_signaling', 'inflammatory_cytokine_crosstalk'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling']])
+  [6/10] Brain <-> Muscle  (18 papers) … types=adipokine_myokine_signaling+nerve_connection  (votes: [['adipokine_myokine_signaling', 'nerve_connection'], ['adipokine_myokine_signaling', 'nerve_connection'], ['adipokine_myokine_signaling', 'nerve_connection'], ['adipokine_myokine_signaling', 'nerve_connection'], ['adipokine_myokine_signaling', 'nerve_connection']])
+  [7/10] Brain <-> Pancreas  (52 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer'], ['direct_glucose_transfer']])
+  [8/10] Liver <-> Spleen  (9 papers) … types=other_physical_connection  (votes: [['other_physical_connection', 'adipokine_myokine_signaling', 'inflammatory_cytokine_crosstalk'], ['hormonal_glucose_control'], ['inflammatory_cytokine_crosstalk', 'mineral_electrolyte_regulation'], ['mineral_electrolyte_regulation', 'adipokine_myokine_signaling'], ['other_physical_connection']])
+  [9/10] Muscle <-> WAT  (148 papers) … types=direct_glucose_transfer  (votes: [['direct_glucose_transfer'], ['direct_glucose_transfer'], ['adipokine_myokine_signaling'], ['adipokine_myokine_signaling'], ['direct_glucose_transfer']])
+  [10/10] Pancreas <-> Spleen  (2 papers) … types=nerve_connection+hormonal_glucose_control  (votes: [['hormonal_glucose_control'], ['nerve_connection', 'hormonal_glucose_control'], ['nerve_connection'], ['nerve_connection', 'hormonal_glucose_control'], ['nerve_connection', 'hormonal_glucose_control']])
+
+[ok] 9/10 pairs classified. Saved: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_connection_types_obese.json
+
+[i] Running LLM connection descriptions (obese)...
+[i] Cache deleted: metabolic_llm_descriptions_obese.json
+[i] Using model: llama3.2
+  [1/10] Adrenal Glands <-> Brain  (28 papers) … ok (132 words, 5 papers)
+  [2/10] Adrenal Glands <-> Pancreas  (0 papers) … skipped (no papers)
+  [3/10] Bone Marrow <-> Kidney  (1 papers) … ok (144 words, 1 papers)
+  [4/10] Bone Marrow <-> Small Intestine  (5 papers) … ok (119 words, 5 papers)
+  [5/10] Brain <-> Kidney  (17 papers) … ok (174 words, 5 papers)
+  [6/10] Brain <-> Muscle  (18 papers) … ok (117 words, 5 papers)
+  [7/10] Brain <-> Pancreas  (52 papers) … ok (129 words, 5 papers)
+  [8/10] Liver <-> Spleen  (9 papers) … ok (162 words, 5 papers)
+  [9/10] Muscle <-> WAT  (148 papers) … ok (154 words, 5 papers)
+  [10/10] Pancreas <-> Spleen  (2 papers) … ok (124 words, 2 papers)
+
+[ok] 9/10 pairs have summaries. Saved to: C:\Users\joel3\Documents\PhD\Side_projects\Metabolic_Reference_Network\Metabolic_Reference_Network\reference_network_only_metabolic\metabolic_llm_descriptions_obese.json
+
+[ok] Condition pipeline done for 'obese'.
+     Note: the dashboard is not yet wired to these condition-specific files -- it still shows the same 'all' data regardless of the Healthy/Obese toggle.

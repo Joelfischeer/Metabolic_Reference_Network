@@ -29,6 +29,7 @@ from Literature_Search.pubmed_search import (
 )
 from run_metabolic_lit_search import (
     CROSSTALK_KEYWORDS, _compile_patterns, _filter_same_sentence_crosstalk,
+    ALL_ORGAN_PATTERNS,
 )
 
 HERE = Path(__file__).parent
@@ -59,7 +60,9 @@ def main():
         organ1_patterns = _compile_patterns(ORGAN_ALIASES.get(o1, [o1]))
         organ2_patterns = _compile_patterns(ORGAN_ALIASES.get(o2, [o2]))
         papers = _filter_same_sentence_crosstalk(papers_raw, organ1_patterns,
-                                                 organ2_patterns, crosstalk_patterns)
+                                                 organ2_patterns, crosstalk_patterns,
+                                                 organ1_name=o1, organ2_name=o2,
+                                                 all_organ_patterns=ALL_ORGAN_PATTERNS)
 
         entry["n_papers_found_pre_same_sentence"] = len(papers_raw)
         entry["papers"]         = papers

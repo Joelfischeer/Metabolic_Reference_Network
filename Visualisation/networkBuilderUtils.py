@@ -617,7 +617,7 @@ applyThresholdAndComparison();
         healthy_toggle_html = (
             f'<button id="healthy-toggle-btn" class="ctrl-btn" '
             f'title="Show only the {_html_attr_escape(healthy_toggle_label)} subset" '
-            f'onclick="setDisplayMode(\'healthy\')">🩺 {_html_attr_escape(healthy_toggle_label)}</button>'
+            f'onclick="setDisplayMode(\'healthy\')">{_html_attr_escape(healthy_toggle_label)}</button>'
         )
 
     obese_toggle_html = ""
@@ -625,7 +625,7 @@ applyThresholdAndComparison();
         obese_toggle_html = (
             f'<button id="obese-toggle-btn" class="ctrl-btn" '
             f'title="Show only the {_html_attr_escape(obese_toggle_label)} subset" '
-            f'onclick="setDisplayMode(\'obese\')">⚖️ {_html_attr_escape(obese_toggle_label)}</button>'
+            f'onclick="setDisplayMode(\'obese\')">{_html_attr_escape(obese_toggle_label)}</button>'
         )
 
     comparison_upload_html = ""

@@ -31,6 +31,14 @@ from Visualisation.networkBuilderUtils import ORGAN_COLORS, DEFAULT_NODE_COLOR
 HERE    = Path(__file__).resolve().parent
 OUT_DIR = HERE / "visualizations"
 DPI     = 600
+# The combined multi-row/column overview grids are physically much larger
+# (up to ~22x30 in) than the standalone per-case plots, so a naive DPI bump
+# balloons file size fast: 900 DPI here produced 300-470 megapixel files
+# that PIL (and very likely PowerPoint, Word, and most browsers) refuse to
+# open by default. 400 DPI keeps the largest grid to ~95-120 megapixels --
+# comfortably under common image-library safety limits (~180 megapixels)
+# while still ~1.3x sharper than these grids' original 300 DPI.
+GRID_DPI = 400
 
 sys.path.insert(0, str(HERE / "reference_network_only_metabolic"))
 import config as _ref_cfg  # noqa: E402 -- needed for CONNECTION_TYPES labels
@@ -349,7 +357,7 @@ def draw_connection_type_grid(scope_rows: list[tuple[str, dict, dict]], order: l
     max_organs = max((len(oc) for _, _, oc in scope_rows), default=1)
     row_h = max(4.2, 0.4 * max_organs)
 
-    fig, axes = plt.subplots(n_rows, 2, figsize=(19, row_h * n_rows), dpi=DPI,
+    fig, axes = plt.subplots(n_rows, 2, figsize=(19, row_h * n_rows), dpi=GRID_DPI,
                               gridspec_kw={"width_ratios": [1, 1.3]})
     fig.patch.set_facecolor("white")
     if n_rows == 1:
@@ -378,7 +386,7 @@ def draw_connection_type_grid(scope_rows: list[tuple[str, dict, dict]], order: l
     fig.subplots_adjust(hspace=0.35)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=DPI, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=GRID_DPI, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  [ok] {out_path.relative_to(HERE)}")
 
@@ -603,8 +611,9 @@ def draw_reference_overview_grid(scope_rows: list[tuple[str, dict, list]], out_p
     max_organs = max((len(op) for _, op, _ in scope_rows), default=1)
     row_h = max(9, 0.45 * max_organs)
 
-    fig, axes = plt.subplots(n_rows, 2, figsize=(22, row_h * n_rows), dpi=DPI,
-                              gridspec_kw={"width_ratios": [1.6, 1], "hspace": 0.5})
+    fig, axes = plt.subplots(n_rows, 2, figsize=(22, row_h * n_rows), dpi=GRID_DPI,
+                              gridspec_kw={"width_ratios": [1.6, 1], "hspace": 0.4,
+                                           "top": 0.96, "bottom": 0.02})
     fig.patch.set_facecolor("white")
     if n_rows == 1:
         axes = axes.reshape(1, 2)
@@ -633,11 +642,13 @@ def draw_reference_overview_grid(scope_rows: list[tuple[str, dict, list]], out_p
             ax_bar.axis("off")
         ax_bar.set_title(f"{row_label}, Papers per organ", fontsize=13, pad=18, color="#1e293b")
 
-    fig.suptitle("Papers per Organ by Condition", fontsize=18, y=1.01, color="#1e293b")
-    fig.tight_layout(rect=[0, 0.01, 1, 0.97])
+    # subplots_adjust (via gridspec_kw top/bottom/hspace above) instead of
+    # tight_layout -- tight_layout's margin math is unreliable here because
+    # the sankey axes use aspect="equal" (matplotlib warns about this).
+    fig.suptitle("Papers per Organ by Condition", fontsize=18, y=0.985, color="#1e293b")
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=DPI, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=GRID_DPI, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  [ok] {out_path.relative_to(HERE)}")
 

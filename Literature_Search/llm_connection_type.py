@@ -229,7 +229,7 @@ def generate_connection_type_classifications(
     """
     Classify each organ pair into 1-3 connection types using an Ollama LLM.
 
-    Each pair is classified VOTE_RUNS (3) times independently; only types
+    Each pair is classified VOTE_RUNS times independently; only types
     appearing in a majority of the runs are kept (falls back to the single
     most-voted type if no type reaches a majority), guaranteeing every
     classified pair gets at least one type and never more than MAX_TYPES.

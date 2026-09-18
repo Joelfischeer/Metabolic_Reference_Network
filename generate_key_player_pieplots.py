@@ -37,6 +37,13 @@ import matplotlib.pyplot as plt
 HERE    = Path(__file__).resolve().parent
 OUT_DIR = HERE / "visualizations"
 DPI     = 600
+# The combined 3x3 overview grid is physically much larger (22x27 in) than
+# the standalone per-case pie figures, so a naive DPI bump balloons file
+# size fast: 900 DPI here produced a ~470 megapixel file that PIL (and very
+# likely PowerPoint, Word, and most browsers) refuse to open by default.
+# 400 DPI keeps it to ~95 megapixels -- comfortably under common
+# image-library safety limits (~180 megapixels).
+GRID_DPI = 400
 TOP_N   = 15
 
 _TAB20      = matplotlib.colormaps["tab20"]
@@ -239,7 +246,7 @@ def draw_key_player_grid(
     Proteins/Transporters, reusing _draw_pie_ax so every pie renders
     identically to its standalone counterpart."""
     n_rows = len(scope_rows)
-    fig, axes = plt.subplots(n_rows, 3, figsize=(22, 9 * n_rows))
+    fig, axes = plt.subplots(n_rows, 3, figsize=(22, 9 * n_rows), dpi=GRID_DPI)
     fig.patch.set_facecolor("white")
     if n_rows == 1:
         axes = axes.reshape(1, 3)
@@ -259,7 +266,7 @@ def draw_key_player_grid(
     fig.tight_layout(rect=[0.015, 0, 1, 0.98])
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=DPI, bbox_inches="tight", facecolor="white")
+    fig.savefig(out_path, dpi=GRID_DPI, bbox_inches="tight", facecolor="white")
     plt.close(fig)
     print(f"  [ok] {out_path.relative_to(HERE)}")
 

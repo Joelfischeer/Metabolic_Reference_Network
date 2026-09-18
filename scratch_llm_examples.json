@@ -1,0 +1,58 @@
+[
+  {
+    "pair_key": "Colon|Small Intestine",
+    "o1": "Colon",
+    "o2": "Small Intestine",
+    "organs_hit": [
+      "Colon",
+      "Liver",
+      "Small Intestine"
+    ],
+    "sentence": "this review examines the role of the gut microbiota in masld pathogenesis and highlights its potential as a therapeutic target.&#xa0;the gut-liver axis facilitates bidirectional communication between the intestine and the liver, thereby influencing metabolic regulation.",
+    "pmid": "42700342",
+    "title": "Decoding dysbiosis: the role of gut microbiota in MASLD progression and emerging therapeutic interventions.",
+    "abstract": "Metabolic dysfunction-associated steatotic liver disease (MASLD), affects a substantial proportion of the global population and is closely associated with metabolic disorders. The gut microbiota, comprising a diverse community of microorganisms within the gastrointestinal tract, plays a crucial role in maintaining host health. Dysbiosis, defined as an imbalance in this microbial ecosystem, has been increasingly implicated in the development and progression of liver diseases, including MASLD. This review examines the role of the gut microbiota in MASLD pathogenesis and highlights its potential as a therapeutic target.&#xa0;The gut-liver axis facilitates bidirectional communication between the intestine and the liver, thereby influencing metabolic regulation. In MASLD, dysbiosis characterized by reduced microbial diversity and an increased abundance of Gram-negative bacteria leads to altered bile acid metabolism, increased intestinal permeability, enhanced endotoxin translocation, and hepatic inflammation. Additionally, it disrupts short-chain fatty acid production and interferes with the endocannabinoid system and choline metabolism, collectively driving disease progression. Emerging non-invasive diagnostic approaches, including gut microbiome profiling, show promise for early detection. Although specific pharmacological treatments remain limited, microbiota-targeted strategies such as probiotics, prebiotics, and synbiotics aim to restore microbial balance. Furthermore, emerging modalities within microbiome-based therapies, including mesenchymal stromal cell therapy and bacteriophage therapy, offer potential for targeted modulation of the gut microbiota and liver repair.&#xa0;The gut microbiota-liver axis plays a central role in the pathogenesis of MASLD. Growing insights into this relationship have driven the development of microbiome-based diagnostic and therapeutic approaches. Non-invasive diagnostic tools, particularly gut microbiome profiling, show promise for early detection. Therapeutically, microbiota-targeted strategies including probiotics, prebiotics, synbiotics, and emerging modalities such as cellular and bacteriophage-based therapies offer potential to restore microbial balance and improve liver function. Nevertheless, robust clinical studies are essential to validate their efficacy, safety, and applicability in personalized MASLD management."
+  },
+  {
+    "pair_key": "Colon|Small Intestine",
+    "o1": "Colon",
+    "o2": "Small Intestine",
+    "organs_hit": [
+      "Colon",
+      "Lung",
+      "Small Intestine"
+    ],
+    "sentence": "this review focuses on gut-to-lung mechanisms, including immune cell trafficking, epithelial barrier regulation, and the role of gut microbiota and its metabolites.",
+    "pmid": "42588546",
+    "title": "The Impact of Plant-Derived Foods and Medicines on the Lung-Gut Axis and Microbiota Cross-Talk.",
+    "abstract": "The gut-lung axis is one of the bidirectional mucosal communication networks linking intestinal microbiota, microbial metabolites, immune regulation, and respiratory inflammation. This narrative review summarizes mechanistic and translational evidence identified through a structured but non-systematic search. This review focuses on gut-to-lung mechanisms, including immune cell trafficking, epithelial barrier regulation, and the role of gut microbiota and its metabolites. Among these metabolites, short-chain fatty acids (SCFAs), particularly acetate, propionate, and butyrate, are key mediators of interorgan communication and are mainly produced through microbial fermentation of dietary fibers and polysaccharides. Unlike previous reviews, reverse lung-to-gut mechanisms are also discussed, whereby respiratory infection, smoking, and lung injury may disrupt intestinal barrier integrity, alter gut microbiota composition, and promote intestinal immune dysregulation. Among plant-derived interventions, dietary fibers, polysaccharides, and polyphenols appear promising, mainly through SCFA-dependent immune modulation, enrichment of metabolite-producing bacteria, and subsequent suppression of inflammatory pathways. Some compounds may also act through microbiota-independent mechanisms, including direct antioxidant effects, epithelial barrier protection, and inhibition of inflammatory signaling pathways. Overall, SCFA-mediated immune regulation is the best-supported mechanism, whereas lung-to-gut signaling remains less established. Most evidence remains preclinical, highlighting the need for standardized human studies evaluating dose, safety, and clinically meaningful respiratory outcomes."
+  },
+  {
+    "pair_key": "Heart|Muscle",
+    "o1": "Heart",
+    "o2": "Muscle",
+    "organs_hit": [
+      "Heart",
+      "Liver",
+      "Muscle"
+    ],
+    "sentence": "morphological and functional characterizations detected a set of phenotypes remarkably associated to polg disorders, including cardiac, skeletal muscle, hepatic and gonadal defects, as well as mitochondrial dysfunctions and, notably, a perturbed mitochondria-to-nucleus retrograde signaling (creb and hypoxia pathways).",
+    "pmid": "33469036",
+    "title": "Efficient clofilium tosylate-mediated rescue of POLG-related disease phenotypes in zebrafish.",
+    "abstract": "The DNA polymerase gamma (Polg) is a nuclear-encoded enzyme involved in DNA replication in animal mitochondria. In humans, mutations in the POLG gene underlie a set of mitochondrial diseases characterized by mitochondrial DNA (mtDNA) depletion or deletion and multiorgan defects, named POLG disorders, for which an effective therapy is still needed. By applying antisense strategies, ENU- and CRISPR/Cas9-based mutagenesis, we have generated embryonic, larval-lethal and adult-viable zebrafish Polg models. Morphological and functional characterizations detected a set of phenotypes remarkably associated to POLG disorders, including cardiac, skeletal muscle, hepatic and gonadal defects, as well as mitochondrial dysfunctions and, notably, a perturbed mitochondria-to-nucleus retrograde signaling (CREB and Hypoxia pathways). Next, taking advantage of preliminary evidence on the candidate molecule Clofilium tosylate (CLO), we tested CLO toxicity and then its efficacy in our zebrafish lines. Interestingly, at well tolerated doses, the CLO drug could successfully rescue mtDNA and Complex I respiratory activity to normal levels, even in mutant phenotypes worsened by treatment with Ethidium Bromide. In addition, the CLO drug could efficiently restore cardio-skeletal parameters and mitochondrial mass back to normal values. Altogether, these evidences point to zebrafish as a valuable vertebrate organism to faithfully phenocopy multiple defects detected in POLG patients. Moreover, this model represents an excellent platform to screen, at the whole-animal level, candidate molecules with therapeutic effects in POLG disorders."
+  },
+  {
+    "pair_key": "Colon|Lung",
+    "o1": "Colon",
+    "o2": "Lung",
+    "organs_hit": [
+      "Colon",
+      "Lung",
+      "Small Intestine"
+    ],
+    "sentence": "recent research has investigated the interplay between the gut and the lungs, known as the gut-lung axis, highlighting the role of the gut microbiome in copd pathogenesis.",
+    "pmid": "39280360",
+    "title": "Gut Microbiota Modulation in the Management of Chronic Obstructive Pulmonary Disease: A Literature Review.",
+    "abstract": "Chronic obstructive pulmonary disease (COPD) represents a significant global health burden, characterized by progressive airflow limitation and exacerbations that significantly impact patient morbidity and mortality. Recent research has investigated the interplay between the gut and the lungs, known as the gut-lung axis, highlighting the role of the gut microbiome in COPD pathogenesis. Dysbiosis, characterized by microbial imbalance, has implications for COPD, influencing disease progression and susceptibility to exacerbations. This comprehensive review integrates current scientific literature on gut microbiota modulation as a therapeutic avenue for COPD management. Through a thorough discussion of studies investigating probiotics, prebiotics, synbiotics, antibiotics, dietary fiber, and fecal microbiota transplantation, this review summarizes the influence of these interventions on COPD via the gut-lung axis through the modulation of systemic inflammation, mucosal immunity, and metabolic processes. The interventions highlighted here show potential in preventing COPD exacerbations, preserving lung function, and improving patient quality of life. By compiling the latest scientific evidence, this review provides a comprehensive framework for physicians and researchers to deduce the effectiveness of gut microbiome modulation as an adjunctive therapeutic strategy in COPD management."
+  }
+]
