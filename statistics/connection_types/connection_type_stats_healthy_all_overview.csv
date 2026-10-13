@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,"Healthy (all papers, no thr.)"
+Condition filter,healthy
+Pair selection,>=1 condition paper
+Organ pairs in scope,70
+Organs in scope,14
+Pairs with >=1 type,69
+Pairs without type,1
+% pairs classified,98.6
+Total type assignments,73
+Mean types per pair (all pairs),1.04
+Mean types per classified pair,1.06
+Pairs with 0 / 1 / 2 / 3 types,1 / 65 / 4 / 0
+Distinct types used,6
+Unique papers in scope,1585
+Papers per pair: mean,28.19
+Papers per pair: median,7.0
+Papers per pair: max,499
+Pairs with 0 papers,0
+Shannon diversity of types (bits),1.115

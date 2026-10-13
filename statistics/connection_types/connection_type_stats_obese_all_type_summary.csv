@@ -1,0 +1,13 @@
+﻿type,n_pairs,pct_of_pairs,pct_of_assignments,n_pairs_exclusive,n_pairs_shared_with_other_type,n_unique_papers,papers_per_pair_mean,papers_per_pair_median,papers_per_pair_min,papers_per_pair_max,papers_per_pair_sd,OO_mean,n_organs_involved,most_frequent_organs,top_pairs_by_papers
+Direct glucose transfer,57,79.2,74.0,57.0,0.0,3551.0,75.72,18.0,1.0,752.0,141.38,0.0897,14.0,"Brain (13), Small Intestine (12), Colon (11)",Brain-Small Intestine; Liver-Small Intestine; Liver-WAT
+Adipokine/myokine signaling,9,12.5,11.7,5.0,4.0,22.0,2.56,2.0,1.0,5.0,1.33,0.019,9.0,"Spleen (3), Pancreas (3), Lung (3)",Heart-Pancreas; Lung-WAT; Heart-Spleen
+Hormonal glucose control,4,5.6,5.2,1.0,3.0,9.0,2.5,2.0,1.0,5.0,1.73,0.0178,5.0,"Pancreas (3), Heart (2), Adrenal Glands (1)",Heart-Pancreas; Pancreas-Spleen; Pancreas-Thyroid
+Nerve connection,3,4.2,3.9,1.0,2.0,23.0,7.67,3.0,1.0,19.0,9.87,0.0309,5.0,"Heart (2), Adrenal Glands (1), Spleen (1)",Kidney-WAT; Heart-Spleen; Adrenal Glands-Heart
+Inflammatory/cytokine crosstalk,2,2.8,2.6,0.0,2.0,8.0,4.0,4.0,4.0,4.0,0.0,0.0207,3.0,"WAT (2), Lung (1), Spleen (1)",Lung-WAT; Spleen-WAT
+No type assigned,1,1.4,,0.0,,7.0,7.0,7.0,7.0,7.0,,0.0266,2.0,"Bone Marrow (1), Liver (1)",Bone Marrow-Liver
+Mineral/electrolyte-coupled metabolic regulation,1,1.4,1.3,1.0,0.0,1.0,1.0,1.0,1.0,1.0,,0.0109,2.0,"Bone Marrow (1), Kidney (1)",Bone Marrow-Kidney
+Other physical connection,1,1.4,1.3,0.0,1.0,4.0,4.0,4.0,4.0,4.0,,0.0235,2.0,"Spleen (1), WAT (1)",Spleen-WAT
+Other Hormonal influence,0,,,,,,,,,,,,,,
+Ketone body exchange,0,,,,,,,,,,,,,,
+Metabolite crosstalk,0,,,,,,,,,,,,,,
+Circadian/clock synchronization,0,,,,,,,,,,,,,,

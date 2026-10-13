@@ -1,0 +1,73 @@
+﻿organ_1,organ_2,n_papers,top3_hormones,n_distinct_hormones,top3_metabolites,n_distinct_metabolites,top3_proteins,n_distinct_proteins
+Brain,Small Intestine,752,Insulin (183); GLP-1 (133); Leptin (99),47,glucose (153); fatty acids (116); serotonin (32),50,GLP-1 receptor (31); AMPK (16); Proopiomelanocortin (15),168
+Liver,Small Intestine,516,Insulin (185); GLP-1 (27); Leptin (11),18,glucose (142); fatty acids (86); cholesterol (74),63,FXR (64); AMPK (35); Tumor necrosis factor (29),268
+Liver,WAT,419,Insulin (276); Adiponectin (58); Leptin (53),29,glucose (207); fatty acids (58); cholesterol (25),59,Tumor necrosis factor (41); AMPK (38); Fibroblast growth factor 21 (27),333
+Colon,Small Intestine,368,Insulin (117); GLP-1 (29); Leptin (14),25,fatty acids (89); glucose (78); tryptophan (23),41,AMPK (24); FXR (22); AKT (18),191
+Brain,WAT,314,Leptin (140); Insulin (109); NPY (25),46,glucose (71); fatty acids (20); oxygen (10),34,leptin receptor (22); Proopiomelanocortin (15); ucp1 (10),143
+Colon,Liver,187,Insulin (64); GLP-1 (6); Leptin (4),11,glucose (58); fatty acids (33); cholesterol (25),49,FXR (18); AMPK (15); tlr4 (9),125
+Brain,Liver,179,Insulin (106); Leptin (31); Cortisol (7),30,glucose (89); fatty acids (15); cholesterol (11),43,AKT (19); PI3K (13); insulin receptor (12),141
+Small Intestine,WAT,173,Insulin (79); Leptin (19); GLP-1 (14),21,glucose (49); fatty acids (37); cholesterol (10),33,ucp1 (10); Interleukin 6 (9); AMPK (9),102
+Brain,Colon,154,Insulin (44); Leptin (15); GLP-1 (12),26,fatty acids (40); glucose (19); serotonin (8),26,tlr4 (5); AMPK (5); Proopiomelanocortin (4),50
+Muscle,WAT,148,Insulin (95); Adiponectin (15); Leptin (15),22,glucose (63); fatty acids (20); oxygen (10),32,AMPK (16); AKT (13); GLUT4 (12),137
+Liver,Muscle,111,Insulin (91); Leptin (14); Adiponectin (14),19,glucose (73); fatty acids (15); cholesterol (10),35,AKT (22); AMPK (21); insulin receptor (12),92
+Brain,Thyroid,100,TSH (44); Leptin (36); T3 (30),34,glucose (23); cholesterol (6); phosphate (2),13,Proopiomelanocortin (7); ucp1 (6); mc4r (6),39
+Colon,WAT,98,Insulin (46); Leptin (15); Adiponectin (6),8,fatty acids (25); glucose (22); cholesterol (4),21,ucp1 (11); AMPK (8); PGC-1α (6),68
+Liver,Pancreas,68,Insulin (53); Glucagon (9); GLP-1 (8),24,glucose (44); fatty acids (4); cholesterol (2),22,ERK (5); Interleukin 6 (5); AKT (4),65
+Heart,WAT,63,Insulin (20); Adiponectin (9); Leptin (6),16,glucose (18); fatty acids (6); oxygen (4),17,FABP (4); AMPK (3); sirt1 (3),55
+Heart,Liver,60,Insulin (27); Adiponectin (5); Testosterone (2),15,glucose (20); fatty acids (7); cholesterol (6),21,Tumor necrosis factor (5); AMPK (5); AKT (4),77
+Pancreas,WAT,56,Insulin (41); Leptin (11); Adiponectin (6),13,glucose (22); cholesterol (5); fatty acids (3),13,Pancreatic lipase (3); Tumor necrosis factor (3); Fibroblast growth factor 21 (2),50
+Brain,Pancreas,52,Insulin (32); Glucagon (10); GLP-1 (8),29,glucose (30); amp (2); serotonin (2),18,FOXO (2); Insulin like growth factor 1 (2); ERK (2),37
+Kidney,Liver,50,Insulin (25); Leptin (2); GLP-1 (2),11,glucose (15); fatty acids (7); cholesterol (5),25,"Epidermal growth factor receptor (5); Creatine kinase, M-type (5); Cyclic GMP-AMP synthase (3)",61
+Heart,Kidney,47,Insulin (11); GLP-1 (5); Ghrelin (3),20,glucose (19); oxygen (6); cholesterol (4),14,"Creatine kinase, M-type (12); Renin (5); Epidermal growth factor receptor (4)",55
+Pancreas,Small Intestine,36,Insulin (24); GLP-1 (17); Glucagon (7),20,glucose (19); fatty acids (3); adp (2),7,TGR5 (3); GLP-1 receptor (3); Pancreatic lipase (1),18
+Bone Marrow,WAT,30,Insulin (13); Leptin (2); GLP-1 (1),7,glucose (8); cholesterol (4); amp (2),7,Interleukin 6 (3); FABP (3); AKT (2),41
+Adrenal Glands,Brain,28,ACTH (14); Cortisol (12); Insulin (9),18,fatty acids (4); glucose (4); amp (2),10,Cortistatin (2); Cytochrome P450 family 17 subfamily A member 1 (1); Proopiomelanocortin (1),11
+Brain,Heart,28,Insulin (9); Leptin (3); BNP (3),16,glucose (6); nitric oxide (3); cholesterol (3),11,C-reactive protein (2); Caveolin 1 (1); Apolipoprotein B (1),30
+Heart,Muscle,20,Insulin (8); Leptin (2); GLP-1 (1),5,glucose (8); fatty acids (5); oxygen (4),17,PGC-1α (3); Myostatin (2); FATP (2),34
+Heart,Small Intestine,20,Insulin (5); Progesterone (1); Leptin (1),4,glucose (5); fatty acids (5); cholesterol (2),18,Tumor necrosis factor (3); Interleukin 6 (3); tlr4 (2),48
+Kidney,Small Intestine,20,Insulin (6); GLP-1 (3); GIP (2),9,glucose (7); fatty acids (6); creatinine (3),20,Tumor necrosis factor (2); SGLT2 (2); Interleukin 6 (1),18
+Kidney,WAT,19,Insulin (8); Leptin (5); Aldosterone (1),8,glucose (8); fatty acids (3); lactate (2),11,Renin (2); Thyroglobulin (2); Angiotensinogen (2),28
+Brain,Muscle,18,Insulin (9); Leptin (5); Irisin (3),4,glucose (8); serine (2); fatty acids (2),7,AMPK (4); ACC (2); AKT (2),20
+Liver,Thyroid,18,Insulin (8); T3 (7); TSH (6),10,cholesterol (4); glucose (4); atp (1),6,lxr (2); ucp1 (2); Iodothyronine deiodinase 2 (2),36
+Muscle,Pancreas,18,Insulin (16); Leptin (2); GLP-1 (2),8,glucose (14); fatty acids (4); glycogen (2),12,AKT (3); insulin receptor (3); IRS-1 (3),21
+Brain,Kidney,17,Insulin (6); Leptin (4); Glucocorticoids (3),17,glucose (5); dehydroepiandrosterone (1); nitric oxide (1),5,Growth differentiation factor 15 (4); Renin (4); Rhodopsin (1),25
+Thyroid,WAT,17,T3 (8); Leptin (7); Insulin (5),12,glucose (3); oxygen (1); cholesterol (1),6,ucp1 (2); Iodothyronine deiodinase 2 (2); FABP (2),27
+Lung,Small Intestine,14,GLP-1 (2); Leptin (2); GIP (1),4,glucose (4); fatty acids (2); fructose (1),6,GLP-1 receptor (2); Thymic stromal lymphopoietin (1); Interleukin 6 (1),8
+Colon,Lung,11,Leptin (2); GLP-1 (1),2,glucose (3); fatty acids (3); phosphate (1),6,Pyrroline-5-carboxylate reductase 1 (1); Elastin (1); GLP-1 receptor (1),4
+Colon,Pancreas,11,Insulin (7); Leptin (1); Adiponectin (1),7,glucose (3); serine (1); fructose (1),6,Insulin like growth factor 1 (3); Adrenomedullin (1); mTOR (1),10
+Colon,Heart,9,Insulin (2); Progesterone (1),2,fatty acids (2); nitric oxide (2); glucose (2),10,"Tumor necrosis factor (2); Interleukin 6 (2); Protein phosphatase, Mg2+/Mn2+ dependent 1K (1)",38
+Heart,Lung,9,Insulin (2); ET-1 (1),2,nitric oxide (2); amp (1); fatty acids (1),6,,0
+Liver,Spleen,9,Insulin (2); Leptin (2); Erythropoietin (1),5,glucose (4); fructose (1); aspartate (1),7,Interleukin 6 (3); C-reactive protein (2); Interleukin 16 (1),15
+Muscle,Small Intestine,9,Insulin (6),1,glucose (3); fatty acids (2); glycogen (1),11,Janus kinase 1 (1); Signal transducer and activator of transcription 2 (1); jak2 (1),3
+Bone Marrow,Brain,7,Leptin (4); Insulin (2); Estradiol (1),4,,0,leptin receptor (2); Pleiotrophin (1); Syndecan 3 (1),9
+Bone Marrow,Liver,7,Insulin (4),1,glucose (2); serine (1); palmitate (1),3,tlr4 (3); cd11c (2); mTOR (1),12
+Colon,Kidney,6,Insulin (3); GLP-1 (1); Aldosterone (1),3,oxygen (1); xanthine (1); uric acid (1),5,Renin (2); ERK (1); p38 (1),12
+Bone Marrow,Small Intestine,5,Insulin (1),1,glucose (1); fatty acids (1); leucine (1),3,Interleukin 10 (1); Wnt family member 10B (1); Transforming growth factor beta receptor 1 (1),6
+Heart,Pancreas,5,Insulin (4); T3 (1); Irisin (1),6,glucose (3); fatty acids (1); fatty acyl-coa (1),5,Myostatin (1); Tumor necrosis factor (1); Brain derived neurotrophic factor (1),9
+Heart,Thyroid,5,TSH (3); Insulin (3); T4 (2),6,glucose (3); cholesterol (3); fatty acids (1),5,Iodothyronine deiodinase 1 (1); Stearoyl-CoA desaturase (1); Solute carrier family 16 member 2 (1),9
+Kidney,Lung,4,Insulin (1),1,dutp (1); oxygen (1),2,AKT (2); Myostatin (1); Tet methylcytosine dioxygenase 2 (1),8
+Kidney,Muscle,4,Insulin (2); PTH (1); Resistin (1),3,atp (1); glucose (1); phosphate (1),3,Janus kinase 1 (1); Signal transducer and activator of transcription 2 (1); jak2 (1),6
+Kidney,Pancreas,4,Insulin (1),1,serine (2); glucose (1); cholesterol (1),7,mTOR (1); AMPK (1); SGLT2 (1),3
+Liver,Lung,4,Insulin (2); Leptin (1),2,glucose (1); amp (1); adenosine (1),4,leptin receptor (1); AMPK (1); PGC-1α (1),4
+Lung,WAT,4,Insulin (2); GLP-1 (1); GIP (1),3,glucose (2); acetyl-coa (1); taurine (1),6,C-reactive protein (1); SREBP (1); Epidermal growth factor receptor (1),9
+Spleen,WAT,4,Insulin (2); Leptin (2); GH (1),4,glucose (2); cholesterol (2); glutamate (1),4,Interleukin 10 (1); Interleukin 18 (1); Interleukin 4 (1),8
+Heart,Spleen,3,,0,creatinine (1),1,C-C motif chemokine receptor 2 (1); iNOS (1); COX-2 (1),6
+Muscle,Thyroid,3,Insulin (2); TSH (1); T3 (1),7,glucose (1); amp (1); cholesterol (1),8,insulin receptor (1); IRS-1 (1); Myostatin (1),7
+Small Intestine,Spleen,3,GLP-1 (2); Insulin (2),2,,0,tlr4 (2); FXR (2); AMPK (1),7
+Small Intestine,Thyroid,3,Leptin (2); GLP-1 (1); Insulin (1),6,,0,cd36 (1); GLUT5 (1); per2 (1),8
+Adrenal Glands,WAT,2,Insulin (1); Aldosterone (1); Mineralocorticoids (1),4,fatty acids (1),1,Renin (1),1
+Bone Marrow,Colon,2,Insulin (1),1,,0,Transforming growth factor beta receptor 1 (1); TGR5 (1); SMAD family member 2 (1),3
+Brain,Lung,2,Leptin (1),1,,0,,0
+Colon,Muscle,2,Insulin (1),1,glucose (2); glycogen (1),2,,0
+Colon,Spleen,2,GLP-1 (1); Insulin (1),2,glucose (1),1,tlr4 (1),1
+Colon,Thyroid,2,Irisin (1); Insulin (1),2,,0,,0
+Kidney,Spleen,2,LH (1); GnRH (1); FSH (1),4,,0,Delta like non-canonical Notch ligand 1 (1); nlrp3 (1); Makorin ring finger protein 3 (1),3
+Kidney,Thyroid,2,,0,,0,ace2 (1),1
+Pancreas,Spleen,2,Insulin (1),1,glucose (2),1,glucokinase (1); GLUT2 (1),2
+Pancreas,Thyroid,2,T3 (1); Irisin (1); Insulin (1),3,glucose (1),1,Myostatin (1); Tumor necrosis factor (1); Brain derived neurotrophic factor (1),6
+Adrenal Glands,Heart,1,Insulin (1); T3 (1); Aldosterone (1),4,gmp (1),1,Adrenomedullin (1); nppb (1); Natriuretic peptide A (1),8
+Bone Marrow,Heart,1,,0,fatty acids (1),1,,0
+Bone Marrow,Kidney,1,,0,dutp (1); amp (1),2,C-X-C motif chemokine ligand 2 (1); C-X-C motif chemokine ligand 1 (1); BCL2 apoptosis regulator (1),6
+Brain,Spleen,1,LH (1); GnRH (1); FSH (1),4,,0,Delta like non-canonical Notch ligand 1 (1); nlrp3 (1); Makorin ring finger protein 3 (1),3
+Lung,Pancreas,1,,0,serine (1); methionine (1); s-adenosylmethionine (1),5,,0
+Lung,Spleen,1,,0,,0,,0

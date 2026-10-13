@@ -1,0 +1,8 @@
+﻿type (diagonal = pairs with type),Direct glucose transfer,Hormonal glucose control,Nerve connection,Other physical connection,Mineral/electrolyte-coupled metabolic regulation,Adipokine/myokine signaling,Inflammatory/cytokine crosstalk
+Direct glucose transfer,57,0,0,0,0,0,0
+Hormonal glucose control,0,11,2,0,1,2,0
+Nerve connection,0,2,5,0,0,2,0
+Other physical connection,0,0,0,2,0,0,1
+Mineral/electrolyte-coupled metabolic regulation,0,1,0,0,2,0,0
+Adipokine/myokine signaling,0,2,2,0,0,16,2
+Inflammatory/cytokine crosstalk,0,0,0,1,0,2,3

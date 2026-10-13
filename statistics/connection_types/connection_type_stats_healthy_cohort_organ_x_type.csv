@@ -1,0 +1,14 @@
+﻿organ,n_connections,Direct glucose transfer,Hormonal glucose control,Nerve connection,Other physical connection,Adipokine/myokine signaling,Inflammatory/cytokine crosstalk,No type assigned,n_type_assignments,n_distinct_types,shannon_diversity_bits,dominant_type,dominant_type_share_pct
+Pancreas,4,0,2,0,0,1,0,2,5,3,1.522,Hormonal glucose control,40.0
+Muscle,4,0,1,1,0,2,0,1,5,4,1.922,Adipokine/myokine signaling,40.0
+Spleen,4,0,1,0,1,0,1,2,5,4,1.922,No type assigned,40.0
+WAT,3,0,2,0,0,2,0,0,4,2,1.0,Hormonal glucose control,50.0
+Adrenal Glands,3,0,1,0,0,0,0,2,3,2,0.918,No type assigned,66.7
+Liver,2,1,1,0,0,0,1,0,3,3,1.585,Direct glucose transfer,33.3
+Kidney,2,0,0,1,1,0,0,0,2,2,1.0,Nerve connection,50.0
+Heart,2,0,1,1,0,0,0,0,2,2,1.0,Hormonal glucose control,50.0
+Bone Marrow,2,0,1,0,0,0,0,1,2,2,1.0,Hormonal glucose control,50.0
+Small Intestine,2,1,1,0,0,0,0,0,2,2,1.0,Direct glucose transfer,50.0
+Lung,2,0,0,2,0,0,0,0,2,1,0.0,Nerve connection,100.0
+Brain,1,0,0,1,0,0,0,0,1,1,0.0,Nerve connection,100.0
+Thyroid,1,0,1,0,0,1,0,0,2,2,1.0,Hormonal glucose control,50.0

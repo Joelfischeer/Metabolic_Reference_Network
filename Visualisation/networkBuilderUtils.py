@@ -77,7 +77,7 @@ def export_network_to_cytoscape_dashboard(
     directed: bool | None = None,
     include_legend: bool = True,
     title: str = "Metabolic Reference Network",
-    start_layout: str = "cose",
+    start_layout: str = "circle",
     info_panel_tabs: list | None = None,
     extra_topbar_buttons: list | None = None,
     total_possible_edges: int | None = None,
@@ -88,6 +88,7 @@ def export_network_to_cytoscape_dashboard(
     healthy_toggle_label: str | None = None,
     obese_toggle_label: str | None = None,
     comparison_upload_label: str | None = None,
+    oo_thresholds: dict | None = None,
 ):
     """
     Export a NetworkX graph to an interactive Cytoscape.js dashboard.
@@ -97,7 +98,7 @@ def export_network_to_cytoscape_dashboard(
     - Click edge → sidebar with key-player chips, notes, sources, PubMed papers
     - Click node → sidebar with organ description + connected edges summary
     - Search bar — type any molecule/keyword → matching edges highlight, results listed
-    - Layout switcher (force / circle / grid)
+    - Layout switcher (circle / grid)
     - Organ-specific node colours
     - Edge thickness reflects evidence strength
 
@@ -188,6 +189,7 @@ def export_network_to_cytoscape_dashboard(
 
     elements = []
     edge_details: dict = {}
+    all_oo_vals: list[float] = []  # collected for edge-width scaling
 
     # --- Nodes ---
     for node, attrs in graph.nodes(data=True):
@@ -248,6 +250,12 @@ def export_network_to_cytoscape_dashboard(
 
         edge_color = attrs.get("color", "#64748b")
 
+        # OO coefficients per condition (stored by build_viz for edge-width scaling)
+        oo_coeff         = float(attrs.get("oo_coeff",         0.0) or 0.0)
+        oo_coeff_healthy = float(attrs.get("oo_coeff_healthy", 0.0) or 0.0)
+        oo_coeff_obese   = float(attrs.get("oo_coeff_obese",   0.0) or 0.0)
+        all_oo_vals.extend([oo_coeff, oo_coeff_healthy, oo_coeff_obese])
+
         # Adaptive-threshold / comparison-toggle fields (see threshold_control
         # and comparison_toggle_label docstrings above) — bootstrap_mean is
         # None (edge always treated as robust, unaffected by the slider) for
@@ -269,6 +277,8 @@ def export_network_to_cytoscape_dashboard(
 
         edge_id = f"{u}__{v}"
         for cond, cdata in condition_variants_raw.items():
+            coo = oo_coeff_healthy if cond == "healthy" else (
+                  oo_coeff_obese   if cond == "obese"   else oo_coeff)
             condition_variants_light[cond] = {
                 "connection_type":                cdata.get("connection_type", ""),
                 "connection_type_others":         cdata.get("connection_type_others", []),
@@ -279,12 +289,20 @@ def export_network_to_cytoscape_dashboard(
                 "key_players_counts_metabolites": cdata.get("key_players_counts_metabolites", {}),
                 "key_players_counts_proteins":    cdata.get("key_players_counts_proteins", {}),
                 "pubmed_n":                       cdata.get("n_papers_found", 0),
+                "ooCoeff":                        coo,
             }
             edge_details[f"{edge_id}::{cond}"] = {
                 "ai_description": cdata.get("ai_description", ""),
                 "pubmed_papers":  cdata.get("papers", []),
                 "pubmed_query":   cdata.get("pubmed_query", ""),
             }
+        # Ensure every condition always has an explicit variant so that
+        # applyConditionVariant never falls back to the "all" baseline.
+        # pubmed_n=0 when there are no papers for that condition; ooCoeff
+        # is always present so edge-width updates correctly on mode switch.
+        for cond, coo in [("healthy", oo_coeff_healthy), ("obese", oo_coeff_obese)]:
+            if cond not in condition_variants_light:
+                condition_variants_light[cond] = {"pubmed_n": 0, "ooCoeff": coo}
 
         elements.append({
             "data": {
@@ -312,6 +330,7 @@ def export_network_to_cytoscape_dashboard(
                 "key_players_counts_proteins":    kp_cnt_proteins,
                 "key_players_bootstrap":          kp_bootstrap,
                 "pubmed_n": pubmed_n,
+                "ooCoeff":  oo_coeff,
             }
         })
 
@@ -333,6 +352,11 @@ def export_network_to_cytoscape_dashboard(
             "pubmed_papers": pubmed_papers,
             "pubmed_query": pubmed_query,
         }
+
+    # Max OO coefficient across all edges and conditions — baked into the
+    # edge-width function so the widest edge always fills the maxW slot.
+    _pos_oo = [v for v in all_oo_vals if v > 0]
+    max_oo_val = max(_pos_oo) if _pos_oo else 1.0
 
     elements_json = json.dumps(elements, ensure_ascii=False)
     edge_details_json = json.dumps(edge_details, ensure_ascii=False)
@@ -637,6 +661,17 @@ applyThresholdAndComparison();
 <button id="upload-comparison-clear-btn" class="ctrl-btn" title="Clear uploaded comparison"
         style="display:none" onclick="clearUploadedComparison()">✕ Clear comparison</button>"""
 
+    oo_filter_html = ""
+    oo_thresholds_js = json.dumps(oo_thresholds or {})
+    if oo_thresholds:
+        oo_filter_html = (
+            '<button id="oo-filter-btn" class="ctrl-btn" '
+            'title="Show only edges at or above the Otsuka–Ochiai elbow threshold '
+            'for the current condition (all / healthy / obese)" '
+            'onclick="window.toggleOoFilter && window.toggleOoFilter()">'
+            '🔬 ≥ OO threshold</button>'
+        )
+
     layer_overlay_css = ""
     layer_overlay_markup = ""
     layer_overlay_js = ""
@@ -741,20 +776,63 @@ function closeLayerOverlay() {
   /* ---- Top bar ---- */
   #topbar {{
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
+    flex-direction: column;
+    align-items: stretch;
     background: #1e293b;
     border-bottom: 1px solid #334155;
     flex-shrink: 0;
     z-index: 10;
   }}
 
-  #topbar h1 {{
-    font-size: 16px;
+  #topbar-title {{
+    font-size: 17px;
     font-weight: 700;
-    color: #f1f5f9;
-    white-space: nowrap;
+    color: #f8fafc;
+    text-align: center;
+    padding: 8px 20px 6px;
+    letter-spacing: 0.02em;
+    border-bottom: 1px solid #334155;
+  }}
+
+  #topbar-controls {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 20px;
+    flex-wrap: wrap;
+  }}
+
+  #comparison-box {{
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+  }}
+
+  .ctrl-group {{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px 10px 6px;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 8px;
+  }}
+
+  .ctrl-group-label {{
+    font-size: 9px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }}
+
+  .ctrl-group-btns {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
   }}
 
   #search-wrap {{
@@ -899,6 +977,11 @@ function closeLayerOverlay() {
 
   .info-section {{ display: none; }}
   .info-section.active {{ display: block; }}
+  #info-section-search.active {{ display: block; column-count: 2; column-gap: 36px; }}
+  #info-section-search .info-h2 {{ break-after: avoid; }}
+  #info-section-search table, #info-section-search .info-code,
+  #info-section-search .info-stat-grid, #info-section-search ul {{ break-inside: avoid; }}
+  @media (max-width: 900px) {{ #info-section-search.active {{ column-count: 1; }} }}
 
   .info-h2 {{
     font-size: 12px;
@@ -1330,16 +1413,12 @@ function closeLayerOverlay() {
 
 <!-- Top bar -->
 <div id="topbar">
+  <div id="topbar-title">{title}</div>
+  <div id="topbar-controls">
   <button id="info-btn" onclick="toggleInfoPanel()" title="How it works">i</button>
   {threshold_html}
-  {comparison_toggle_html}
-  {healthy_toggle_html}
-  {obese_toggle_html}
-  {comparison_upload_html}
   {topbar_extra_buttons_html}
   {layer_content_html}
-
-  <h1>{title}</h1>
 
   <div id="search-wrap">
     <span id="search-icon">🔍</span>
@@ -1366,9 +1445,33 @@ function closeLayerOverlay() {
     </div>
   </div>
 
-  <button class="ctrl-btn" onclick="runLayout('circle')" title="Circle layout">⭕ Circle</button>
+  <button class="ctrl-btn" onclick="runLayout('circle')" title="Circle layout"><span style="filter:grayscale(1)">⭕</span> Circle</button>
   <button class="ctrl-btn" onclick="runLayout('grid')" title="Grid layout">⊞ Grid</button>
   <button class="ctrl-btn" onclick="cy.fit()" title="Fit all">⤢ Fit</button>
+
+  <div id="comparison-box">
+    <div class="ctrl-group">
+      <div class="ctrl-group-label">Compare to reference</div>
+      <div class="ctrl-group-btns">
+      {comparison_upload_html}
+      </div>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-group-label">Edge Threshold</div>
+      <div class="ctrl-group-btns">
+      {oo_filter_html}
+      </div>
+    </div>
+    <div class="ctrl-group">
+      <div class="ctrl-group-label">Conditions</div>
+      <div class="ctrl-group-btns">
+      {comparison_toggle_html}
+      {healthy_toggle_html}
+      {obese_toggle_html}
+      </div>
+    </div>
+  </div>
+  </div>
 </div>
 
 <div id="upload-error-banner" style="display:none;position:fixed;top:48px;left:50%;transform:translateX(-50%);
@@ -1456,6 +1559,62 @@ elements.forEach(el => {{
 }});
 
 // ── Cytoscape init ────────────────────────────────────────────────────────
+// ── Node sizing: wrap each organ name and size the circles so the text fits inside ──
+// The label is split into at most three lines (at spaces) so that the text block
+// is as compact as possible; the circle must contain the block's diagonal. All
+// nodes share one diameter; if the longest name needs more than NODE_MAX_D the
+// font is shrunk step by step instead of letting the text leave the circle.
+const NODE_FONT_FAMILY = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+const NODE_PAD = 5;        // px between the text block and the circle border
+const NODE_MAX_D = 70;     // largest circle diameter before the font is reduced
+const _mctx = document.createElement('canvas').getContext('2d');
+
+function _splitLabel(words, mask) {{      // bit i of mask = line break after word i
+  const lines = [];
+  let cur = [words[0]];
+  for (let i = 1; i < words.length; i++) {{
+    if ((mask >> (i - 1)) & 1) {{ lines.push(cur.join(' ')); cur = [words[i]]; }}
+    else cur.push(words[i]);
+  }}
+  lines.push(cur.join(' '));
+  return lines;
+}}
+
+function _fitLabel(label, fs) {{
+  _mctx.font = '600 ' + fs + 'px ' + NODE_FONT_FAMILY;
+  const words = String(label).split(' ').filter(w => w.length > 0);
+  if (words.length === 0) return {{ text: '', d: 0 }};
+  let best = null;
+  const nMasks = 1 << (words.length - 1);
+  for (let mask = 0; mask < nMasks; mask++) {{
+    const lines = _splitLabel(words, mask);
+    if (lines.length > 3) continue;
+    const w = Math.max.apply(null, lines.map(l => _mctx.measureText(l).width));
+    const h = lines.length * fs * 1.2;
+    const d = Math.sqrt(w * w + h * h) + 2 * NODE_PAD;
+    if (!best || d < best.d - 0.01) best = {{ text: lines.join(String.fromCharCode(10)), d: d }};
+  }}
+  return best;
+}}
+
+let NODE_FONT_PX = 11;
+let NODE_SIZE = 52;
+(function () {{
+  const sizes = [11, 10.5, 10, 9.5, 9, 8.5, 8];
+  for (let k = 0; k < sizes.length; k++) {{
+    let maxD = 0;
+    elements.forEach(el => {{
+      if (!el.data.source) maxD = Math.max(maxD, _fitLabel(el.data.label, sizes[k]).d);
+    }});
+    NODE_FONT_PX = sizes[k];
+    NODE_SIZE = Math.max(52, Math.ceil(maxD));
+    if (maxD <= NODE_MAX_D) break;
+  }}
+  elements.forEach(el => {{
+    if (!el.data.source) el.data.wrapLabel = _fitLabel(el.data.label, NODE_FONT_PX).text;
+  }});
+}})();
+
 const cy = cytoscape({{
   container: document.getElementById('cy'),
   elements,
@@ -1464,14 +1623,17 @@ const cy = cytoscape({{
       selector: 'node',
       style: {{
         'background-color': 'data(color)',
-        'label': 'data(label)',
+        'label': 'data(wrapLabel)',
+        'text-wrap': 'wrap',
+        'line-height': 1.2,
         'color': '#f1f5f9',
         'text-valign': 'center',
         'text-halign': 'center',
-        'font-size': '11px',
+        'font-family': NODE_FONT_FAMILY,
+        'font-size': NODE_FONT_PX + 'px',
         'font-weight': '600',
-        'width': 52,
-        'height': 52,
+        'width': NODE_SIZE,
+        'height': NODE_SIZE,
         'border-width': 2,
         'border-color': 'rgba(255,255,255,0.15)',
         'text-outline-color': 'rgba(0,0,0,0.6)',
@@ -1486,14 +1648,20 @@ const cy = cytoscape({{
       style: {{
         'border-width': 3,
         'border-color': '#fbbf24',
-        'width': 60,
-        'height': 60,
+        'width': NODE_SIZE + 8,
+        'height': NODE_SIZE + 8,
       }}
     }},
     {{
       selector: 'edge',
       style: {{
-        'width': 2.5,
+        'width': function(ele) {{
+          var oo = ele.data('ooCoeff') || 0;
+          var maxOO = {max_oo_val:.6f};
+          var minW = 1.2, maxW = 6.5;
+          if (maxOO <= 0 || oo <= 0) return minW;
+          return minW + (maxW - minW) * Math.sqrt(oo / maxOO);
+        }},
         'line-color': 'data(color)',
         'target-arrow-color': 'data(color)',
         'target-arrow-shape': '{arrow_shape}',
@@ -1554,13 +1722,8 @@ const cy = cytoscape({{
   ],
   layout: {{
     name: '{start_layout}',
-    animate: {str(start_layout != 'circle').lower()},
+    animate: false,
     padding: 80,
-    nodeRepulsion: 15000,
-    idealEdgeLength: 180,
-    edgeElasticity: 200,
-    gravity: 0.25,
-    randomize: false,
   }}
 }});
 
@@ -1572,6 +1735,7 @@ let currentEdgeData = null;  // last edge displayed in sidebar
 function runLayout(name) {{
   cy.layout({{ name, animate: true, padding: 60 }}).run();
 }}
+
 
 function chipsHtml(items, cls, counts, unit) {{
   unit = unit || '×';
@@ -1709,6 +1873,30 @@ function renderEdgeSidebarContent(data) {{
 
   // ── Tab: Summary ──────────────────────────────────────────────────────
   let summaryHtml = '';
+
+  // Paper count + OO coefficient badge (condition-specific)
+  const _mode = window.__currentDisplayMode || 'all';
+  const _modeLabel = _mode === 'healthy' ? 'Healthy' : (_mode === 'obese' ? 'Obese' : 'All');
+  const _nPapers = data.pubmed_n || 0;
+  const _oo = data.ooCoeff || 0;
+  summaryHtml +=
+    '<div style="display:flex;gap:8px;margin-bottom:14px">' +
+    '<div style="flex:1;background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;' +
+    'padding:8px 12px;min-width:0">' +
+    '<div style="font-size:10px;color:#64748b;margin-bottom:3px;text-transform:uppercase;' +
+    'letter-spacing:0.05em">' + escHtml(_modeLabel) + ' papers</div>' +
+    '<div style="font-size:22px;font-weight:700;color:#e2e8f0;line-height:1">' +
+    _nPapers + '</div>' +
+    '</div>' +
+    '<div style="flex:1;background:#0f172a;border:1px solid #1e3a5f;border-radius:8px;' +
+    'padding:8px 12px;min-width:0">' +
+    '<div style="font-size:10px;color:#64748b;margin-bottom:3px;text-transform:uppercase;' +
+    'letter-spacing:0.05em">OO coefficient</div>' +
+    '<div style="font-size:22px;font-weight:700;color:#e2e8f0;line-height:1">' +
+    (_oo > 0 ? _oo.toFixed(4) : '<span style="color:#475569">—</span>') +
+    '</div>' +
+    '</div>' +
+    '</div>';
 
   if (data.connection_type) {{
     const allTypes = [data.connection_type, ...(data.connection_type_others || [])];
@@ -2115,10 +2303,22 @@ document.addEventListener('dblclick', function(e) {{
 // Python-baked is_ref_edge flag; this one recolors live from a CSV the
 // visitor loads in their own browser — nothing is ever uploaded anywhere).
 (function() {{
-  const HAS_HEALTHY = {("true" if healthy_toggle_label else "false")};
-  const HAS_OBESE   = {("true" if obese_toggle_label else "false")};
-  const HAS_UPLOAD  = {("true" if comparison_upload_label else "false")};
-  if (!HAS_HEALTHY && !HAS_OBESE && !HAS_UPLOAD) return;
+  const HAS_HEALTHY   = {("true" if healthy_toggle_label else "false")};
+  const HAS_OBESE     = {("true" if obese_toggle_label else "false")};
+  const HAS_UPLOAD    = {("true" if comparison_upload_label else "false")};
+  const HAS_OO_FILTER = {("true" if oo_thresholds else "false")};
+  if (!HAS_HEALTHY && !HAS_OBESE && !HAS_UPLOAD && !HAS_OO_FILTER) return;
+
+  // OO threshold filter state — thresholds keyed by display mode ('all'/'healthy'/'obese')
+  const OO_THRESHOLDS = {oo_thresholds_js};
+  let ooFilterActive = false;
+
+  window.toggleOoFilter = function() {{
+    ooFilterActive = !ooFilterActive;
+    const btn = document.getElementById('oo-filter-btn');
+    if (btn) btn.classList.toggle('active', ooFilterActive);
+    applyDisplay();
+  }};
 
   const CMP_COLOR_SHARED = '#22c55e', CMP_COLOR_ONLY_LIT = '#38bdf8', CMP_COLOR_ONLY_REF = '#f97316';
 
@@ -2130,7 +2330,7 @@ document.addEventListener('dblclick', function(e) {{
     'connection_type', 'connection_type_others',
     'key_players_hormones', 'key_players_metabolites', 'key_players_proteins',
     'key_players_counts_hormones', 'key_players_counts_metabolites', 'key_players_counts_proteins',
-    'pubmed_n',
+    'pubmed_n', 'ooCoeff',
   ];
 
   cy.edges().forEach(e => {{
@@ -2162,6 +2362,8 @@ document.addEventListener('dblclick', function(e) {{
 
   let displayMode = 'all'; // 'all' | 'healthy' | 'obese' — mutually exclusive
   let uploadedRefPairs = null; // Set of "OrganA__OrganB" (alphabetically sorted) or null
+  // 'uploaded' | 'healthy_cohort' | 'obese_cohort' | null — drives the "ONLY in …" label
+  let comparisonSource = null;
 
   function normPairKey(a, b) {{ return [a, b].sort().join('__'); }}
   function currentOrgans() {{
@@ -2206,6 +2408,20 @@ document.addEventListener('dblclick', function(e) {{
         return;
       }}
 
+      // OO threshold filter: hide edges whose current-condition OO coefficient
+      // is below the elbow threshold for that condition.
+      // applyConditionVariant() above has already swapped in the right ooCoeff.
+      if (HAS_OO_FILTER && ooFilterActive) {{
+        const oo     = e.data('ooCoeff') || 0;
+        const thresh = OO_THRESHOLDS[displayMode] !== undefined
+          ? OO_THRESHOLDS[displayMode]
+          : (OO_THRESHOLDS['all'] || 0);
+        if (oo < thresh) {{
+          e.style('display', 'none');
+          return;
+        }}
+      }}
+
       if (!uploadedRefPairs) {{
         const shown = edgeInCurrentMode(e);
         e.style('display', shown ? 'element' : 'none');
@@ -2219,16 +2435,23 @@ document.addEventListener('dblclick', function(e) {{
 
       if (!displayed && !inUpload) {{ e.style('display', 'none'); return; }}
 
+      const _condLabel = displayMode === 'healthy' ? 'Healthy'
+                       : displayMode === 'obese'   ? 'Obese'
+                       : 'All';
+
       e.style('display', 'element');
       if (displayed && inUpload) {{
         e.data('color', CMP_COLOR_SHARED);
         e.data('connection_type', 'SHARED — in both networks');
       }} else if (displayed) {{
         e.data('color', CMP_COLOR_ONLY_LIT);
-        e.data('connection_type', 'ONLY in the currently displayed network');
+        e.data('connection_type', `ONLY in the ${{_condLabel}} network`);
       }} else {{
         e.data('color', CMP_COLOR_ONLY_REF);
-        e.data('connection_type', 'ONLY in the uploaded reference network');
+        const _refLabel = comparisonSource === 'healthy_cohort' ? 'Healthy cohort reference network'
+                        : comparisonSource === 'obese_cohort'   ? 'Obese cohort reference network'
+                        : 'uploaded reference network';
+        e.data('connection_type', `ONLY in the ${{_refLabel}}`);
       }}
     }});
 
@@ -2236,6 +2459,8 @@ document.addEventListener('dblclick', function(e) {{
       const refreshed = cy.getElementById(currentEdgeData.id);
       if (refreshed && refreshed.length) showEdgeSidebar(refreshed.data());
     }}
+    // Re-evaluate function-based styles (edge width from ooCoeff) after data swap
+    cy.style().update();
   }}
 
   window.setDisplayMode = function(mode) {{
@@ -2286,9 +2511,44 @@ document.addEventListener('dblclick', function(e) {{
     return pairs;
   }}
 
+  // IDs of cohort buttons injected by _inject_cohort_comparison
+  const COHORT_BTN_IDS = ['healthy-cohort-btn', 'obese-cohort-btn'];
+
+  function _activateComparisonSource(source) {{
+    // Transform the matching cohort button into "✕ Clear"; restore others
+    const sourceMap = {{ 'healthy_cohort': 'healthy-cohort-btn', 'obese_cohort': 'obese-cohort-btn' }};
+    COHORT_BTN_IDS.forEach(function(id) {{
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      if (btn._origHTML) {{ btn.innerHTML = btn._origHTML; btn._origHTML = null; }}
+      btn.classList.remove('active');
+      btn.onclick = btn._origOnclick || btn.onclick;
+    }});
+    const activeId = sourceMap[source];
+    if (activeId) {{
+      const btn = document.getElementById(activeId);
+      if (btn) {{
+        if (!btn._origHTML) btn._origHTML = btn.innerHTML;
+        if (!btn._origOnclick) btn._origOnclick = btn.onclick;
+        btn.innerHTML = '✕ Clear comparison';
+        btn.onclick = function() {{ window.clearUploadedComparison(); }};
+        btn.classList.add('active');
+      }}
+    }}
+  }}
+
   window.clearUploadedComparison = function() {{
     uploadedRefPairs = null;
+    comparisonSource = null;
     clearUploadError();
+    // Restore any cohort button that was transformed
+    COHORT_BTN_IDS.forEach(function(id) {{
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      if (btn._origHTML) {{ btn.innerHTML = btn._origHTML; btn._origHTML = null; }}
+      if (btn._origOnclick) {{ btn.onclick = btn._origOnclick; btn._origOnclick = null; }}
+      btn.classList.remove('active');
+    }});
     const clearBtn = document.getElementById('upload-comparison-clear-btn');
     if (clearBtn) clearBtn.style.display = 'none';
     const uploadBtn = document.getElementById('upload-comparison-btn');
@@ -2296,6 +2556,24 @@ document.addEventListener('dblclick', function(e) {{
     const fileInput = document.getElementById('comparison-file-input');
     if (fileInput) fileInput.value = '';
     applyDisplay();
+  }};
+
+  // Called by cohort-comparison buttons (not the file picker) so the upload
+  // button's active/bright state is NOT changed — it should only light up
+  // when the user has actually uploaded their own CSV file.
+  window.loadExternalComparison = function(csvText, source) {{
+    try {{
+      uploadedRefPairs = parseComparisonCsv(csvText);
+      comparisonSource = source || null;
+      clearUploadError();
+      _activateComparisonSource(source);
+      applyDisplay();
+    }} catch (err) {{
+      uploadedRefPairs = null;
+      comparisonSource = null;
+      showUploadError(err.message);
+      applyDisplay();
+    }}
   }};
 
   const fileInput = document.getElementById('comparison-file-input');
@@ -2307,6 +2585,7 @@ document.addEventListener('dblclick', function(e) {{
       reader.onload = function(evt) {{
         try {{
           uploadedRefPairs = parseComparisonCsv(evt.target.result);
+          comparisonSource = 'uploaded';
           clearUploadError();
           const clearBtn = document.getElementById('upload-comparison-clear-btn');
           if (clearBtn) clearBtn.style.display = '';
@@ -2315,6 +2594,7 @@ document.addEventListener('dblclick', function(e) {{
           applyDisplay();
         }} catch (err) {{
           uploadedRefPairs = null;
+          comparisonSource = null;
           showUploadError(err.message);
           fileInput.value = '';
           const clearBtn = document.getElementById('upload-comparison-clear-btn');

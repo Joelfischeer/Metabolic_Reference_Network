@@ -1,0 +1,32 @@
+﻿organ_1,organ_2,n_types,types,n_papers,OO,median_year,latest_year
+Brain,Small Intestine,1,Direct glucose transfer,752,0.4665,2022.0,2026
+Liver,Small Intestine,1,Direct glucose transfer,516,0.3236,2024.0,2026
+Liver,WAT,1,Direct glucose transfer,419,0.3203,2019.0,2026
+Colon,Small Intestine,1,Direct glucose transfer,368,0.3052,2026.0,2026
+Brain,WAT,1,Direct glucose transfer,314,0.2374,2017.0,2026
+Colon,Liver,1,Direct glucose transfer,187,0.1744,2024.0,2026
+Brain,Liver,1,Direct glucose transfer,179,0.1249,2018.0,2026
+Small Intestine,WAT,1,Direct glucose transfer,173,0.1176,2023.0,2026
+Brain,Colon,1,Direct glucose transfer,154,0.1421,2023.0,2026
+Muscle,WAT,1,Direct glucose transfer,148,0.2396,2018.0,2026
+Liver,Muscle,1,Direct glucose transfer,111,0.1658,2017.0,2026
+Brain,Thyroid,1,Direct glucose transfer,100,0.2167,2017.0,2026
+Colon,WAT,1,Direct glucose transfer,98,0.0991,2023.0,2026
+Liver,Pancreas,1,Direct glucose transfer,68,0.1207,2018.0,2026
+Heart,WAT,1,Direct glucose transfer,63,0.1163,2020.0,2026
+Heart,Liver,1,Direct glucose transfer,60,0.1022,2020.5,2026
+Pancreas,WAT,1,Direct glucose transfer,56,0.1077,2016.0,2026
+Brain,Pancreas,1,Direct glucose transfer,52,0.0913,2012.5,2026
+Kidney,Liver,1,Direct glucose transfer,50,0.1015,2023.0,2026
+Heart,Kidney,1,Direct glucose transfer,47,0.2306,2024.0,2026
+Pancreas,Small Intestine,1,Direct glucose transfer,36,0.0568,2020.5,2026
+Bone Marrow,WAT,1,Direct glucose transfer,30,0.1234,2016.5,2026
+Adrenal Glands,Brain,1,Direct glucose transfer,28,0.1321,2008.5,2024
+Brain,Heart,1,Direct glucose transfer,28,0.0472,2019.0,2026
+Heart,Muscle,1,Direct glucose transfer,20,0.0722,2015.5,2026
+Muscle,Pancreas,1,Direct glucose transfer,18,0.0677,2019.5,2026
+Lung,Small Intestine,1,Direct glucose transfer,14,0.0516,2024.0,2026
+Colon,Lung,1,Direct glucose transfer,11,0.0603,2022.0,2026
+Heart,Lung,1,Direct glucose transfer,9,0.0902,2020.0,2026
+Liver,Spleen,1,Direct glucose transfer,9,0.0488,2019.0,2025
+Kidney,Lung,1,Direct glucose transfer,4,0.0478,2023.5,2025

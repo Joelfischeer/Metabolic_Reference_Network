@@ -1,0 +1,132 @@
+% =============================================================================
+%  Workflow of the reference network generation (Figure 4)
+%  Compile with pdflatex, lualatex or xelatex (TeX Live full / Overleaf):
+%      pdflatex workflow_diagram.tex
+%  Needs: tikz, fontawesome5 (icons), helvet.
+%  Numbers are macros (section "Numbers") -- change them in one place.
+% =============================================================================
+\documentclass[tikz,border=8pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.92]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{fontawesome5}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
+
+% ---------------------------------------------------------------- Numbers ---
+% Unique papers (a paper that matches several organ pairs is counted once).
+% Counted as organ-pair assignments instead: all 27\,416, healthy 1\,973, obese 4\,373.
+\newcommand{\nOrgans}{14}
+\newcommand{\nPairs}{91}
+\newcommand{\nAll}{22\,451}
+\newcommand{\nHealthy}{1\,585}
+\newcommand{\nObese}{3\,594}
+\newcommand{\nBoth}{200}
+\newcommand{\nOrganPapers}{700}
+\newcommand{\nYearsPairs}{20}
+\newcommand{\nYearsOrgans}{5}
+
+% ----------------------------------------------------------------- Colours ---
+\definecolor{cDb}{HTML}{475569}     % database / retrieval
+\definecolor{cFilter}{HTML}{2563A8} % filtering
+\definecolor{cCond}{HTML}{0F766E}   % condition subsets
+\definecolor{cKey}{HTML}{B45309}    % key players
+\definecolor{cType}{HTML}{7C3AED}   % connection types
+\definecolor{cDesc}{HTML}{BE185D}   % descriptions
+\definecolor{cOrgan}{HTML}{15803D}  % organ branch
+\definecolor{cViz}{HTML}{1E293B}    % visualization
+\definecolor{cLine}{HTML}{64748B}
+
+% ------------------------------------------------------------------ Styles ---
+\tikzset{
+  box/.style={
+    rounded corners=5pt, draw=#1, line width=1.1pt, fill=#1!6,
+    text width=5.4cm, align=center, inner sep=9pt, minimum height=2.7cm,
+    text depth=0pt, anchor=center
+  },
+  icon/.style={
+    circle, fill=#1, text=white, minimum size=1.0cm, inner sep=0pt,
+    font=\large, draw=white, line width=1.5pt
+  },
+  arrow/.style={-{Latex[length=3.2mm,width=2.4mm]}, line width=1.3pt, draw=cLine},
+  line/.style={line width=1.3pt, draw=cLine}
+}
+
+% \step{name}{(x,y)}{colour}{icon}{title}{body}
+\newcommand{\step}[6]{%
+  \node[box=#3] (#1) at #2 {{\bfseries\normalsize #5}\\[4pt]{\footnotesize #6}};
+  \node[icon=#3] at ($(#1.north west)+(0.75,0)$) {#4};
+}
+
+\begin{document}
+\begin{tikzpicture}[>=Latex]
+
+% ============================================================== Row 1 =======
+\step{pubmed}{(0,0)}{cDb}{\faDatabase}{PubMed search}
+  {One query per organ pair, last \nYearsPairs{} years:\\
+   organ MeSH terms and aliases \textit{and} 22 metabolic \textit{and} 21 crosstalk terms
+   (title/abstract)}
+
+\step{papers}{(6.9,0)}{cFilter}{\faFilter}{Papers per organ--organ pair}
+  {Local same-sentence co-location and multi-organ filter\\[3pt]
+   \textbf{n = \nAll{}} unique papers\\ (\nPairs{} pairs, \nOrgans{} organs)}
+
+\step{subsets}{(13.8,0)}{cCond}{\faSlidersH}{Condition subsets}
+  {A) all papers: \textbf{\nAll}\\
+   B) healthy keywords: \textbf{\nHealthy}\\
+   C) obese keywords: \textbf{\nObese}\\[2pt]
+   (\nBoth{} papers are in both B and C)}
+
+\draw[arrow] (pubmed.east) -- (papers.west);
+\draw[arrow] (papers.east) -- (subsets.west);
+
+% ============================================================== Row 2 =======
+\step{organsearch}{(0,-5.4)}{cOrgan}{\faLungs}{Organ literature}
+  {Per organ: MeSH/aliases \textit{and} metabolic terms, last \nYearsOrgans{} years\\[3pt]
+   \textbf{n = \nOrganPapers} papers\\ (\nOrgans{} organs $\times$ 50)}
+
+\step{keyplayers}{(6.9,-5.4)}{cKey}{\faKey}{Key player extraction}
+  {Hormones, metabolites and proteins/transporters matched in title, abstract and MeSH
+   terms; synonyms merged; papers counted per term}
+
+\step{types}{(13.8,-5.4)}{cType}{\faTags}{Connection types (LLM)}
+  {llama3.2, 5 independent runs, majority vote:\\ up to 3 of 11 connection types per pair}
+
+\step{edgedesc}{(20.7,-5.4)}{cDesc}{\faCommentDots}{Connection descriptions (LLM)}
+  {25 random papers $\rightarrow$ 5 selected $\rightarrow$ cited summary of 3--4 sentences}
+
+% dashed container around the three per-pair analyses
+\begin{scope}[on background layer]
+  \node[fit=(keyplayers)(types)(edgedesc), draw=cLine, dashed, line width=1pt,
+        rounded corners=8pt, inner sep=14pt, fill=black!2,
+        label={[anchor=north west, font=\small\itshape, text=cLine]south west:%
+               For each organ--organ pair}] (pairbox) {};
+\end{scope}
+
+% arrows: PubMed -> organ literature; condition subsets -> three analyses
+\draw[arrow] (pubmed.south) -- (organsearch.north);
+
+\coordinate (bus) at ($(subsets.south)+(0,-1.15)$);
+\draw[line]  (subsets.south) -- (bus);
+\draw[line]  (bus -| keyplayers.north) -- (bus -| edgedesc.north);
+\draw[arrow] (bus -| keyplayers.north) -- (keyplayers.north);
+\draw[arrow] (bus -| types.north)      -- (types.north);
+\draw[arrow] (bus -| edgedesc.north)   -- (edgedesc.north);
+
+% ============================================================== Row 3 =======
+\step{organdesc}{(0,-11.2)}{cOrgan}{\faRobot}{Organ descriptions (LLM)}
+  {6 papers $\rightarrow$ description of five sentences: substrates, energy pathways and
+   hormonal regulation}
+
+\node[box=cViz, text width=9.2cm, minimum height=2.7cm] (viz) at (13.8,-11.2)
+  {{\bfseries\normalsize Visualization}\\[4pt]
+   {\footnotesize Interactive HTML dashboard (Cytoscape.js):\\
+    \nOrgans{} organs and \nPairs{} connections, views for all papers, healthy and obese}};
+\node[icon=cViz] at ($(viz.north west)+(0.75,0)$) {\faProjectDiagram};
+
+\draw[arrow] (organsearch.south) -- (organdesc.north);
+\draw[arrow] (organdesc.east) -- (viz.west);
+
+\draw[arrow] (pairbox.south) -- (viz.north -| pairbox.south);
+
+\end{tikzpicture}
+\end{document}

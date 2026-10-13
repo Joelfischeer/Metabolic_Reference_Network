@@ -28,8 +28,9 @@ from matplotlib.patches import PathPatch, Patch
 
 from Visualisation.networkBuilderUtils import ORGAN_COLORS, DEFAULT_NODE_COLOR
 
-HERE    = Path(__file__).resolve().parent
-OUT_DIR = HERE / "visualizations"
+HERE        = Path(__file__).resolve().parent
+OUT_DIR     = HERE / "visualizations"
+OUT_DIR_ALL = HERE / "visualizations_all_papers"
 DPI     = 600
 # The combined multi-row/column overview grids are physically much larger
 # (up to ~22x30 in) than the standalone per-case plots, so a naive DPI bump
@@ -136,6 +137,56 @@ def _load_reference_case(results_filename: str = "metabolic_literature_results.j
     return organ_papers, links
 
 
+def _load_reference_condition_all(condition: str):
+    """Sankey/barplot data for all 91 pairs filtered by condition keyword only
+    (no OO threshold). Pairs with ≥1 condition-filtered paper are included."""
+    from run_metabolic_lit_search import (
+        CONDITION_KEYWORDS, _compile_patterns, _filter_by_condition,
+    )
+
+    base = HERE / "reference_network_only_metabolic"
+    results_path = base / "metabolic_literature_results.json"
+    if not results_path.exists():
+        raise FileNotFoundError(f"{results_path.name} not found in {base}")
+    data = json.loads(results_path.read_text(encoding="utf-8"))
+    pats = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    results_by_pair: dict[tuple, dict] = {}
+    for v in data.values():
+        o1, o2 = v.get("organ1", ""), v.get("organ2", "")
+        if not o1 or not o2:
+            continue
+        papers = _filter_by_condition(v.get("papers", []), pats)
+        if not papers:
+            continue
+        key = (min(o1, o2), max(o1, o2))
+        results_by_pair[key] = {**v, "papers": papers, "n_papers_found": len(papers)}
+
+    if not results_by_pair:
+        raise FileNotFoundError(f"No pairs with condition '{condition}' papers found")
+
+    pairs = sorted(results_by_pair.keys())
+    organs = sorted({o for pair in pairs for o in pair})
+
+    organ_pmids: dict[str, set] = {o: set() for o in organs}
+    for pair in pairs:
+        pmids = {p.get("pmid") for p in results_by_pair[pair].get("papers", []) if p.get("pmid")}
+        organ_pmids[pair[0]].update(pmids)
+        organ_pmids[pair[1]].update(pmids)
+    organ_papers = {o: len(organ_pmids[o]) for o in organs}
+
+    links = []
+    for pair in pairs:
+        o1, o2 = pair
+        n = results_by_pair[pair].get("n_papers_found", 0)
+        if n <= 0:
+            continue
+        if organ_papers.get(o1, 0) < organ_papers.get(o2, 0):
+            o1, o2 = o2, o1
+        links.append({"source": o1, "target": o2, "value": n})
+    return organ_papers, links
+
+
 _COSINE_SUBTITLE = "Total Papers Found per Organ (direct per-organ search, same-sentence organ + crosstalk-keyword co-mentions)"
 _REFERENCE_SUBTITLE = "Total Papers Found per Organ (union of papers across all its predefined organ-organ axes)"
 
@@ -144,30 +195,32 @@ CASES = {
                              "Metabolic Network — Healthy", _COSINE_SUBTITLE),
     "met_obese":           (lambda: _load_cosine_case("Edge_cosine_met_reference_network", "obese"),
                              "Metabolic Network — Obese", _COSINE_SUBTITLE),
-    "general_healthy":     (lambda: _load_cosine_case("Edge_cosine_general_reference_network", "healthy"),
-                             "Metabolic + Hormonal Network — Healthy", _COSINE_SUBTITLE),
-    "general_obese":       (lambda: _load_cosine_case("Edge_cosine_general_reference_network", "obese"),
-                             "Metabolic + Hormonal Network — Obese", _COSINE_SUBTITLE),
     "reference_metabolic": (_load_reference_case,
                              "Metabolic Reference Network — All Connections", _REFERENCE_SUBTITLE),
-    # healthy/obese use their own condition-filtered results file + cohort
-    # CSV -- not the "all" results filtered down to that scope's pairs.
-    "reference_metabolic_healthy": (
-        lambda: _load_reference_case("metabolic_literature_results_healthy.json",
-                                      "healthy_cohort_connections.csv"),
-        "Metabolic Reference Network — Healthy Connections", _REFERENCE_SUBTITLE),
-    "reference_metabolic_obese": (
-        lambda: _load_reference_case("metabolic_literature_results_obese.json",
-                                      "obese_cohort_connections.csv"),
-        "Metabolic Reference Network — Obese Connections", _REFERENCE_SUBTITLE),
+}
+
+CASES_ALL = {
+    "reference_metabolic_all": (
+        _load_reference_case,
+        "Metabolic Reference Network — All Connections", _REFERENCE_SUBTITLE),
+    "reference_metabolic_healthy_all": (
+        lambda: _load_reference_condition_all("healthy"),
+        "Metabolic Reference Network — Healthy (all papers, 14 organs)", _REFERENCE_SUBTITLE),
+    "reference_metabolic_obese_all": (
+        lambda: _load_reference_condition_all("obese"),
+        "Metabolic Reference Network — Obese (all papers, 14 organs)", _REFERENCE_SUBTITLE),
 }
 
 # Row order + label for the combined reference-network overview grid
 # (draw_reference_overview_grid) -- all/healthy/obese only.
 _REFERENCE_OVERVIEW_ROWS = {
-    "reference_metabolic":         "All Connections",
-    "reference_metabolic_healthy": "Healthy Connections",
-    "reference_metabolic_obese":   "Obese Connections",
+    "reference_metabolic": "All Connections",
+}
+
+_REFERENCE_OVERVIEW_ROWS_ALL = {
+    "reference_metabolic_all":         "All Connections",
+    "reference_metabolic_healthy_all": "Healthy (all papers)",
+    "reference_metabolic_obese_all":   "Obese (all papers)",
 }
 
 
@@ -189,12 +242,8 @@ CONNECTION_TYPE_LABELS[UNCLASSIFIED_KEY] = UNCLASSIFIED_LABEL
 # classification (run_metabolic_lit_search.py --condition healthy|obese) --
 # not the "all" classification filtered down to that scope's pairs.
 CONNECTION_TYPE_SCOPES = {
-    "all":     ("all_organ_connections.csv",      "All Connections",
-                "metabolic_connection_types.json"),
-    "healthy": ("healthy_cohort_connections.csv",  "Healthy Connections",
-                "metabolic_connection_types_healthy.json"),
-    "obese":   ("obese_cohort_connections.csv",    "Obese Connections",
-                "metabolic_connection_types_obese.json"),
+    "all": ("all_organ_connections.csv", "No Condition",
+            "metabolic_connection_types.json", None),
 }
 
 
@@ -214,6 +263,88 @@ def _load_connection_types(
         o1, o2 = key.split("|", 1)
         pair_types[(min(o1, o2), max(o1, o2))] = entry.get("types", [])
     return pair_types
+
+
+def _oo_pairs_for_condition(condition: str) -> list[tuple[str, str]]:
+    """
+    Return the list of (organ1, organ2) pairs that pass the OO elbow threshold
+    for the given condition, using all 91 pairs of the 14-organ reference network.
+
+    Steps: load base results → filter papers by condition keywords → compute
+    OO per pair → kneedle elbow → keep pairs with OO >= threshold.
+    """
+    from threshold_utils import kneedle_elbow
+    from run_metabolic_lit_search import (
+        CONDITION_KEYWORDS, _compile_patterns, _filter_by_condition,
+    )
+
+    ref_dir = HERE / "reference_network_only_metabolic"
+    results_path = ref_dir / "metabolic_literature_results.json"
+    data = json.loads(results_path.read_text(encoding="utf-8"))
+    pats = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    pair_papers: dict[tuple, list] = {}
+    for key, entry in data.items():
+        parts = key.split("|", 1)
+        if len(parts) != 2:
+            continue
+        o1, o2 = min(parts), max(parts)
+        papers = _filter_by_condition(entry.get("papers", []), pats)
+        pair_papers[(o1, o2)] = papers
+
+    organ_pmids: dict[str, set] = {}
+    for (o1, o2), papers in pair_papers.items():
+        pmids = {p.get("pmid") for p in papers if p.get("pmid")}
+        organ_pmids.setdefault(o1, set()).update(pmids)
+        organ_pmids.setdefault(o2, set()).update(pmids)
+    organ_n = {o: len(s) for o, s in organ_pmids.items()}
+
+    oo_vals: dict[tuple, float] = {}
+    for (o1, o2), papers in pair_papers.items():
+        n_co  = len([p for p in papers if p.get("pmid")])
+        n1, n2 = organ_n.get(o1, 0), organ_n.get(o2, 0)
+        denom  = (n1 * n2) ** 0.5 if n1 > 0 and n2 > 0 else 0
+        oo_vals[(o1, o2)] = (n_co / denom) if denom > 0 else 0.0
+
+    nonzero = sorted(v for v in oo_vals.values() if v > 0)
+    thresh  = kneedle_elbow(nonzero) if len(nonzero) >= 3 else 0.0
+
+    selected = [(o1, o2) for (o1, o2), oo in oo_vals.items() if oo >= thresh and oo > 0]
+    print(f"    OO threshold ({condition}): {thresh:.4f} → {len(selected)}/{len(pair_papers)} pairs")
+    return selected
+
+
+def _condition_pairs_all(condition: str) -> list[tuple[str, str]]:
+    """Return all pairs with ≥1 condition-filtered paper (no OO threshold)."""
+    from run_metabolic_lit_search import (
+        CONDITION_KEYWORDS, _compile_patterns, _filter_by_condition,
+    )
+
+    ref_dir = HERE / "reference_network_only_metabolic"
+    data = json.loads((ref_dir / "metabolic_literature_results.json").read_text(encoding="utf-8"))
+    pats = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    selected = []
+    for key, entry in data.items():
+        parts = key.split("|", 1)
+        if len(parts) != 2:
+            continue
+        o1, o2 = min(parts), max(parts)
+        if _filter_by_condition(entry.get("papers", []), pats):
+            selected.append((o1, o2))
+
+    print(f"    Condition filter ({condition}): {len(selected)}/91 pairs with ≥1 paper")
+    return selected
+
+
+CONNECTION_TYPE_SCOPES_ALL = {
+    "all_no_threshold":  ("all_organ_connections.csv", "No Condition",
+                          "metabolic_connection_types.json", None),
+    "healthy_all": ("all_organ_connections.csv", "Healthy (all papers, 14 organs)",
+                    "metabolic_connection_types.json", "healthy"),
+    "obese_all":   ("all_organ_connections.csv", "Obese (all papers, 14 organs)",
+                    "metabolic_connection_types.json", "obese"),
+}
 
 
 def _connection_type_counts(pair_types: dict, pairs: list[tuple[str, str]]):
@@ -677,7 +808,7 @@ def main():
         print("[i] reference_metabolic_overview_grid")
         grid_rows = [
             (_REFERENCE_OVERVIEW_ROWS[name], *reference_overview_rows[name])
-            for name in ("reference_metabolic", "reference_metabolic_healthy", "reference_metabolic_obese")
+            for name in ("reference_metabolic",)
             if name in reference_overview_rows
         ]
         draw_reference_overview_grid(grid_rows, OUT_DIR / "reference_metabolic_overview_grid.png")
@@ -705,7 +836,7 @@ def main():
 
     grid_rows = []  # (row_label, type_count, organ_type_count), top-to-bottom
 
-    for scope_name, (csv_name, scope_label, types_filename) in CONNECTION_TYPE_SCOPES.items():
+    for scope_name, (csv_name, scope_label, types_filename, oo_cond) in CONNECTION_TYPE_SCOPES.items():
         print(f"[i] connection_types_{scope_name}")
         csv_fp = ref_dir / csv_name
         if not csv_fp.exists():
@@ -717,7 +848,12 @@ def main():
             print(f"  [!] skipped: {exc}")
             continue
 
-        pairs = _load_edge_filter(csv_fp)
+        if oo_cond is not None:
+            # healthy/obese: restrict to OO-threshold-passing pairs
+            pairs = _oo_pairs_for_condition(oo_cond)
+        else:
+            pairs = _load_edge_filter(csv_fp)
+
         type_count, organ_type_count = _connection_type_counts(scope_pair_types, pairs)
         plot_title = f"Metabolic Reference Network — {scope_label}"
         case_dir = OUT_DIR / f"connection_types_{scope_name}"
@@ -738,6 +874,78 @@ def main():
     print("[i] connection_types_grid")
     draw_connection_type_grid(grid_rows, order, colors,
                                OUT_DIR / "connection_types_grid.png")
+
+    # ── No-threshold healthy/obese variants ───────────────────────────────────
+    print()
+    reference_overview_rows_all: dict[str, tuple] = {}
+
+    for case_name, (loader, title, subtitle) in CASES_ALL.items():
+        print(f"[i] {case_name}")
+        try:
+            organ_papers, links = loader()
+        except FileNotFoundError as exc:
+            print(f"  [!] skipped: {exc}")
+            continue
+
+        case_dir = OUT_DIR_ALL / case_name
+        draw_chord_diagram(organ_papers, links, title, case_dir / "sankey.png")
+        draw_barplot(organ_papers, title, subtitle, case_dir / "papers_per_organ_barplot.png")
+
+        if case_name in _REFERENCE_OVERVIEW_ROWS_ALL:
+            reference_overview_rows_all[case_name] = (organ_papers, links)
+
+    if reference_overview_rows_all:
+        print("[i] reference_metabolic_overview_grid_all")
+        grid_rows_all = [
+            (_REFERENCE_OVERVIEW_ROWS_ALL[name], *reference_overview_rows_all[name])
+            for name in ("reference_metabolic_all", "reference_metabolic_healthy_all", "reference_metabolic_obese_all")
+            if name in reference_overview_rows_all
+        ]
+        draw_reference_overview_grid(
+            grid_rows_all,
+            OUT_DIR_ALL / "reference_metabolic_overview_grid.png",
+        )
+
+    # Connection-type plots for the no-threshold scopes
+    ct_grid_rows_all = []
+
+    for scope_name, (csv_name, scope_label, types_filename, cond) in CONNECTION_TYPE_SCOPES_ALL.items():
+        print(f"[i] connection_types_{scope_name}")
+        csv_fp = ref_dir / csv_name
+        if not csv_fp.exists():
+            print(f"  [!] skipped: {csv_fp.name} not found")
+            continue
+        try:
+            scope_pair_types = _load_connection_types(types_filename)
+        except FileNotFoundError as exc:
+            print(f"  [!] skipped: {exc}")
+            continue
+
+        if cond is None:
+            pairs = _load_edge_filter(csv_fp)
+        else:
+            pairs = _condition_pairs_all(cond)
+        type_count, organ_type_count = _connection_type_counts(scope_pair_types, pairs)
+        plot_title = f"Metabolic Reference Network — {scope_label}"
+        case_dir_all = OUT_DIR_ALL / f"connection_types_{scope_name}"
+
+        draw_connection_type_barplot(
+            type_count, order, colors, plot_title,
+            f"How often each connection type was assigned ({len(pairs)} organ pairs, "
+            f"LLM-classified, up to 3 types per pair)",
+            case_dir_all / "connection_type_frequency_barplot.png")
+        draw_organ_connection_type_stacked_barplot(
+            organ_type_count, order, colors, plot_title,
+            "Connection types touching each organ (stacked; a pair with multiple "
+            "types counts toward each)",
+            case_dir_all / "connection_type_per_organ_stacked_barplot.png")
+
+        ct_grid_rows_all.append((scope_label, type_count, organ_type_count))
+
+    if ct_grid_rows_all:
+        print("[i] connection_types_grid_all")
+        draw_connection_type_grid(ct_grid_rows_all, order, colors,
+                                   OUT_DIR_ALL / "connection_types_grid.png")
 
 
 if __name__ == "__main__":

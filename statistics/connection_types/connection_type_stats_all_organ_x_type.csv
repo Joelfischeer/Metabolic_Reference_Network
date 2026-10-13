@@ -1,0 +1,15 @@
+﻿organ,n_connections,Direct glucose transfer,Hormonal glucose control,Nerve connection,Other physical connection,Mineral/electrolyte-coupled metabolic regulation,Adipokine/myokine signaling,Inflammatory/cytokine crosstalk,No type assigned,n_type_assignments,n_distinct_types,shannon_diversity_bits,dominant_type,dominant_type_share_pct
+Adrenal Glands,13,1,6,2,1,1,1,0,4,16,7,2.406,Hormonal glucose control,37.5
+Bone Marrow,13,5,0,0,0,1,5,1,2,14,5,2.006,Direct glucose transfer,35.7
+Brain,13,13,0,0,0,0,0,0,0,13,1,0.0,Direct glucose transfer,100.0
+Colon,13,11,0,0,0,0,1,0,1,13,3,0.773,Direct glucose transfer,84.6
+Heart,13,10,2,2,0,0,2,0,0,16,4,1.549,Direct glucose transfer,62.5
+Kidney,13,10,1,1,0,2,0,0,0,14,4,1.292,Direct glucose transfer,71.4
+Liver,13,11,1,0,0,0,0,0,1,13,3,0.773,Direct glucose transfer,84.6
+Lung,13,6,0,1,1,0,6,1,0,15,5,1.839,Direct glucose transfer,40.0
+Muscle,13,8,2,2,0,0,3,1,0,16,5,1.953,Direct glucose transfer,50.0
+Pancreas,13,7,3,0,0,0,4,0,1,15,4,1.746,Direct glucose transfer,46.7
+Small Intestine,13,12,1,0,0,0,0,0,0,13,2,0.391,Direct glucose transfer,92.3
+Spleen,13,4,3,1,1,0,4,1,1,15,7,2.523,Direct glucose transfer,26.7
+Thyroid,13,7,3,0,0,0,4,0,0,14,3,1.493,Direct glucose transfer,50.0
+WAT,13,9,0,1,1,0,2,2,0,15,5,1.738,Direct glucose transfer,60.0

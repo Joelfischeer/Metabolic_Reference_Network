@@ -221,7 +221,7 @@ LLM_MAX_PAPERS = 100            # Max abstracts sent per pair
 #  Visualization
 # -----------------------------------------------------------------------------
 
-VIZ_TITLE = "Metabolic Reference Network — Metabolic Query"
+VIZ_TITLE = "Metabolic Reference Network"
 
 
 # =============================================================================

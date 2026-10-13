@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,Obese (PET cohort edges)
+Condition filter,obese
+Pair selection,PET cohort edges (own LLM classification)
+Organ pairs in scope,9
+Organs in scope,12
+Pairs with >=1 type,8
+Pairs without type,1
+% pairs classified,88.9
+Total type assignments,11
+Mean types per pair (all pairs),1.22
+Mean types per classified pair,1.38
+Pairs with 0 / 1 / 2 / 3 types,1 / 5 / 3 / 0
+Distinct types used,5
+Unique papers in scope,111
+Papers per pair: mean,12.33
+Papers per pair: median,5.0
+Papers per pair: max,52
+Pairs with 0 papers,1
+Shannon diversity of types (bits),2.187

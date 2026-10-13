@@ -1,0 +1,7 @@
+﻿type (diagonal = pairs with type),Direct glucose transfer,Hormonal glucose control,Nerve connection,Other physical connection,Adipokine/myokine signaling,Inflammatory/cytokine crosstalk
+Direct glucose transfer,57,0,0,0,0,0
+Hormonal glucose control,0,1,0,0,1,0
+Nerve connection,0,0,3,0,2,0
+Other physical connection,0,0,0,1,0,1
+Adipokine/myokine signaling,0,1,2,0,10,0
+Inflammatory/cytokine crosstalk,0,0,0,1,0,1

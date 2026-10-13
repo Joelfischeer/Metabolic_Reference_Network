@@ -1,0 +1,71 @@
+﻿organ_1,organ_2,n_types,types,n_papers,OO,median_year,latest_year
+Brain,Small Intestine,1,Direct glucose transfer,499,0.5613,2023.0,2026
+Colon,Small Intestine,1,Direct glucose transfer,270,0.3457,2026.0,2026
+Brain,Colon,1,Direct glucose transfer,185,0.2827,2024.0,2026
+Liver,Small Intestine,1,Direct glucose transfer,172,0.2791,2023.5,2026
+Colon,Liver,1,Direct glucose transfer,63,0.1389,2024.0,2026
+Brain,Thyroid,1,Direct glucose transfer,54,0.2172,2013.0,2026
+Lung,Small Intestine,1,Direct glucose transfer,53,0.1678,2025.0,2026
+Kidney,Small Intestine,1,Direct glucose transfer,51,0.1338,2025.0,2026
+Brain,Liver,1,Direct glucose transfer,39,0.0755,2020.0,2026
+Liver,WAT,1,Direct glucose transfer,35,0.1604,2020.0,2026
+Brain,Heart,1,Direct glucose transfer,35,0.1138,2020.0,2026
+Kidney,Liver,1,Direct glucose transfer,34,0.1535,2022.5,2026
+Adrenal Glands,Brain,1,Direct glucose transfer,32,0.2041,2006.5,2024
+Muscle,WAT,1,Direct glucose transfer,25,0.2351,2016.0,2026
+Colon,Lung,1,Direct glucose transfer,25,0.1075,2023.0,2026
+Heart,Kidney,1,Direct glucose transfer,23,0.1744,2021.0,2026
+Brain,WAT,1,Direct glucose transfer,22,0.0699,2019.5,2026
+Small Intestine,WAT,1,Direct glucose transfer,21,0.0559,2023.0,2026
+Colon,Kidney,1,Direct glucose transfer,20,0.0713,2025.0,2026
+Heart,Small Intestine,1,Direct glucose transfer,20,0.0545,2025.0,2026
+Heart,Muscle,1,Direct glucose transfer,19,0.1829,2015.0,2026
+Liver,Pancreas,1,Direct glucose transfer,19,0.1286,2017.0,2025
+Liver,Muscle,1,Direct glucose transfer,18,0.1032,2019.5,2026
+Heart,Liver,1,Direct glucose transfer,16,0.075,2021.5,2026
+Brain,Kidney,1,Direct glucose transfer,15,0.047,2021.0,2026
+Colon,WAT,1,Direct glucose transfer,13,0.047,2023.0,2026
+Brain,Muscle,1,Direct glucose transfer,12,0.0477,2024.0,2026
+Pancreas,Small Intestine,1,Direct glucose transfer,12,0.0472,2022.0,2026
+Heart,WAT,1,Direct glucose transfer,11,0.0846,2022.0,2026
+Brain,Pancreas,1,Direct glucose transfer,11,0.0516,2018.0,2026
+Brain,Lung,1,Direct glucose transfer,11,0.0416,2017.0,2026
+Colon,Heart,1,Direct glucose transfer,10,0.037,2024.5,2026
+Liver,Thyroid,1,Direct glucose transfer,9,0.0522,2021.0,2026
+Small Intestine,Thyroid,1,Direct glucose transfer,9,0.0303,2022.0,2026
+Liver,Lung,1,Direct glucose transfer,8,0.0436,2023.5,2026
+Bone Marrow,WAT,1,Direct glucose transfer,6,0.1062,2025.0,2026
+Muscle,Pancreas,1,Direct glucose transfer,6,0.0833,2023.5,2026
+Pancreas,WAT,1,Direct glucose transfer,6,0.0666,2016.0,2025
+Kidney,Pancreas,1,Direct glucose transfer,6,0.0656,2002.5,2024
+Thyroid,WAT,1,Direct glucose transfer,6,0.0571,2008.5,2026
+Bone Marrow,Brain,1,Direct glucose transfer,6,0.0449,2019.5,2026
+Colon,Thyroid,1,Direct glucose transfer,6,0.0275,2023.0,2026
+Liver,Spleen,1,Direct glucose transfer,5,0.0763,2022.0,2025
+Lung,Muscle,2,Nerve connection; Adipokine/myokine signaling,5,0.0559,2012.0,2021
+Heart,Lung,1,Direct glucose transfer,5,0.0458,2016.0,2024
+Bone Marrow,Small Intestine,1,Direct glucose transfer,4,0.0251,2024.0,2026
+Colon,Pancreas,1,Direct glucose transfer,4,0.0214,2020.0,2024
+Bone Marrow,Lung,1,Adipokine/myokine signaling,3,0.0632,2025.0,2026
+Bone Marrow,Heart,1,Direct glucose transfer,3,0.0543,2021.0,2026
+Bone Marrow,Liver,0,No type assigned,3,0.0324,2018.0,2025
+Kidney,Lung,1,Direct glucose transfer,3,0.0264,2021.0,2025
+Kidney,Spleen,1,Direct glucose transfer,2,0.0493,2023.0,2026
+Kidney,Muscle,1,Direct glucose transfer,2,0.0185,2017.5,2025
+Small Intestine,Spleen,1,Direct glucose transfer,2,0.0177,2026.0,2026
+Kidney,WAT,1,Nerve connection,2,0.0148,2024.5,2025
+Colon,Muscle,1,Direct glucose transfer,2,0.009,2024.0,2026
+Muscle,Small Intestine,1,Direct glucose transfer,2,0.0067,2024.0,2026
+Lung,Spleen,1,Adipokine/myokine signaling,1,0.0298,2026.0,2026
+Heart,Spleen,2,Nerve connection; Adipokine/myokine signaling,1,0.0256,2021.0,2021
+Spleen,WAT,2,Inflammatory/cytokine crosstalk; Other physical connection,1,0.025,2002.0,2002
+Adrenal Glands,WAT,1,Adipokine/myokine signaling,1,0.0151,2021.0,2021
+Lung,Pancreas,1,Adipokine/myokine signaling,1,0.0132,2009.0,2009
+Colon,Spleen,1,Adipokine/myokine signaling,1,0.012,2026.0,2026
+Muscle,Thyroid,1,Adipokine/myokine signaling,1,0.0119,2002.0,2002
+Heart,Pancreas,2,Hormonal glucose control; Adipokine/myokine signaling,1,0.0114,2026.0,2026
+Lung,Thyroid,1,Adipokine/myokine signaling,1,0.0113,1999.0,1999
+Brain,Spleen,1,Direct glucose transfer,1,0.0106,2022.0,2022
+Heart,Thyroid,1,Direct glucose transfer,1,0.0097,2004.0,2004
+Kidney,Thyroid,1,Direct glucose transfer,1,0.0094,2017.0,2017
+Bone Marrow,Colon,1,Direct glucose transfer,1,0.0085,2024.0,2024

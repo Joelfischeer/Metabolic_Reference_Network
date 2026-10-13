@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,Healthy (PET cohort edges)
+Condition filter,healthy
+Pair selection,PET cohort edges (own LLM classification)
+Organ pairs in scope,16
+Organs in scope,13
+Pairs with >=1 type,12
+Pairs without type,4
+% pairs classified,75.0
+Total type assignments,15
+Mean types per pair (all pairs),0.94
+Mean types per classified pair,1.25
+Pairs with 0 / 1 / 2 / 3 types,4 / 9 / 3 / 0
+Distinct types used,6
+Unique papers in scope,240
+Papers per pair: mean,15.12
+Papers per pair: median,3.0
+Papers per pair: max,172
+Pairs with 0 papers,4
+Shannon diversity of types (bits),2.239

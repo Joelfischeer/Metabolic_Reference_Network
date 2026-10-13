@@ -1,0 +1,71 @@
+﻿organ_1,organ_2,n_papers,top3_hormones,n_distinct_hormones,top3_metabolites,n_distinct_metabolites,top3_proteins,n_distinct_proteins
+Brain,Small Intestine,499,Insulin (36); Dopamine (19); Ghrelin (17),31,fatty acids (81); tryptophan (68); glucose (42),57,Brain derived neurotrophic factor (15); Tumor necrosis factor (11); Interleukin 6 (11),125
+Colon,Small Intestine,270,Insulin (16); GLP-1 (5); Melatonin (3),21,fatty acids (42); tryptophan (28); glucose (26),61,Tumor necrosis factor (19); Interleukin 6 (15); mTOR (8),152
+Brain,Colon,185,Dopamine (11); Insulin (9); Ghrelin (4),21,fatty acids (30); tryptophan (23); serotonin (11),36,Brain derived neurotrophic factor (3); Interleukin 4 (3); Tumor necrosis factor (3),35
+Liver,Small Intestine,172,Insulin (19); GLP-1 (5); Estradiol (2),17,glucose (26); fatty acids (24); cholesterol (14),40,FXR (13); Tumor necrosis factor (9); SREBP (7),131
+Colon,Liver,63,Insulin (11); Leptin (1); Resistin (1),7,glucose (10); fatty acids (7); acetate (3),23,FXR (7); SREBP (4); mTOR (2),58
+Brain,Thyroid,54,TSH (40); T4 (37); T3 (29),29,glucose (8); oxygen (3); cholesterol (2),7,Insulin like growth factor 1 (3); Thyroglobulin (2); ACC (1),20
+Lung,Small Intestine,53,VIP (1); Estriol (1),2,fatty acids (7); tryptophan (4); phosphate (3),27,Interleukin 6 (7); Tumor necrosis factor (3); GPR43/FFAR2 (2),34
+Kidney,Small Intestine,51,Insulin (4); PTH (2); GLP-1 (2),14,fatty acids (10); sulfate (5); creatinine (4),31,Interleukin 6 (3); Tumor necrosis factor (3); Aryl hydrocarbon receptor (2),41
+Brain,Liver,39,Insulin (15); Cortisol (6); Leptin (3),12,glucose (10); cholesterol (3); creatine (3),19,PI3K (3); insulin receptor (2); C-reactive protein (2),35
+Brain,Heart,35,Cortisol (3); Insulin (1); Melatonin (1),5,glucose (4); oxygen (3); fatty acids (2),14,Tumor necrosis factor (3); C-reactive protein (2); Brain derived neurotrophic factor (2),28
+Liver,WAT,35,Insulin (22); Adiponectin (4); Leptin (2),8,glucose (17); cholesterol (5); fatty acids (4),17,Fibroblast growth factor 21 (3); FOXO (2); Thyroglobulin (2),31
+Kidney,Liver,34,Insulin (4); Aldosterone (1); Angiotensin II (1),7,creatinine (8); glucose (6); atp (3),20,Albumin (5); Cytochrome P450 family 2 subfamily D member 6 (3); Cytochrome P450 family 3 subfamily A member 4 (3),47
+Adrenal Glands,Brain,32,Cortisol (24); ACTH (17); Insulin (9),22,glucose (15); lactate (3); dehydroepiandrosterone (3),17,corticotropin releasing hormone (2); Sex hormone binding globulin (2); Interleukin 6 (2),12
+Colon,Lung,25,T3 (1),1,fatty acids (4); phosphate (2); tryptophan (2),14,Interleukin 6 (3); Tumor necrosis factor (2); AKT (1),14
+Muscle,WAT,25,Insulin (17); Aldosterone (1); Angiotensin II (1),9,glucose (13); oxygen (3); fatty acids (3),14,IRS-1 (5); AMPK (5); insulin receptor (4),40
+Heart,Kidney,23,PTH (2); GH (1); Aldosterone (1),5,glucose (5); adenine (3); amp (2),15,"Creatine kinase, M-type (2); SGLT2 (2); Vinculin (1)",31
+Brain,WAT,22,Leptin (8); Insulin (4); GH (1),7,glucose (7); serotonin (2); fatty acids (2),8,Brain derived neurotrophic factor (3); AMPK (1); Apolipoprotein B (1),16
+Small Intestine,WAT,21,Insulin (10); GLP-1 (3); Leptin (2),9,glucose (7); fatty acids (4); amp (1),9,C-C motif chemokine ligand 2 (2); Interleukin 6 (2); ERH mRNA splicing and mitosis factor (1),11
+Colon,Kidney,20,ANP (1); Leptin (1),2,fatty acids (4); oxygen (3); phosphate (2),14,Epidermal growth factor receptor (2); Aryl hydrocarbon receptor (2); Tumor necrosis factor (2),20
+Heart,Small Intestine,20,BNP (1),1,sulfate (3); fatty acids (3); amp (1),9,Calcium voltage-gated channel subunit alpha1 C (1); mTOR (1); Fibroblast growth factor 21 (1),14
+Heart,Muscle,19,GLP-1 (1); LH (1); FSH (1),7,oxygen (9); fatty acids (3); glucose (2),15,PGC-1α (2); Myostatin (2); fatty acid synthase (1),28
+Liver,Pancreas,19,Insulin (15); Glucagon (4); Leptin (1),12,glucose (12); arginine (2); glycogen (2),10,Interleukin 18 (1); caspase-1 (1); Thioredoxin reductase 1 (1),20
+Liver,Muscle,18,Insulin (8); Vasopressin/ADH (1); Irisin (1),3,glucose (7); fatty acids (6); oxygen (3),11,insulin receptor (2); Aldehyde dehydrogenase 2 family member (1); Albumin (1),26
+Heart,Liver,16,Insulin (4); T4 (2); T3 (1),6,oxygen (3); adenosine (1); adenine (1),13,Fibroblast growth factor 21 (2); AMPK (2); mTOR (2),20
+Brain,Kidney,15,Cortisol (4); PTH (2); Insulin (2),10,creatinine (3); glucose (3); urea (2),11,Epidermal growth factor receptor (2); AKT (1); PI3K (1),20
+Colon,WAT,13,Insulin (6); Leptin (1); Ghrelin (1),5,glucose (3); fatty acids (3); oxygen (1),8,Interleukin 5 (1); Interleukin 6 (1); Ret proto-oncogene (1),9
+Brain,Muscle,12,Insulin (2); Glucagon (1); Irisin (1),5,glucose (2); glutamate (1); alanine (1),12,Glutaminase (1); Cathepsin B (1); Brain derived neurotrophic factor (1),6
+Pancreas,Small Intestine,12,Insulin (6); GIP (5); GLP-1 (4),6,glucose (7); amp (1),2,mapk (1); NF-κB (1),2
+Brain,Lung,11,Insulin (2); Corticosterone (1); Epinephrine (1),6,glucose (4); adenosine (2); oxygen (1),6,"Raf-1 proto-oncogene, serine/threonine kinase (1); Glycerol kinase (1); Albumin (1)",5
+Brain,Pancreas,11,Insulin (8); Epinephrine (1); Glucagon (1),5,glucose (8); tryptophan (1); cholesterol (1),3,Dickkopf WNT signaling pathway inhibitor 3 (1); DAB adaptor protein 2 (1); Wnt family member 4 (1),24
+Heart,WAT,11,Insulin (3); GLP-1 (1); Adiponectin (1),7,glucose (5); oxygen (3); adenosine (2),8,AMPK (2); Interleukin 6 (2); Rhodopsin (1),12
+Colon,Heart,10,Glucagon (1),1,acetate (1); fatty acids (1); citrate (1),4,mTOR (2); Phenylalanine hydroxylase (1); Fibroblast growth factor 21 (1),3
+Liver,Thyroid,9,T4 (7); TSH (6); T3 (5),7,cholesterol (3); bilirubin (1); uracil (1),6,Thyroid peroxidase (2); Albumin (2); Thyroglobulin (1),14
+Small Intestine,Thyroid,9,T4 (3); T3 (2); TSH (2),11,glucose (1),1,IRS-2 (1); WW domain containing transcription regulator 1 (1); Growth arrest and DNA damage inducible alpha (1),6
+Liver,Lung,8,Glucagon (2); Insulin (2); Melatonin (1),3,cholesterol (1); alanine (1); phosphoenolpyruvate (1),8,Thyroglobulin (1); Proliferating cell nuclear antigen (1); ERK (1),18
+Bone Marrow,Brain,6,Leptin (2); Estradiol (1),2,adenosine (1); oxygen (1); adenine (1),5,AMPK (1); Translocator protein (1),2
+Bone Marrow,WAT,6,Calcitonin (1); Estradiol (1); FGF19 (1),3,palmitate (1); amp (1),2,Lipopolysaccharide binding protein (1); sirt4 (1); Aryl hydrocarbon receptor (1),18
+Colon,Thyroid,6,Insulin (1),1,fatty acids (1),1,Thyroid hormone responsive (1),1
+Kidney,Pancreas,6,Insulin (5); GLP-1 (2),2,glucose (5); fatty acids (3); glycerol (2),8,insulin receptor (2); GLP-1 receptor (1); AKT (1),8
+Muscle,Pancreas,6,Insulin (5); Leptin (1),2,glucose (5); amp (2); oxygen (1),3,Decorin (1); Tumor necrosis factor (1); fatty acid synthase (1),13
+Pancreas,WAT,6,Insulin (5); Leptin (1); Glucagon (1),3,glucose (4),1,insulin receptor (1); Nidogen 2 (1); Pancreatic lipase (1),3
+Thyroid,WAT,6,TSH (4); Insulin (3); T3 (2),7,glucose (2); glycerol (1); phosphate (1),4,Thyroid stimulating hormone receptor (1); ucp2 (1); ucp3 (1),4
+Heart,Lung,5,,0,oxygen (2); glycine (1); carnitine (1),3,Protein S (1); Albumin (1); Phenylalanine hydroxylase (1),3
+Liver,Spleen,5,Insulin (2); Testosterone (1); GLP-1 (1),3,alanine (1); aspartate (1),2,Interleukin 6 (2); Signal regulatory protein alpha (1); Nuclear receptor subfamily 2 group F member 6 (1),19
+Lung,Muscle,5,,0,oxygen (2); leucine (1); arginine (1),5,AKT (1); Myostatin (1); Myogenin (1),8
+Bone Marrow,Small Intestine,4,,0,urea (1); citrulline (1),2,AKT (1); PI3K (1); BCL2 apoptosis regulator (1),3
+Colon,Pancreas,4,neuromedin b (1); TSH (1); gastrin (1),5,glucose (1); fatty acids (1),2,Bombesin receptor subtype 3 (1); nmb (1),2
+Bone Marrow,Heart,3,,0,adenosine (1); oxygen (1); adenine (1),3,AMPK (1),1
+Bone Marrow,Liver,3,Glucocorticoids (1); Leptin (1),2,,0,tlr4 (1); Steroid 5 alpha-reductase 1 (1); Musculin (1),6
+Bone Marrow,Lung,3,Dopamine (1),1,phosphate (1); glucose-6-phosphate (1); glucose (1),4,CD34 molecule (1); Phenylalanine hydroxylase (1); Bone morphogenetic protein receptor type 1A (1),17
+Kidney,Lung,3,,0,sphingosine (1); leucine (1); gaba (1),4,Leucine rich glioma inactivated 1 (1),1
+Colon,Muscle,2,,0,fatty acids (1); glucose (1); succinate (1),3,,0
+Kidney,Muscle,2,Ghrelin (1); Insulin (1),2,,0,AKT (1),1
+Kidney,Spleen,2,,0,tyrosine (1),1,Spleen associated tyrosine kinase (1); C-type lectin domain containing 7A (1); Tumor necrosis factor (1),4
+Kidney,WAT,2,Leptin (1),1,,0,"Creatine kinase, M-type (1)",1
+Muscle,Small Intestine,2,,0,fatty acids (1); glucose (1); succinate (1),3,,0
+Small Intestine,Spleen,2,,0,,0,GLUT2 (1); Tight junction protein 1 (1); Interleukin 2 (1),4
+Adrenal Glands,WAT,1,,0,atp (1); cholesterol (1),2,,0
+Bone Marrow,Colon,1,,0,,0,,0
+Brain,Spleen,1,,0,glucose (1),1,,0
+Colon,Spleen,1,,0,,0,,0
+Heart,Pancreas,1,,0,glucose (1),1,,0
+Heart,Spleen,1,,0,phosphate (1); sphinganine (1); sphingosine (1),5,Sphingosine-1-phosphate receptor 1 (1); C-C motif chemokine ligand 2 (1); Tumor necrosis factor (1),3
+Heart,Thyroid,1,,0,,0,,0
+Kidney,Thyroid,1,Cortisol (1),1,,0,Tumor necrosis factor (1); Interleukin 6 (1),2
+Lung,Pancreas,1,,0,,0,,0
+Lung,Spleen,1,,0,,0,,0
+Lung,Thyroid,1,TSH (1); T4 (1),2,,0,,0
+Muscle,Thyroid,1,T3 (1),1,,0,,0
+Spleen,WAT,1,PP (1),1,cholesterol (1),1,PPARα (1),1

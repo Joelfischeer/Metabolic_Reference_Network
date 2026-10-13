@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,"Obese (all papers, no thr.)"
+Condition filter,obese
+Pair selection,>=1 condition paper
+Organ pairs in scope,72
+Organs in scope,14
+Pairs with >=1 type,71
+Pairs without type,1
+% pairs classified,98.6
+Total type assignments,77
+Mean types per pair (all pairs),1.07
+Mean types per classified pair,1.08
+Pairs with 0 / 1 / 2 / 3 types,1 / 65 / 6 / 0
+Distinct types used,7
+Unique papers in scope,3594
+Papers per pair: mean,60.74
+Papers per pair: median,10.0
+Papers per pair: max,752
+Pairs with 0 papers,0
+Shannon diversity of types (bits),1.387

@@ -1,0 +1,13 @@
+﻿type,All papers (no condition) | n_pairs,All papers (no condition) | pct_of_pairs,All papers (no condition) | n_unique_papers,Healthy (OO threshold) | n_pairs,Healthy (OO threshold) | pct_of_pairs,Healthy (OO threshold) | n_unique_papers,Obese (OO threshold) | n_pairs,Obese (OO threshold) | pct_of_pairs,Obese (OO threshold) | n_unique_papers,"Healthy (all papers, no thr.) | n_pairs","Healthy (all papers, no thr.) | pct_of_pairs","Healthy (all papers, no thr.) | n_unique_papers","Obese (all papers, no thr.) | n_pairs","Obese (all papers, no thr.) | pct_of_pairs","Obese (all papers, no thr.) | n_unique_papers",Healthy (PET cohort edges) | n_pairs,Healthy (PET cohort edges) | pct_of_pairs,Healthy (PET cohort edges) | n_unique_papers,Obese (PET cohort edges) | n_pairs,Obese (PET cohort edges) | pct_of_pairs,Obese (PET cohort edges) | n_unique_papers
+Direct glucose transfer,57,62.6,22097.0,21,100.0,1343.0,31,100.0,3417.0,57,81.4,1568.0,57,79.2,3551.0,1,6.2,172.0,2,22.2,80.0
+Adipokine/myokine signaling,16,17.6,272.0,0,0.0,0.0,0,0.0,0.0,10,14.3,15.0,9,12.5,22.0,3,18.8,32.0,4,44.4,20.0
+Hormonal glucose control,11,12.1,86.0,0,0.0,0.0,0,0.0,0.0,1,1.4,1.0,4,5.6,9.0,6,37.5,18.0,2,22.2,7.0
+Nerve connection,5,5.5,96.0,0,0.0,0.0,0,0.0,0.0,3,4.3,8.0,3,4.2,23.0,3,18.8,25.0,2,22.2,11.0
+No type assigned,5,5.5,63.0,0,0.0,0.0,0,0.0,0.0,1,1.4,3.0,1,1.4,7.0,4,25.0,0.0,1,11.1,0.0
+Inflammatory/cytokine crosstalk,3,3.3,25.0,0,0.0,0.0,0,0.0,0.0,1,1.4,1.0,2,2.8,8.0,1,6.2,5.0,0,0.0,0.0
+Mineral/electrolyte-coupled metabolic regulation,2,2.2,30.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,1,1.4,1.0,0,0.0,0.0,0,0.0,0.0
+Other physical connection,2,2.2,9.0,0,0.0,0.0,0,0.0,0.0,1,1.4,1.0,1,1.4,4.0,1,6.2,2.0,1,11.1,9.0
+Other Hormonal influence,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0
+Ketone body exchange,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0
+Metabolite crosstalk,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0
+Circadian/clock synchronization,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0,0.0,0.0

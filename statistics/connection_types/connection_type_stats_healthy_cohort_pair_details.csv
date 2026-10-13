@@ -1,0 +1,17 @@
+﻿organ_1,organ_2,n_types,types,n_papers,OO,median_year,latest_year
+Liver,Small Intestine,1,Direct glucose transfer,172,0.2791,2023.5,2026.0
+Muscle,WAT,1,Adipokine/myokine signaling,25,0.2351,2016.0,2026.0
+Brain,Kidney,1,Nerve connection,15,0.047,2021.0,2026.0
+Pancreas,WAT,2,Hormonal glucose control; Adipokine/myokine signaling,6,0.0666,2016.0,2025.0
+Liver,Spleen,2,Hormonal glucose control; Inflammatory/cytokine crosstalk,5,0.0763,2022.0,2025.0
+Lung,Muscle,1,Nerve connection,5,0.0559,2012.0,2021.0
+Heart,Lung,1,Nerve connection,5,0.0458,2016.0,2024.0
+Bone Marrow,Small Intestine,1,Hormonal glucose control,4,0.0251,2024.0,2026.0
+Kidney,Spleen,1,Other physical connection,2,0.0493,2023.0,2026.0
+Adrenal Glands,WAT,1,Hormonal glucose control,1,0.0151,2021.0,2021.0
+Muscle,Thyroid,2,Hormonal glucose control; Adipokine/myokine signaling,1,0.0119,2002.0,2002.0
+Heart,Pancreas,1,Hormonal glucose control,1,0.0114,2026.0,2026.0
+Adrenal Glands,Muscle,0,No type assigned,0,0.0,,
+Adrenal Glands,Pancreas,0,No type assigned,0,0.0,,
+Bone Marrow,Spleen,0,No type assigned,0,0.0,,
+Pancreas,Spleen,0,No type assigned,0,0.0,,

@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,Healthy (OO threshold)
+Condition filter,healthy
+Pair selection,OO kneedle elbow threshold
+Organ pairs in scope,21
+Organs in scope,13
+Pairs with >=1 type,21
+Pairs without type,0
+% pairs classified,100.0
+Total type assignments,21
+Mean types per pair (all pairs),1.0
+Mean types per classified pair,1.0
+Pairs with 0 / 1 / 2 / 3 types,0 / 21 / 0 / 0
+Distinct types used,1
+Unique papers in scope,1343
+Papers per pair: mean,77.86
+Papers per pair: median,34.0
+Papers per pair: max,499
+Pairs with 0 papers,0
+Shannon diversity of types (bits),0.0

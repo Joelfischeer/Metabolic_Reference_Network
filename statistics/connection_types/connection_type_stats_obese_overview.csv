@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,Obese (OO threshold)
+Condition filter,obese
+Pair selection,OO kneedle elbow threshold
+Organ pairs in scope,31
+Organs in scope,14
+Pairs with >=1 type,31
+Pairs without type,0
+% pairs classified,100.0
+Total type assignments,31
+Mean types per pair (all pairs),1.0
+Mean types per classified pair,1.0
+Pairs with 0 / 1 / 2 / 3 types,0 / 31 / 0 / 0
+Distinct types used,1
+Unique papers in scope,3417
+Papers per pair: mean,132.97
+Papers per pair: median,60.0
+Papers per pair: max,752
+Pairs with 0 papers,0
+Shannon diversity of types (bits),0.0

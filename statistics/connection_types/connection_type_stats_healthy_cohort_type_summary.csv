@@ -1,0 +1,13 @@
+﻿type,n_pairs,pct_of_pairs,pct_of_assignments,n_pairs_exclusive,n_pairs_shared_with_other_type,n_unique_papers,papers_per_pair_mean,papers_per_pair_median,papers_per_pair_min,papers_per_pair_max,papers_per_pair_sd,OO_mean,n_organs_involved,most_frequent_organs,top_pairs_by_papers
+Hormonal glucose control,6,37.5,40.0,3.0,3.0,18.0,3.0,2.5,1.0,6.0,2.28,0.0344,10.0,"WAT (2), Pancreas (2), Adrenal Glands (1)",Pancreas-WAT; Liver-Spleen; Bone Marrow-Small Intestine
+No type assigned,4,25.0,,0.0,,0.0,0.0,0.0,0.0,0.0,0.0,0.0,5.0,"Adrenal Glands (2), Pancreas (2), Spleen (2)",Adrenal Glands-Muscle; Adrenal Glands-Pancreas; Bone Marrow-Spleen
+Adipokine/myokine signaling,3,18.8,20.0,1.0,2.0,32.0,10.67,6.0,1.0,25.0,12.66,0.1045,4.0,"Muscle (2), WAT (2), Thyroid (1)",Muscle-WAT; Pancreas-WAT; Muscle-Thyroid
+Nerve connection,3,18.8,20.0,3.0,0.0,25.0,8.33,5.0,5.0,15.0,5.77,0.0496,5.0,"Lung (2), Brain (1), Kidney (1)",Brain-Kidney; Heart-Lung; Lung-Muscle
+Inflammatory/cytokine crosstalk,1,6.2,6.7,0.0,1.0,5.0,5.0,5.0,5.0,5.0,,0.0763,2.0,"Liver (1), Spleen (1)",Liver-Spleen
+Direct glucose transfer,1,6.2,6.7,1.0,0.0,172.0,172.0,172.0,172.0,172.0,,0.2791,2.0,"Liver (1), Small Intestine (1)",Liver-Small Intestine
+Other physical connection,1,6.2,6.7,1.0,0.0,2.0,2.0,2.0,2.0,2.0,,0.0493,2.0,"Kidney (1), Spleen (1)",Kidney-Spleen
+Other Hormonal influence,0,,,,,,,,,,,,,,
+Mineral/electrolyte-coupled metabolic regulation,0,,,,,,,,,,,,,,
+Ketone body exchange,0,,,,,,,,,,,,,,
+Metabolite crosstalk,0,,,,,,,,,,,,,,
+Circadian/clock synchronization,0,,,,,,,,,,,,,,

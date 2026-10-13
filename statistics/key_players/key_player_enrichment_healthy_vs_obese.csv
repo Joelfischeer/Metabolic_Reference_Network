@@ -1,0 +1,314 @@
+﻿comparison,category,term,n_healthy,N_healthy,pct_healthy,n_obese,N_obese,pct_obese,log2_odds_ratio,p_value,q_value_BH,significant_q<0.05,enriched_in
+healthy_only vs obese_only,hormones,Insulin,145,1385,10.47,1405,3394,41.4,-2.591,3.831570289230805e-108,2.1456793619692508e-106,True,obese
+healthy_only vs obese_only,hormones,Leptin,25,1385,1.81,472,3394,13.91,-3.109,1.9550637678543084e-45,5.474178549992063e-44,True,obese
+healthy_only vs obese_only,hormones,Adiponectin,6,1385,0.43,166,3394,4.89,-3.452,2.203439496111914e-18,4.113087059408906e-17,True,obese
+healthy_only vs obese_only,hormones,GLP-1,28,1385,2.02,251,3394,7.4,-1.93,4.905883288899191e-15,6.868236604458867e-14,True,obese
+healthy_only vs obese_only,hormones,NPY,3,1385,0.22,71,3394,2.09,-3.087,7.82089589575999e-08,8.759403403251189e-07,True,obese
+healthy_only vs obese_only,hormones,T4,45,1385,3.25,33,3394,0.97,1.768,1.0394091075006548e-07,9.701151670006112e-07,True,healthy
+healthy_only vs obese_only,hormones,Cortisol,48,1385,3.47,42,3394,1.24,1.516,1.4904477663488581e-06,1.1923582130790865e-05,True,healthy
+healthy_only vs obese_only,hormones,Ghrelin,20,1385,1.44,121,3394,3.57,-1.306,4.258106094618326e-05,0.0002980674266232828,True,obese
+healthy_only vs obese_only,hormones,TSH,49,1385,3.54,55,3394,1.62,1.156,0.00010566386478895558,0.0006574640475757236,True,healthy
+healthy_only vs obese_only,hormones,Resistin,1,1385,0.07,33,3394,0.97,-3.201,0.00019390549127577488,0.0010858707511443393,True,obese
+healthy_only vs obese_only,hormones,oxyntomodulin,0,1385,0.0,21,3394,0.62,-4.142,0.0011140411011921897,0.005671481969705693,True,obese
+healthy_only vs obese_only,hormones,VIP,8,1385,0.58,2,3394,0.06,3.066,0.0012217629450051505,0.005701560410024036,True,healthy
+healthy_only vs obese_only,hormones,CCK,8,1385,0.58,58,3394,1.71,-1.507,0.001522190130261478,0.00655712671497252,True,obese
+healthy_only vs obese_only,hormones,GIP,11,1385,0.79,62,3394,1.83,-1.165,0.008733757824704782,0.03493503129881913,True,obese
+healthy_only vs obese_only,hormones,Epinephrine,8,1385,0.58,5,3394,0.15,1.927,0.014555271445372754,0.05433968006272495,False,healthy
+healthy_only vs obese_only,hormones,T3,38,1385,2.74,58,3394,1.71,0.704,0.023161702399632007,0.07857629031950904,False,healthy
+healthy_only vs obese_only,hormones,MSH,0,1385,0.0,12,3394,0.35,-3.356,0.023853516704136674,0.07857629031950904,False,obese
+healthy_only vs obese_only,hormones,Irisin,2,1385,0.14,21,3394,0.62,-1.818,0.035848950216390486,0.11153006733988151,False,obese
+healthy_only vs obese_only,hormones,Dopamine,22,1385,1.59,31,3394,0.91,0.817,0.048166845612334315,0.14196543969951167,False,healthy
+healthy_only vs obese_only,hormones,Vasopressin/ADH,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.1563142574179542,False,healthy
+healthy_only vs obese_only,hormones,Estriol,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.1563142574179542,False,healthy
+healthy_only vs obese_only,hormones,Calcitonin,0,1385,0.0,9,3394,0.27,-2.959,0.06699182460769466,0.1563142574179542,False,obese
+healthy_only vs obese_only,hormones,PTH,7,1385,0.51,6,3394,0.18,1.504,0.06385107104370327,0.1563142574179542,False,healthy
+healthy_only vs obese_only,hormones,ACTH,25,1385,1.81,37,3394,1.09,0.747,0.06567584991181855,0.1563142574179542,False,healthy
+healthy_only vs obese_only,hormones,Amylin,3,1385,0.22,22,3394,0.65,-1.398,0.07539813510726212,0.16889182264026714,False,obese
+healthy_only vs obese_only,hormones,Melatonin,10,1385,0.72,12,3394,0.35,1.047,0.10011897404799586,0.21408895520114182,False,healthy
+healthy_only vs obese_only,hormones,Glucagon,16,1385,1.16,63,3394,1.86,-0.662,0.10322146054340767,0.21408895520114182,False,obese
+healthy_only vs obese_only,hormones,Norepinephrine,16,1385,1.16,23,3394,0.68,0.79,0.11027959838312405,0.2205591967662481,False,healthy
+healthy_only vs obese_only,hormones,BNP,6,1385,0.43,6,3394,0.18,1.297,0.11845747616149557,0.22874547120840524,False,healthy
+healthy_only vs obese_only,hormones,PYY,11,1385,0.79,46,3394,1.36,-0.731,0.14064400242986125,0.26253547120240767,False,obese
+healthy_only vs obese_only,hormones,GnRH,1,1385,0.07,10,3394,0.29,-1.518,0.19395937940606917,0.339428913960621,False,obese
+healthy_only vs obese_only,hormones,Dihydrotestosterone,0,1385,0.0,6,3394,0.18,-2.41,0.1906958539665952,0.339428913960621,False,obese
+healthy_only vs obese_only,hormones,PP,7,1385,0.51,29,3394,0.85,-0.688,0.2684820512825645,0.4556059052067762,False,obese
+healthy_only vs obese_only,hormones,GH,16,1385,1.16,55,3394,1.62,-0.464,0.2912182486101983,0.47965358594620894,False,obese
+healthy_only vs obese_only,hormones,TRH,6,1385,0.43,25,3394,0.74,-0.684,0.32050152287229766,0.4998549009527142,False,obese
+healthy_only vs obese_only,hormones,Erythropoietin,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.4998549009527142,False,obese
+healthy_only vs obese_only,hormones,nesfatin-1,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.4998549009527142,False,obese
+healthy_only vs obese_only,hormones,Estrogens,5,1385,0.36,20,3394,0.59,-0.609,0.38351966948111793,0.5369275372735651,False,obese
+healthy_only vs obese_only,hormones,Oxytocin,2,1385,0.14,11,3394,0.32,-0.911,0.37002687737880074,0.5369275372735651,False,obese
+healthy_only vs obese_only,hormones,Aldosterone,5,1385,0.36,20,3394,0.59,-0.609,0.38351966948111793,0.5369275372735651,False,obese
+healthy_only vs obese_only,hormones,obestatin,3,1385,0.22,4,3394,0.12,0.932,0.4208303133613741,0.5464311046982342,False,healthy
+healthy_only vs obese_only,hormones,FGF19,3,1385,0.22,4,3394,0.12,0.932,0.4208303133613741,0.5464311046982342,False,healthy
+healthy_only vs obese_only,hormones,Estradiol,7,1385,0.51,25,3394,0.74,-0.476,0.43909642341822397,0.5464311046982342,False,obese
+healthy_only vs obese_only,hormones,CRH,11,1385,0.79,19,3394,0.56,0.534,0.41876208468326165,0.5464311046982342,False,healthy
+healthy_only vs obese_only,hormones,FSH,7,1385,0.51,11,3394,0.32,0.679,0.4340593359166872,0.5464311046982342,False,healthy
+healthy_only vs obese_only,hormones,Glucocorticoids,12,1385,0.87,38,3394,1.12,-0.334,0.5313948171615618,0.6469154295879883,False,obese
+healthy_only vs obese_only,hormones,PRL,6,1385,0.43,11,3394,0.32,0.471,0.5948472591267571,0.7087541810871999,False,healthy
+healthy_only vs obese_only,hormones,ANP,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.736467279790454,False,healthy
+healthy_only vs obese_only,hormones,Somatostatin,1,1385,0.07,6,3394,0.18,-0.824,0.6811149000289506,0.7784170286045149,False,obese
+healthy_only vs obese_only,hormones,Progesterone,3,1385,0.22,6,3394,0.18,0.4,0.7243090232192219,0.8112261060055285,False,healthy
+healthy_only vs obese_only,hormones,Corticosterone,10,1385,0.72,22,3394,0.65,0.194,0.8451304666181637,0.9279863947179837,False,healthy
+healthy_only vs obese_only,hormones,LH,7,1385,0.51,17,3394,0.5,0.07,1.0,1.0,False,healthy
+healthy_only vs obese_only,hormones,Angiotensin II,4,1385,0.29,12,3394,0.35,-0.182,1.0,1.0,False,obese
+healthy_only vs obese_only,hormones,Calcitriol,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,hormones,MCH,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,hormones,Testosterone,9,1385,0.65,23,3394,0.68,-0.014,1.0,1.0,False,obese
+healthy_only vs obese_only,metabolites,glucose,186,1385,13.43,1070,3394,31.53,-1.567,2.5675984920300515e-41,1.7716429595007354e-39,True,obese
+healthy_only vs obese_only,metabolites,tryptophan,108,1385,7.8,67,3394,1.97,2.066,5.2271818405147595e-20,1.803377734977592e-18,True,healthy
+healthy_only vs obese_only,metabolites,sulfate,30,1385,2.17,9,3394,0.27,3.003,6.762096574353219e-10,1.5552822121012404e-08,True,healthy
+healthy_only vs obese_only,metabolites,gaba,29,1385,2.09,11,3394,0.32,2.678,1.3605792065491416e-08,2.3469991312972691e-07,True,healthy
+healthy_only vs obese_only,metabolites,phenylalanine,22,1385,1.59,7,3394,0.21,2.898,2.168765937456494e-07,2.992896993689962e-06,True,healthy
+healthy_only vs obese_only,metabolites,urea,14,1385,1.01,2,3394,0.06,3.843,1.8072541802256994e-06,2.0783423072595543e-05,True,healthy
+healthy_only vs obese_only,metabolites,arginine,21,1385,1.52,11,3394,0.32,2.213,1.7642203518290285e-05,0.00017390172039457569,True,healthy
+healthy_only vs obese_only,metabolites,creatinine,19,1385,1.37,9,3394,0.27,2.346,2.1965720266999808e-05,0.00018945433730287336,True,healthy
+healthy_only vs obese_only,metabolites,cholesterol,42,1385,3.03,198,3394,5.83,-0.973,3.8953014150533126e-05,0.0002986397751540873,True,obese
+healthy_only vs obese_only,metabolites,glutamate,29,1385,2.09,23,3394,0.68,1.642,7.444666719243249e-05,0.0004669836396616219,True,healthy
+healthy_only vs obese_only,metabolites,serotonin,43,1385,3.1,45,3394,1.33,1.254,7.379544155755512e-05,0.0004669836396616219,True,healthy
+healthy_only vs obese_only,metabolites,lactate,18,1385,1.3,14,3394,0.41,1.657,0.0013391136150115305,0.006693709785177806,True,healthy
+healthy_only vs obese_only,metabolites,acetate,33,1385,2.38,37,3394,1.09,1.149,0.0012826857830031658,0.006693709785177806,True,healthy
+healthy_only vs obese_only,metabolites,glutamine,15,1385,1.08,10,3394,0.29,1.866,0.0013581440143839029,0.006693709785177806,True,healthy
+healthy_only vs obese_only,metabolites,bilirubin,7,1385,0.51,3,3394,0.09,2.398,0.008553514065053284,0.03934616469924511,True,healthy
+healthy_only vs obese_only,metabolites,fructose,8,1385,0.58,49,3394,1.44,-1.262,0.011873862474691526,0.05120603192210721,False,obese
+healthy_only vs obese_only,metabolites,triacylglycerol,1,1385,0.07,19,3394,0.56,-2.415,0.013337228173271268,0.054133455526806915,False,obese
+healthy_only vs obese_only,metabolites,ornithine,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.09324355127418313,False,healthy
+healthy_only vs obese_only,metabolites,dehydroepiandrosterone,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.09324355127418313,False,healthy
+healthy_only vs obese_only,metabolites,ammonium,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.09324355127418313,False,healthy
+healthy_only vs obese_only,metabolites,taurine,11,1385,0.79,11,3394,0.32,1.3,0.03529020560649019,0.1159535327070392,False,healthy
+healthy_only vs obese_only,metabolites,lysine,10,1385,0.72,9,3394,0.27,1.444,0.03846543738960632,0.12064159908558345,False,healthy
+healthy_only vs obese_only,metabolites,citrate,8,1385,0.58,7,3394,0.21,1.479,0.04678758918816695,0.13149059007240949,False,healthy
+healthy_only vs obese_only,metabolites,methionine,10,1385,0.72,10,3394,0.29,1.299,0.04764151814217735,0.13149059007240949,False,healthy
+healthy_only vs obese_only,metabolites,proline,8,1385,0.58,7,3394,0.21,1.479,0.04678758918816695,0.13149059007240949,False,healthy
+healthy_only vs obese_only,metabolites,creatine,7,1385,0.51,6,3394,0.18,1.504,0.06385107104370327,0.16317495933390835,False,healthy
+healthy_only vs obese_only,metabolites,citrulline,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.16317495933390835,False,healthy
+healthy_only vs obese_only,metabolites,serine,17,1385,1.23,68,3394,2.0,-0.687,0.07043710991550346,0.17357716372034782,False,obese
+healthy_only vs obese_only,metabolites,inosine,4,1385,0.29,3,3394,0.09,1.658,0.11304860165141595,0.2689777073775069,False,healthy
+healthy_only vs obese_only,metabolites,phosphoenolpyruvate,1,1385,0.07,12,3394,0.35,-1.77,0.12568023712572124,0.2890645453891588,False,obese
+healthy_only vs obese_only,metabolites,alanine,25,1385,1.81,41,3394,1.21,0.599,0.13183247204228454,0.2934335668037946,False,healthy
+healthy_only vs obese_only,metabolites,nitric oxide,9,1385,0.65,39,3394,1.15,-0.77,0.1491205370725197,0.31179748660617757,False,obese
+healthy_only vs obese_only,metabolites,tyrosine,30,1385,2.17,53,3394,1.56,0.491,0.14510522513928545,0.31179748660617757,False,healthy
+healthy_only vs obese_only,metabolites,succinate,8,1385,0.58,10,3394,0.29,0.992,0.19031233109412005,0.38622208369100836,False,healthy
+healthy_only vs obese_only,metabolites,gmp,1,1385,0.07,11,3394,0.32,-1.649,0.19887939609036767,0.3920765237210106,False,obese
+healthy_only vs obese_only,metabolites,glycogen,12,1385,0.87,44,3394,1.3,-0.545,0.23797786724489745,0.4321177063131032,False,obese
+healthy_only vs obese_only,metabolites,aspartate,15,1385,1.08,25,3394,0.74,0.58,0.2258057458625421,0.4321177063131032,False,healthy
+healthy_only vs obese_only,metabolites,adenosine,12,1385,0.87,44,3394,1.3,-0.545,0.23797786724489745,0.4321177063131032,False,obese
+healthy_only vs obese_only,metabolites,oxygen,46,1385,3.32,92,3394,2.71,0.31,0.2541656369665759,0.4496776654024035,False,healthy
+healthy_only vs obese_only,metabolites,phospholipids,7,1385,0.51,10,3394,0.29,0.81,0.2872701020255505,0.49554092599407457,False,healthy
+healthy_only vs obese_only,metabolites,alpha-ketoglutarate,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.5558055584199822,False,obese
+healthy_only vs obese_only,metabolites,isoleucine,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.5997901547914379,False,healthy
+healthy_only vs obese_only,metabolites,gtp,2,1385,0.14,12,3394,0.35,-1.032,0.37533106853402537,0.6014285725953895,False,obese
+healthy_only vs obese_only,metabolites,palmitate,5,1385,0.36,20,3394,0.59,-0.609,0.38351966948111793,0.6014285725953895,False,obese
+healthy_only vs obese_only,metabolites,valine,3,1385,0.22,4,3394,0.12,0.932,0.4208303133613741,0.6180409067334499,False,healthy
+healthy_only vs obese_only,metabolites,acetyl-coa,3,1385,0.22,14,3394,0.41,-0.761,0.4246321370718131,0.6180409067334499,False,obese
+healthy_only vs obese_only,metabolites,glycine,11,1385,0.79,20,3394,0.59,0.462,0.42994150033631295,0.6180409067334499,False,healthy
+healthy_only vs obese_only,metabolites,phosphate,17,1385,1.23,32,3394,0.94,0.404,0.4283943573550709,0.6180409067334499,False,healthy
+healthy_only vs obese_only,metabolites,fatty acids,170,1385,12.27,444,3394,13.08,-0.103,0.4748846540017629,0.6424910024729733,False,obese
+healthy_only vs obese_only,metabolites,ceramide,4,1385,0.29,17,3394,0.5,-0.67,0.4694272802162464,0.6424910024729733,False,obese
+healthy_only vs obese_only,metabolites,atp,19,1385,1.37,37,3394,1.09,0.353,0.4586353127366548,0.6424910024729733,False,healthy
+healthy_only vs obese_only,metabolites,sphingosine,4,1385,0.29,6,3394,0.18,0.764,0.48885910357751733,0.6486784259009364,False,healthy
+healthy_only vs obese_only,metabolites,amp,28,1385,2.02,59,3394,1.74,0.235,0.550943375638182,0.7172659041327275,False,healthy
+healthy_only vs obese_only,metabolites,cysteine,5,1385,0.36,9,3394,0.27,0.506,0.5636652021373925,0.7202388693977793,False,healthy
+healthy_only vs obese_only,metabolites,glycerol,8,1385,0.58,27,3394,0.8,-0.404,0.5747650496330394,0.7210688804487222,False,obese
+healthy_only vs obese_only,metabolites,ethanol,9,1385,0.65,28,3394,0.82,-0.295,0.590482038302812,0.7275582257659648,False,obese
+healthy_only vs obese_only,metabolites,malonyl-coa,1,1385,0.07,6,3394,0.18,-0.824,0.6811149000289506,0.8245075105613612,False,obese
+healthy_only vs obese_only,metabolites,adenine,5,1385,0.36,11,3394,0.32,0.229,0.7883593717202912,0.9378758042879327,False,healthy
+healthy_only vs obese_only,metabolites,leucine,7,1385,0.51,16,3394,0.47,0.156,0.8217503250483422,0.9610300411582307,False,healthy
+healthy_only vs obese_only,metabolites,pyruvate,9,1385,0.65,20,3394,0.59,0.184,0.8379329483899863,0.9636228906484843,False,healthy
+healthy_only vs obese_only,metabolites,guanosine,2,1385,0.14,5,3394,0.15,0.155,1.0,1.0,False,healthy
+healthy_only vs obese_only,metabolites,galactose,2,1385,0.14,5,3394,0.15,0.155,1.0,1.0,False,healthy
+healthy_only vs obese_only,metabolites,sphingolipids,3,1385,0.22,9,3394,0.27,-0.148,1.0,1.0,False,obese
+healthy_only vs obese_only,metabolites,uric acid,5,1385,0.36,14,3394,0.41,-0.107,1.0,1.0,False,obese
+healthy_only vs obese_only,metabolites,nadh,3,1385,0.22,7,3394,0.21,0.193,1.0,1.0,False,healthy
+healthy_only vs obese_only,metabolites,adp,2,1385,0.14,7,3394,0.21,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,metabolites,cortisone,3,1385,0.22,8,3394,0.24,0.012,1.0,1.0,False,healthy
+healthy_only vs obese_only,metabolites,carnitine,6,1385,0.43,16,3394,0.47,-0.052,1.0,1.0,False,obese
+healthy_only vs obese_only,metabolites,xanthine,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,AMPK,19,1385,1.37,187,3394,5.51,-2.034,2.9886624814960292e-12,5.618685465212535e-10,True,obese
+healthy_only vs obese_only,proteins,ucp1,1,1385,0.07,69,3394,2.03,-4.27,1.692957162507648e-09,1.591379732757189e-07,True,obese
+healthy_only vs obese_only,proteins,AKT,16,1385,1.16,133,3394,3.92,-1.764,1.0191390954855504e-07,6.386604998376116e-06,True,obese
+healthy_only vs obese_only,proteins,Proopiomelanocortin,0,1385,0.0,45,3394,1.33,-5.234,3.4769601755786646e-07,1.6341712825219724e-05,True,obese
+healthy_only vs obese_only,proteins,GLP-1 receptor,4,1385,0.29,65,3394,1.92,-2.594,2.7380477901331597e-06,0.0001029505969090068,True,obese
+healthy_only vs obese_only,proteins,Cytochrome P450 family 3 subfamily A member 4,11,1385,0.79,1,3394,0.03,4.242,1.0397247317425871e-05,0.0003257804159460106,True,healthy
+healthy_only vs obese_only,proteins,PGC-1α,2,1385,0.14,46,3394,1.36,-2.942,1.9451641021107594e-05,0.0005224155017097468,True,obese
+healthy_only vs obese_only,proteins,GLUT4,1,1385,0.07,38,3394,1.12,-3.404,4.775095361020393e-05,0.0011221474098397925,True,obese
+healthy_only vs obese_only,proteins,Agouti related neuropeptide,0,1385,0.0,26,3394,0.77,-4.446,0.00025576074466687,0.005123775390249089,True,obese
+healthy_only vs obese_only,proteins,fatty acid synthase,4,1385,0.29,47,3394,1.38,-2.123,0.0002997953685784041,0.005123775390249089,True,obese
+healthy_only vs obese_only,proteins,leptin receptor,4,1385,0.29,48,3394,1.41,-2.154,0.0002995113201348426,0.005123775390249089,True,obese
+healthy_only vs obese_only,proteins,C-reactive protein,24,1385,1.73,20,3394,0.59,1.567,0.00036464376466187266,0.005712752313036005,True,healthy
+healthy_only vs obese_only,proteins,PI3K,12,1385,0.87,79,3394,2.33,-1.398,0.00042741559125444276,0.006181087011987326,True,obese
+healthy_only vs obese_only,proteins,Fibroblast growth factor 21,8,1385,0.58,63,3394,1.86,-1.627,0.0005164956453612359,0.0069357986662794534,True,obese
+healthy_only vs obese_only,proteins,JNK,2,1385,0.14,33,3394,0.97,-2.463,0.00113789724428991,0.013370292620406444,True,obese
+healthy_only vs obese_only,proteins,mc4r,0,1385,0.0,21,3394,0.62,-4.142,0.0011140411011921897,0.013370292620406444,True,obese
+healthy_only vs obese_only,proteins,stat3,4,1385,0.29,41,3394,1.21,-1.926,0.0015327382752686983,0.016950282102971486,True,obese
+healthy_only vs obese_only,proteins,Thyroglobulin,10,1385,0.72,65,3394,1.92,-1.366,0.0018926496927494337,0.01976767456871631,True,obese
+healthy_only vs obese_only,proteins,Albumin,13,1385,0.94,9,3394,0.27,1.81,0.003558780732580292,0.03521319882763657,True,healthy
+healthy_only vs obese_only,proteins,TGR5,7,1385,0.51,50,3394,1.47,-1.473,0.004717942309789849,0.044348657712024585,True,obese
+healthy_only vs obese_only,proteins,Aryl hydrocarbon receptor,17,1385,1.23,16,3394,0.47,1.389,0.0064387843361092215,0.057642450247073033,False,healthy
+healthy_only vs obese_only,proteins,insulin receptor,12,1385,0.87,65,3394,1.92,-1.112,0.007628510905844318,0.0651890931953969,False,obese
+healthy_only vs obese_only,proteins,tlr4,11,1385,0.79,62,3394,1.83,-1.165,0.008733757824704782,0.06847501344717684,False,obese
+healthy_only vs obese_only,proteins,Interleukin 10,18,1385,1.3,18,3394,0.53,1.304,0.008741491078363,0.06847501344717684,False,healthy
+healthy_only vs obese_only,proteins,"BCL2 associated X, apoptosis regulator",5,1385,0.36,1,3394,0.03,3.172,0.00926383217503521,0.06966401795626478,False,healthy
+healthy_only vs obese_only,proteins,GHSR,0,1385,0.0,14,3394,0.41,-3.571,0.014622802916700605,0.1057341133976813,False,obese
+healthy_only vs obese_only,proteins,sirt1,8,1385,0.58,47,3394,1.38,-1.201,0.016382441372606662,0.11407033252037231,False,obese
+healthy_only vs obese_only,proteins,PPARγ,1,1385,0.07,18,3394,0.53,-2.338,0.02085072107340113,0.1289165633660542,False,obese
+healthy_only vs obese_only,proteins,catalase,6,1385,0.43,3,3394,0.09,2.191,0.021173802414201623,0.1289165633660542,False,healthy
+healthy_only vs obese_only,proteins,BCL2 apoptosis regulator,6,1385,0.43,3,3394,0.09,2.191,0.021173802414201623,0.1289165633660542,False,healthy
+healthy_only vs obese_only,proteins,FXR,22,1385,1.59,92,3394,2.71,-0.763,0.021257518427381276,0.1289165633660542,False,obese
+healthy_only vs obese_only,proteins,Rhodopsin,5,1385,0.36,2,3394,0.06,2.435,0.02468249678370146,0.14500966860424608,False,healthy
+healthy_only vs obese_only,proteins,Glutaminase,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.14517422475814848,False,healthy
+healthy_only vs obese_only,proteins,Glycogen synthase kinase 3 beta,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.14517422475814848,False,healthy
+healthy_only vs obese_only,proteins,Myeloperoxidase,4,1385,0.29,1,3394,0.03,2.882,0.02702711631135743,0.14517422475814848,False,healthy
+healthy_only vs obese_only,proteins,c-Fos,1,1385,0.07,16,3394,0.47,-2.172,0.033105838743288526,0.1682134509118444,False,obese
+healthy_only vs obese_only,proteins,pepck,1,1385,0.07,16,3394,0.47,-2.172,0.033105838743288526,0.1682134509118444,False,obese
+healthy_only vs obese_only,proteins,FTO alpha-ketoglutarate dependent dioxygenase,0,1385,0.0,11,3394,0.32,-3.235,0.04074839740838459,0.19151746781940757,False,obese
+healthy_only vs obese_only,proteins,glucagon receptor,0,1385,0.0,11,3394,0.32,-3.235,0.04074839740838459,0.19151746781940757,False,obese
+healthy_only vs obese_only,proteins,ERK,6,1385,0.43,36,3394,1.06,-1.206,0.03920934927706088,0.19151746781940757,False,obese
+healthy_only vs obese_only,proteins,Fibroblast growth factor 23,5,1385,0.36,3,3394,0.09,1.949,0.05025533643616551,0.23043910365851503,False,healthy
+healthy_only vs obese_only,proteins,GPR41/FFAR3,2,1385,0.14,19,3394,0.56,-1.677,0.05359423033648111,0.23989798341091548,False,obese
+healthy_only vs obese_only,proteins,COX-2,0,1385,0.0,9,3394,0.27,-2.959,0.06699182460769466,0.24909383618227363,False,obese
+healthy_only vs obese_only,proteins,Brain derived neurotrophic factor,19,1385,1.37,26,3394,0.77,0.859,0.0675733279005104,0.24909383618227363,False,healthy
+healthy_only vs obese_only,proteins,cpt1,0,1385,0.0,9,3394,0.27,-2.959,0.06699182460769466,0.24909383618227363,False,obese
+healthy_only vs obese_only,proteins,Interleukin 2,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.24909383618227363,False,healthy
+healthy_only vs obese_only,proteins,Glucose-6-phosphate isomerase,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.24909383618227363,False,healthy
+healthy_only vs obese_only,proteins,Gastric inhibitory polypeptide receptor,0,1385,0.0,9,3394,0.27,-2.959,0.06699182460769466,0.24909383618227363,False,obese
+healthy_only vs obese_only,proteins,mTOR,15,1385,1.08,64,3394,1.89,-0.776,0.05971982338808868,0.24909383618227363,False,obese
+healthy_only vs obese_only,proteins,Carbonic anhydrase 2,4,1385,0.29,2,3394,0.06,2.144,0.06255368458415864,0.24909383618227363,False,healthy
+healthy_only vs obese_only,proteins,Low density lipoprotein receptor,0,1385,0.0,9,3394,0.27,-2.959,0.06699182460769466,0.24909383618227363,False,obese
+healthy_only vs obese_only,proteins,Ribosomal protein S6,0,1385,0.0,10,3394,0.29,-3.104,0.0726187014217446,0.2625445359093843,False,obese
+healthy_only vs obese_only,proteins,Renin,6,1385,0.43,33,3394,0.97,-1.081,0.07486349295906061,0.26555352219440365,False,obese
+healthy_only vs obese_only,proteins,jak2,2,1385,0.14,18,3394,0.53,-1.6,0.08114502727955544,0.27241544872422185,False,obese
+healthy_only vs obese_only,proteins,ATGL,1,1385,0.07,13,3394,0.38,-1.882,0.08093868789240784,0.27241544872422185,False,obese
+healthy_only vs obese_only,proteins,p38,2,1385,0.14,18,3394,0.53,-1.6,0.08114502727955544,0.27241544872422185,False,obese
+healthy_only vs obese_only,proteins,FABP,5,1385,0.36,28,3394,0.82,-1.087,0.08506619651129613,0.27266014202816546,False,obese
+healthy_only vs obese_only,proteins,Adiponectin receptor,1,1385,0.07,14,3394,0.41,-1.985,0.08270815151417174,0.27266014202816546,False,obese
+healthy_only vs obese_only,proteins,SREBP,9,1385,0.65,42,3394,1.24,-0.877,0.08701919426430813,0.27266014202816546,False,obese
+healthy_only vs obese_only,proteins,nlrp3,5,1385,0.36,29,3394,0.85,-1.138,0.08582087848771926,0.27266014202816546,False,obese
+healthy_only vs obese_only,proteins,GLUT1,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,Retinol binding protein 4,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,PR/SET domain 16,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,Vascular endothelial growth factor A,4,1385,0.29,3,3394,0.09,1.658,0.11304860165141595,0.3221664376354273,False,healthy
+healthy_only vs obese_only,proteins,Pancreatic lipase,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,β-Klotho,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,Interleukin 15,0,1385,0.0,8,3394,0.24,-2.798,0.11481463468922143,0.3221664376354273,False,obese
+healthy_only vs obese_only,proteins,EBP cholestenol delta-isomerase,2,1385,0.14,16,3394,0.47,-1.434,0.11934327286336609,0.3299490485046004,False,obese
+healthy_only vs obese_only,proteins,socs3,1,1385,0.07,12,3394,0.35,-1.77,0.12568023712572124,0.3375412082805085,False,obese
+healthy_only vs obese_only,proteins,Growth differentiation factor 15,1,1385,0.07,12,3394,0.35,-1.77,0.12568023712572124,0.3375412082805085,False,obese
+healthy_only vs obese_only,proteins,Interleukin 4,5,1385,0.36,4,3394,0.12,1.586,0.13242527615748223,0.35064721010713606,False,healthy
+healthy_only vs obese_only,proteins,C-C motif chemokine ligand 2,3,1385,0.22,18,3394,0.53,-1.114,0.1557581469618059,0.40113057025780147,False,obese
+healthy_only vs obese_only,proteins,"Creatine kinase, M-type",3,1385,0.22,18,3394,0.53,-1.114,0.1557581469618059,0.40113057025780147,False,obese
+healthy_only vs obese_only,proteins,"Fos proto-oncogene, AP-1 transcription factor subunit",2,1385,0.14,14,3394,0.41,-1.247,0.17640873950096028,0.44817355440784507,False,obese
+healthy_only vs obese_only,proteins,SGLT2,4,1385,0.29,22,3394,0.65,-1.034,0.19108341772842224,0.4605600324736331,False,obese
+healthy_only vs obese_only,proteins,HSL,0,1385,0.0,6,3394,0.18,-2.41,0.1906958539665952,0.4605600324736331,False,obese
+healthy_only vs obese_only,proteins,glucokinase,0,1385,0.0,6,3394,0.18,-2.41,0.1906958539665952,0.4605600324736331,False,obese
+healthy_only vs obese_only,proteins,Plasminogen,0,1385,0.0,6,3394,0.18,-2.41,0.1906958539665952,0.4605600324736331,False,obese
+healthy_only vs obese_only,proteins,Myostatin,1,1385,0.07,10,3394,0.29,-1.518,0.19395937940606917,0.4615742193460886,False,obese
+healthy_only vs obese_only,proteins,Patatin like phospholipase domain containing 3,1,1385,0.07,11,3394,0.32,-1.649,0.19887939609036767,0.4615966230245571,False,obese
+healthy_only vs obese_only,proteins,vitamin D receptor,1,1385,0.07,11,3394,0.32,-1.649,0.19887939609036767,0.4615966230245571,False,obese
+healthy_only vs obese_only,proteins,Phosphatase and tensin homolog,0,1385,0.0,7,3394,0.21,-2.617,0.20400725865278344,0.4620887304424492,False,obese
+healthy_only vs obese_only,proteins,"Adiponectin, C1Q and collagen domain containing",0,1385,0.0,7,3394,0.21,-2.617,0.20400725865278344,0.4620887304424492,False,obese
+healthy_only vs obese_only,proteins,IRS-1,7,1385,0.51,31,3394,0.91,-0.784,0.20753459219335824,0.4644821825279922,False,obese
+healthy_only vs obese_only,proteins,myd88,8,1385,0.58,11,3394,0.32,0.86,0.21142896605873782,0.46763112492991427,False,healthy
+healthy_only vs obese_only,proteins,Neurotensin,3,1385,0.22,17,3394,0.5,-1.033,0.21948162590033035,0.4742821341294495,False,obese
+healthy_only vs obese_only,proteins,cd36,5,1385,0.36,23,3394,0.68,-0.807,0.21746769713332337,0.4742821341294495,False,obese
+healthy_only vs obese_only,proteins,PPARα,4,1385,0.29,4,3394,0.12,1.295,0.24040116511939158,0.5135843073005183,False,healthy
+healthy_only vs obese_only,proteins,Claudin 1,6,1385,0.43,8,3394,0.24,0.909,0.2496489533424219,0.5273483508806216,False,healthy
+healthy_only vs obese_only,proteins,lep,2,1385,0.14,13,3394,0.38,-1.144,0.2570372549204263,0.5310220211542872,False,obese
+healthy_only vs obese_only,proteins,lxr,2,1385,0.14,13,3394,0.38,-1.144,0.2570372549204263,0.5310220211542872,False,obese
+healthy_only vs obese_only,proteins,Occludin,14,1385,1.01,23,3394,0.68,0.601,0.2741282756620505,0.5601751720050597,False,healthy
+healthy_only vs obese_only,proteins,Interleukin 22,1,1385,0.07,9,3394,0.27,-1.373,0.29866029657779086,0.5973205931555817,False,obese
+healthy_only vs obese_only,proteins,Angiotensinogen,1,1385,0.07,9,3394,0.27,-1.373,0.29866029657779086,0.5973205931555817,False,obese
+healthy_only vs obese_only,proteins,SMAD family member 2,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,Guanylate cyclase 2C,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,Lipin 1,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,Lipopolysaccharide binding protein,5,1385,0.36,6,3394,0.18,1.054,0.31512985863166454,0.6087168576728081,False,healthy
+healthy_only vs obese_only,proteins,androgen receptor,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,Aquaporin 7,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,NF-κB,9,1385,0.65,34,3394,1.0,-0.573,0.31101463052215417,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,ace2,0,1385,0.0,5,3394,0.15,-2.169,0.3302612738437576,0.6087168576728081,False,obese
+healthy_only vs obese_only,proteins,Thyroid peroxidase,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,corticotropin releasing hormone,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,Toll like receptor 2,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,ace,5,1385,0.36,7,3394,0.21,0.848,0.34647967783128963,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,Cytochrome P450 family 2 subfamily E member 1,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,Kelch like ECH associated protein 1,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,Follistatin,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,ERH mRNA splicing and mitosis factor,3,1385,0.22,3,3394,0.09,1.295,0.36508965943826654,0.6239714179490373,False,healthy
+healthy_only vs obese_only,proteins,Iodothyronine deiodinase 2,2,1385,0.14,11,3394,0.32,-0.911,0.37002687737880074,0.6267121887136445,False,obese
+healthy_only vs obese_only,proteins,ins,3,1385,0.22,4,3394,0.12,0.932,0.4208303133613741,0.7063937402851638,False,healthy
+healthy_only vs obese_only,proteins,Stearoyl-CoA desaturase,3,1385,0.22,14,3394,0.41,-0.761,0.4246321370718131,0.7064676262787687,False,obese
+healthy_only vs obese_only,proteins,FOXO,7,1385,0.51,11,3394,0.32,0.679,0.4340593359166872,0.7158171504590982,False,healthy
+healthy_only vs obese_only,proteins,g6pase,1,1385,0.07,7,3394,0.21,-1.031,0.4515960351052706,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,bmal1,1,1385,0.07,8,3394,0.24,-1.212,0.46171906391902445,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,cd11c,1,1385,0.07,8,3394,0.24,-1.212,0.46171906391902445,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,GLUT2,1,1385,0.07,8,3394,0.24,-1.212,0.46171906391902445,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,Toll like receptor 5,1,1385,0.07,7,3394,0.21,-1.031,0.4515960351052706,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,Angiogenin,1,1385,0.07,8,3394,0.24,-1.212,0.46171906391902445,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,Cyclic GMP-AMP synthase,1,1385,0.07,8,3394,0.24,-1.212,0.46171906391902445,0.7173816860890628,False,obese
+healthy_only vs obese_only,proteins,Tumor necrosis factor,50,1385,3.61,138,3394,4.07,-0.17,0.5119174284687331,0.7888563651813264,False,obese
+healthy_only vs obese_only,proteins,Pleckstrin and Sec7 domain containing,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Mitofusin 2,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Thyroid stimulating hormone receptor,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Proliferating cell nuclear antigen,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Heme oxygenase 1,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,sirt3,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Nerve growth factor,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Glucose-6-phosphate dehydrogenase,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Iodothyronine deiodinase 3,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Caspase 3,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Epidermal growth factor receptor,7,1385,0.51,14,3394,0.41,0.343,0.6355380041262887,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,cyp7a1,4,1385,0.29,14,3394,0.41,-0.397,0.6134491922712172,0.8721251443484838,False,obese
+healthy_only vs obese_only,proteins,Sex hormone binding globulin,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,"Glycoprotein hormones, alpha polypeptide",2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,Nicotinamide phosphoribosyltransferase,2,1385,0.14,3,3394,0.09,0.808,0.6312576683918177,0.8721251443484838,False,healthy
+healthy_only vs obese_only,proteins,LPL,5,1385,0.36,17,3394,0.5,-0.379,0.6413962472139978,0.8737861918567507,False,obese
+healthy_only vs obese_only,proteins,chrebp,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,citrate synthase,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,FGFR1c,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,Galactosidase alpha,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,C-X-C motif chemokine ligand 1,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,rxr,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,Hepatocyte growth factor,1,1385,0.07,6,3394,0.18,-0.824,0.6811149000289506,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,3-hydroxy-3-methylglutaryl-CoA reductase,1,1385,0.07,5,3394,0.15,-0.583,0.679300762290395,0.8770520630509775,False,obese
+healthy_only vs obese_only,proteins,Ornithine aminotransferase,3,1385,0.22,5,3394,0.15,0.642,0.6980436982932324,0.8867041572914034,False,healthy
+healthy_only vs obese_only,proteins,Cytochrome P450 family 8 subfamily B member 1,3,1385,0.22,5,3394,0.15,0.642,0.6980436982932324,0.8867041572914034,False,healthy
+healthy_only vs obese_only,proteins,Apolipoprotein B,2,1385,0.14,8,3394,0.24,-0.474,0.7335565193016824,0.9210841654381038,False,obese
+healthy_only vs obese_only,proteins,DPP4/CD26,2,1385,0.14,9,3394,0.27,-0.635,0.739806962665711,0.9210841654381038,False,obese
+healthy_only vs obese_only,proteins,Interleukin 6,50,1385,3.61,131,3394,3.86,-0.092,0.7385296047432967,0.9210841654381038,False,obese
+healthy_only vs obese_only,proteins,Apolipoprotein E,5,1385,0.36,10,3394,0.29,0.361,0.7764729633892152,0.9603744547182399,False,healthy
+healthy_only vs obese_only,proteins,Carnitine palmitoyltransferase 1A,4,1385,0.29,13,3394,0.38,-0.294,0.7913631312120135,0.9723939128618205,False,obese
+healthy_only vs obese_only,proteins,Thyroid hormone receptor beta,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,IRS-2,4,1385,0.29,9,3394,0.27,0.215,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,Cannabinoid receptor 1,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,hexokinase,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Signal transducer and activator of transcription 1,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Cytochrome P450 family 7 subfamily B member 1,2,1385,0.14,6,3394,0.18,-0.086,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Glycerol kinase,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Lipoprotein(a),1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Cortistatin,2,1385,0.14,5,3394,0.15,0.155,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,cry1,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,C-C motif chemokine receptor 2,2,1385,0.14,6,3394,0.18,-0.086,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,SGLT1,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,ucp2,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Insulin like growth factor 1,10,1385,0.72,28,3394,0.82,-0.149,0.857939281411148,1.0,False,obese
+healthy_only vs obese_only,proteins,Pancreatic and duodenal homeobox 1,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Interleukin 18,2,1385,0.14,5,3394,0.15,0.155,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,Wnt family member 10B,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,foxp3,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,ucp3,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,ACC,10,1385,0.72,25,3394,0.74,0.012,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,iNOS,2,1385,0.14,7,3394,0.21,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,cyp27a1,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,GPR43/FFAR2,6,1385,0.43,16,3394,0.47,-0.052,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Perilipin 2,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,mapk,6,1385,0.43,18,3394,0.53,-0.218,0.8227997344016778,1.0,False,obese
+healthy_only vs obese_only,proteins,Lipocalin 2,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,CD4 molecule,5,1385,0.36,13,3394,0.38,-0.003,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,SMAD family member 3,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,CD14 molecule,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,cd68,2,1385,0.14,6,3394,0.18,-0.086,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,tyrosine hydroxylase,2,1385,0.14,5,3394,0.15,0.155,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,Fibroblast growth factor receptor 4,2,1385,0.14,4,3394,0.12,0.445,1.0,1.0,False,healthy
+healthy_only vs obese_only,proteins,Epidermal growth factor,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,gcg,1,1385,0.07,4,3394,0.12,-0.293,1.0,1.0,False,obese
+healthy_only vs obese_only,proteins,Klotho,4,1385,0.29,9,3394,0.27,0.215,1.0,1.0,False,healthy

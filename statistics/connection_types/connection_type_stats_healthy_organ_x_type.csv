@@ -1,0 +1,14 @@
+﻿organ,n_connections,Direct glucose transfer,n_type_assignments,n_distinct_types,shannon_diversity_bits,dominant_type,dominant_type_share_pct
+Liver,6,6,6,1,0.0,Direct glucose transfer,100.0
+Small Intestine,5,5,5,1,0.0,Direct glucose transfer,100.0
+Brain,5,5,5,1,0.0,Direct glucose transfer,100.0
+Heart,4,4,4,1,0.0,Direct glucose transfer,100.0
+Colon,4,4,4,1,0.0,Direct glucose transfer,100.0
+WAT,4,4,4,1,0.0,Direct glucose transfer,100.0
+Muscle,4,4,4,1,0.0,Direct glucose transfer,100.0
+Kidney,3,3,3,1,0.0,Direct glucose transfer,100.0
+Lung,2,2,2,1,0.0,Direct glucose transfer,100.0
+Pancreas,2,2,2,1,0.0,Direct glucose transfer,100.0
+Adrenal Glands,1,1,1,1,0.0,Direct glucose transfer,100.0
+Bone Marrow,1,1,1,1,0.0,Direct glucose transfer,100.0
+Thyroid,1,1,1,1,0.0,Direct glucose transfer,100.0

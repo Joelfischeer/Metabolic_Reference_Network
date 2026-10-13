@@ -30001,6 +30001,115 @@ PROTEIN_SYNONYMS: dict[str, set[str]] = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Post-hoc curation of the generated synonym tables
+# ---------------------------------------------------------------------------
+# PROTEIN_SYNONYMS is generated one-gene-per-group, so (a) family symbols such
+# as "akt" stayed separate from their numbered paralogs, (b) short names such
+# as "tgr5" stayed separate from the official gene name, and (c) a few aliases
+# match common words or compound names. The helpers below fix this once, at
+# import time, before the matchers are built.
+
+def _absorb(syn: dict[str, set[str]], vocab: set[str], target: str, *,
+            raw: tuple = (), groups: tuple = (), group_prefixes: tuple = ()) -> None:
+    """Merge `raw` terms, whole `groups` and every group whose key starts with one
+    of `group_prefixes` into the single group `target`. Every alias is also added
+    to `vocab` so the matcher can see it."""
+    aliases = set(syn.get(target, set())) | {r.lower() for r in raw}
+    for g in list(syn):
+        if g != target and (g in groups or any(g.startswith(p) for p in group_prefixes)):
+            aliases |= syn.pop(g)
+    syn[target] = aliases
+    vocab.update(aliases)
+
+
+def _drop_terms(syn: dict[str, set[str]], vocab: set[str], terms: tuple) -> None:
+    for t in terms:
+        vocab.discard(t)
+        for g in list(syn):
+            syn[g].discard(t)
+            if not syn[g]:
+                del syn[g]
+
+
+_P, _PS = PROTEINS, PROTEIN_SYNONYMS
+
+# (a) family symbol + numbered paralogs -> one display name
+_absorb(_PS, _P, "AKT", raw=("akt",),
+        groups=("AKT serine/threonine kinase 1", "AKT serine/threonine kinase 2",
+                "AKT serine/threonine kinase 3"))
+_absorb(_PS, _P, "AMPK",
+        raw=("ampk", "amp-activated protein kinase", "amp activated protein kinase",
+             "amp-activated kinase"),
+        group_prefixes=("Protein kinase AMP-activated",))
+_absorb(_PS, _P, "PI3K",
+        raw=("pi3k", "pi3-kinase", "phosphoinositide 3-kinase", "phosphatidylinositol 3-kinase"),
+        group_prefixes=("Phosphatidylinositol-4,5-bisphosphate 3-kinase catalytic subunit",
+                        "Phosphoinositide-3-kinase regulatory subunit 1",
+                        "Phosphoinositide-3-kinase regulatory subunit 2",
+                        "Phosphoinositide-3-kinase regulatory subunit 3"))
+# MAPK subfamilies keep their familiar names; "mapk" stays the generic term
+_absorb(_PS, _P, "ERK", raw=("erk", "erk1", "erk2", "erk1/2"),
+        groups=("Mitogen-activated protein kinase 1", "Mitogen-activated protein kinase 3"))
+_absorb(_PS, _P, "JNK", raw=("jnk",),
+        groups=("Mitogen-activated protein kinase 8", "Mitogen-activated protein kinase 9",
+                "Mitogen-activated protein kinase 10"))
+_absorb(_PS, _P, "p38", raw=("p38",),
+        groups=("Mitogen-activated protein kinase 11", "Mitogen-activated protein kinase 12",
+                "Mitogen-activated protein kinase 13", "Mitogen-activated protein kinase 14"))
+_absorb(_PS, _P, "FABP", raw=("fabp",),
+        group_prefixes=tuple(f"Fatty acid binding protein {i}" for i in range(1, 10)))
+_absorb(_PS, _P, "SREBP", raw=("srebp",),
+        groups=("Sterol regulatory element binding transcription factor 1",
+                "Sterol regulatory element binding transcription factor 2"))
+_absorb(_PS, _P, "FOXO", raw=("foxo",),
+        group_prefixes=("Forkhead box O",))
+_absorb(_PS, _P, "NF-κB", raw=("nf-kb", "nfkb", "nf-κb", "nf-kappab", "nf-kappa b"),
+        groups=("RELA proto-oncogene, NF-kB subunit", "REL proto-oncogene, NF-kB subunit",
+                "RELB proto-oncogene, NF-kB subunit", "Nuclear factor kappa B subunit 1",
+                "Nuclear factor kappa B subunit 2"))
+_absorb(_PS, _P, "Adiponectin receptor", raw=("adiponectin receptor",),
+        groups=("Adiponectin receptor 1", "Adiponectin receptor 2"))
+
+# (b) short name + official gene name -> one display name
+_absorb(_PS, _P, "ACC", raw=("acc",),
+        groups=("Acetyl-CoA carboxylase alpha", "Acetyl-CoA carboxylase beta"))
+_absorb(_PS, _P, "TGR5", raw=("tgr5",), groups=("G protein-coupled bile acid receptor 1",))
+_absorb(_PS, _P, "FXR",
+        raw=("fxr", "farnesoid x receptor", "farnesoid x-activated receptor"),
+        groups=("Nuclear receptor subfamily 1 group H member 4",))
+for _n in range(1, 6):
+    _absorb(_PS, _P, f"GLUT{_n}", raw=(f"glut{_n}", f"glut-{_n}"),
+            groups=(f"Solute carrier family 2 member {_n}",))
+for _n in (1, 2):
+    _absorb(_PS, _P, f"SGLT{_n}", raw=(f"sglt{_n}", f"sglt-{_n}"),
+            groups=(f"Solute carrier family 5 member {_n}",))
+_absorb(_PS, _P, "PGC-1α", groups=("PPARG coactivator 1 alpha",))
+_absorb(_PS, _P, "PGC-1β", raw=("pgc-1beta", "pgc-1b", "pgc1b"),
+        groups=("PPARG coactivator 1 beta",))
+_absorb(_PS, _P, "PPARδ", raw=("ppar-delta", "ppar-δ", "pparδ"),
+        groups=("Peroxisome proliferator activated receptor delta",))
+
+# (c) aliases that match animals / ordinary words / abbreviations of other genes
+_drop_terms(_PS, _P, ("pigs", "pgc", "clock"))
+
+# Hormones: "progesterone" belonged to both Progesterone and Progestins;
+# GLP-1 is often written "glucagon-like peptide-1".
+HORMONE_SYNONYMS["Progestins"].discard("progesterone")
+HORMONE_SYNONYMS["GLP-1"].add("glucagon-like peptide-1")
+HORMONES.add("glucagon-like peptide-1")
+
+# A term must not be counted when it is only the first word of a different,
+# hyphen-joined name ("glucagon-like peptide" is GLP-1, "AMP-activated" is AMPK,
+# "insulin-like growth factor" is IGF) -- hyphens are non-word characters, so
+# the word-boundary check alone lets these through.
+_EXCLUDE_FOLLOWING: dict[str, tuple[str, ...]] = {
+    "glucagon": ("-like", " like"),
+    "insulin":  ("-like", " like"),
+    "amp":      ("-activated", " activated"),
+}
+
+
 def _merge_synonyms(counts: dict[str, int],
                     synonym_groups: dict[str, set[str]]) -> dict[str, int]:
     """Sum counts for all synonym variants into their canonical display name."""
@@ -30141,6 +30250,9 @@ def _find_canonical_terms(automaton, term_to_canon: dict, text: str) -> set[str]
         if start_idx > 0 and _is_word_char(text[start_idx - 1]):
             continue
         if end_idx + 1 < len(text) and _is_word_char(text[end_idx + 1]):
+            continue
+        excl = _EXCLUDE_FOLLOWING.get(term)
+        if excl and text.startswith(excl, end_idx + 1):
             continue
         found.add(term_to_canon.get(term, term))
     return found

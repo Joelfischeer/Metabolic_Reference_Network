@@ -1,0 +1,10 @@
+﻿organ_1,organ_2,n_types,types,n_papers,OO,median_year,latest_year
+Brain,Pancreas,1,Direct glucose transfer,52,0.0913,2012.5,2026.0
+Brain,Heart,1,Direct glucose transfer,28,0.0472,2019.0,2026.0
+Heart,Lung,2,Nerve connection; Adipokine/myokine signaling,9,0.0902,2020.0,2026.0
+Liver,Spleen,1,Other physical connection,9,0.0488,2019.0,2025.0
+Heart,Thyroid,2,Hormonal glucose control; Adipokine/myokine signaling,5,0.0265,2007.0,2020.0
+Bone Marrow,Small Intestine,1,Adipokine/myokine signaling,5,0.0169,2025.0,2026.0
+Pancreas,Spleen,2,Nerve connection; Hormonal glucose control,2,0.0273,2022.5,2024.0
+Bone Marrow,Kidney,1,Adipokine/myokine signaling,1,0.0109,2019.0,2019.0
+Adrenal Glands,Muscle,0,No type assigned,0,0.0,,

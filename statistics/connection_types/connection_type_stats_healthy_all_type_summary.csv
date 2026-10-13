@@ -1,0 +1,13 @@
+﻿type,n_pairs,pct_of_pairs,pct_of_assignments,n_pairs_exclusive,n_pairs_shared_with_other_type,n_unique_papers,papers_per_pair_mean,papers_per_pair_median,papers_per_pair_min,papers_per_pair_max,papers_per_pair_sd,OO_mean,n_organs_involved,most_frequent_organs,top_pairs_by_papers
+Direct glucose transfer,57,81.4,78.1,57.0,0.0,1568.0,34.23,11.0,1.0,499.0,78.37,0.0958,14.0,"Brain (13), Small Intestine (12), Colon (11)",Brain-Small Intestine; Colon-Small Intestine; Brain-Colon
+Adipokine/myokine signaling,10,14.3,13.7,7.0,3.0,15.0,1.6,1.0,1.0,5.0,1.35,0.0249,10.0,"Lung (5), Spleen (3), Heart (2)",Lung-Muscle; Bone Marrow-Lung; Adrenal Glands-WAT
+Nerve connection,3,4.3,4.1,1.0,2.0,8.0,2.67,2.0,1.0,5.0,2.08,0.0321,6.0,"Heart (1), Spleen (1), Kidney (1)",Lung-Muscle; Kidney-WAT; Heart-Spleen
+Hormonal glucose control,1,1.4,1.4,0.0,1.0,1.0,1.0,1.0,1.0,1.0,,0.0114,2.0,"Heart (1), Pancreas (1)",Heart-Pancreas
+No type assigned,1,1.4,,0.0,,3.0,3.0,3.0,3.0,3.0,,0.0324,2.0,"Bone Marrow (1), Liver (1)",Bone Marrow-Liver
+Other physical connection,1,1.4,1.4,0.0,1.0,1.0,1.0,1.0,1.0,1.0,,0.025,2.0,"Spleen (1), WAT (1)",Spleen-WAT
+Inflammatory/cytokine crosstalk,1,1.4,1.4,0.0,1.0,1.0,1.0,1.0,1.0,1.0,,0.025,2.0,"Spleen (1), WAT (1)",Spleen-WAT
+Other Hormonal influence,0,,,,,,,,,,,,,,
+Mineral/electrolyte-coupled metabolic regulation,0,,,,,,,,,,,,,,
+Ketone body exchange,0,,,,,,,,,,,,,,
+Metabolite crosstalk,0,,,,,,,,,,,,,,
+Circadian/clock synchronization,0,,,,,,,,,,,,,,

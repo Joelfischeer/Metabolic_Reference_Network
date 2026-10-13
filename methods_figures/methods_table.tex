@@ -1,0 +1,102 @@
+% =============================================================================
+%  Methods table: how each pipeline step contributes to the HTML dashboard
+%  Compile standalone (pdflatex methods_table.tex) or copy the longtable
+%  (from \begin{longtable} to \end{longtable}) into the manuscript.
+%  Needs: booktabs, longtable, array, ragged2e (all in TeX Live).
+% =============================================================================
+\documentclass[a4paper,10pt]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.92]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{booktabs,longtable,array,ragged2e}
+
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcommand{\file}[1]{\texttt{\detokenize{#1}}}   % file names with underscores
+
+\begin{document}
+\pagestyle{empty}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+
+\begin{longtable}{@{}L{2.3cm} L{3.2cm} L{5.9cm} L{4.4cm}@{}}
+\caption{Pipeline steps and their contribution to the interactive HTML dashboard.
+Numbers refer to the current run (14 organs, 91 organ pairs); papers are unique papers unless stated otherwise.}
+\label{tab:html-generation}\\
+\toprule
+\textbf{Step} & \textbf{Input} & \textbf{Processing} & \textbf{Use in the HTML dashboard}\\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Step} & \textbf{Input} & \textbf{Processing} & \textbf{Use in the HTML dashboard}\\
+\midrule
+\endhead
+\midrule \multicolumn{4}{r}{\textit{continued on next page}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+
+\textbf{1}~Literature search and filtering
+ & 14 organs, 91 organ pairs; organ MeSH terms and aliases; 22 metabolic and 21 crosstalk keywords
+ & One PubMed query per pair (title/abstract), last 20 years, up to 20\,000 hits, 0.4~s between requests;
+   PMID, title, abstract, year and MeSH descriptors fetched via EFetch.
+   Local rule-based filters keep a paper only if both organs and a crosstalk keyword occur in the
+   same sentence (whole-word, negation-aware) and no third organ indicates a different relationship
+   (multi-organ disambiguation).
+   187\,757 hits retrieved (summed over pairs); 27\,416 pair--paper assignments kept, i.e.\ 22\,451 unique
+   papers (87 of 91 pairs with at least one paper).
+ & Existence of a connection and its paper count; overlap-coefficient (OO) based edge weight;
+   paper list with abstracts per connection; Literature Statistics tab (Sankey and bar plots).\\[3pt]
+
+\textbf{2}~Condition subselection
+ & Papers of step 1; 7 healthy and 11 obese keywords
+ & A paper is kept for a condition if its title or abstract contains at least one keyword of that condition
+   (whole-word, negation-aware, anywhere in the text). The two sets overlap (200 papers).
+   Healthy: 1\,585 papers in 70 pairs; obese: 3\,594 papers in 72 pairs.
+   Computed on the fly while the HTML is built.
+ & Healthy/Obese switch: a connection is shown if it has at least one matching paper; paper counts,
+   key players, OO weights and statistics are recomputed from the filtered papers.\\[3pt]
+
+\textbf{3}~Key player extraction
+ & Title, abstract and MeSH descriptors of the papers of each pair and condition
+ & Multi-pattern (Aho--Corasick) whole-word matching against curated vocabularies of hormones (171),
+   metabolites (254) and proteins/transporters (45\,138). Synonyms and paralog families are merged to one
+   display name at match time; each term counts once per paper (count = number of papers).
+ & Ranked lists of hormones, metabolites and proteins with paper counts in the information panel of each
+   connection; recalculated for the Healthy and Obese views.\\[3pt]
+
+\textbf{4}~Connection-type classification (LLM)
+ & First 100 papers of a pair (abstracts truncated to 400 characters); definitions of 11 connection types
+ & Local LLM (llama3.2 via Ollama, temperature 0.5) assigns 1--3 types per run; 5 independent runs;
+   types named in the majority of runs (at least 3 of 5) are kept; if none reaches a majority the single
+   most frequent type is kept.
+ & Connection-type label and colour of each edge and the type legend; Healthy/Obese views use the
+   condition-specific classification where it exists and the all-papers classification otherwise.\\[3pt]
+
+\textbf{5}~Connection descriptions (LLM)
+ & Papers of a pair (condition-filtered for the condition files)
+ & 25 papers drawn at random (all if fewer); the LLM selects the 5 most relevant; a second prompt writes a
+   3--4 sentence summary of the metabolic and hormonal basis of the axis that cites every selected paper.
+ & Cited summary with the five source papers in the information panel of each connection.\\[3pt]
+
+\textbf{6}~Organ descriptions (LLM)
+ & 14 organs; organ MeSH term/aliases and the 22 metabolic keywords
+ & Separate PubMed search per organ (title/abstract, last 5 years, up to 50 papers; 700 in total); the first six
+   papers (abstracts truncated to 400 characters) are given to the LLM, which writes exactly five sentences on
+   consumed and produced substrates, energy pathways and hormonal regulation. Refusals are detected and
+   re-prompted with a simplified prompt.
+ & Description and source papers in the information panel of each organ (node).\\[3pt]
+
+\textbf{7}~Assembly of the dashboard
+ & Caches of steps 1, 4, 5 and 6 (plus the condition-specific files); PET partial-correlation networks
+   of the healthy and obese cohorts
+ & Undirected NetworkX graph (14 nodes, 91 edges) with all edge and node attributes, including the
+   precomputed condition variants; export to a single HTML file rendered with Cytoscape.js (version 3.29.2,
+   loaded from a CDN). The cohort partial-correlation networks (16 healthy and 9 obese edges) are added
+   as comparison networks.
+ & Interactive network with All/Healthy/Obese views, comparison with the PET-based networks, and the
+   Literature and Edge Statistics tabs.\\
+
+\end{longtable}
+\end{document}

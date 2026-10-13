@@ -1,0 +1,6 @@
+﻿type (diagonal = pairs with type),Direct glucose transfer,Hormonal glucose control,Nerve connection,Other physical connection,Adipokine/myokine signaling
+Direct glucose transfer,2,0,0,0,0
+Hormonal glucose control,0,2,1,0,1
+Nerve connection,0,1,2,0,1
+Other physical connection,0,0,0,1,0
+Adipokine/myokine signaling,0,1,1,0,4

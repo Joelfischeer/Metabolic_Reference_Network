@@ -1,0 +1,20 @@
+﻿metric,value
+Scope,All papers (no condition)
+Condition filter,none
+Pair selection,edge set (all_organ_connections.csv)
+Organ pairs in scope,91
+Organs in scope,14
+Pairs with >=1 type,86
+Pairs without type,5
+% pairs classified,94.5
+Total type assignments,96
+Mean types per pair (all pairs),1.05
+Mean types per classified pair,1.12
+Pairs with 0 / 1 / 2 / 3 types,5 / 76 / 10 / 0
+Distinct types used,7
+Unique papers in scope,22451
+Papers per pair: mean,301.27
+Papers per pair: median,63.0
+Papers per pair: max,4986
+Pairs with 0 papers,4
+Shannon diversity of types (bits),1.846

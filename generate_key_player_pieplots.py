@@ -27,6 +27,7 @@ Output: visualizations/<case>/key_players_pie.png
 """
 
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -35,7 +36,10 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 HERE    = Path(__file__).resolve().parent
-OUT_DIR = HERE / "visualizations"
+sys.path.insert(0, str(HERE))
+
+OUT_DIR     = HERE / "visualizations"
+OUT_DIR_ALL = HERE / "visualizations_all_papers"
 DPI     = 600
 # The combined 3x3 overview grid is physically much larger (22x27 in) than
 # the standalone per-case pie figures, so a naive DPI bump balloons file
@@ -112,6 +116,128 @@ def _aggregate_reference(results_path: Path) -> dict[str, dict[str, float]]:
     return {cat: dict(v) for cat, v in totals.items()}
 
 
+def _aggregate_reference_condition_all(
+    results_path: Path, condition: str
+) -> dict[str, dict[str, float]]:
+    """
+    Key players from ALL condition-filtered papers across all 91 pairs —
+    no OO threshold, just ≥1 paper matching the condition keyword.
+    """
+    from run_metabolic_lit_search import (
+        CONDITION_KEYWORDS, _compile_patterns, _filter_by_condition,
+    )
+    from Literature_Search.pubmed_search import extract_key_players
+
+    data = json.loads(results_path.read_text(encoding="utf-8"))
+    pats = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    totals: dict[str, dict[str, float]] = {
+        "hormones":    defaultdict(float),
+        "metabolites": defaultdict(float),
+        "proteins":    defaultdict(float),
+    }
+    cat_keys = (
+        ("hormones",    "hormones_counts"),
+        ("metabolites", "metabolites_counts"),
+        ("proteins",    "proteins_counts"),
+    )
+    for entry in data.values():
+        papers = _filter_by_condition(entry.get("papers", []), pats)
+        if not papers:
+            continue
+        kp = extract_key_players(papers)
+        for cat, count_key in cat_keys:
+            for term, count in (kp.get(count_key) or {}).items():
+                term = term.strip()
+                if term:
+                    totals[cat][term] += float(count)
+
+    return {cat: dict(v) for cat, v in totals.items()}
+
+
+def _aggregate_reference_condition_oo(
+    results_path: Path, condition: str
+) -> dict[str, dict[str, float]]:
+    """
+    Build key-player tallies for the 14-organ reference network restricted to
+    the condition-filtered, OO-threshold-selected pairs.
+
+    Steps:
+      1. Load the full base results (all 91 pairs).
+      2. Filter each pair's papers by `condition` keywords (healthy/obese).
+      3. Compute the Otsuka-Ochiai coefficient per pair.
+      4. Find the elbow threshold with kneedle.
+      5. Keep only pairs with OO >= threshold.
+      6. Re-extract key players from those pairs' condition-filtered papers
+         and aggregate counts across all kept pairs.
+    """
+    from threshold_utils import kneedle_elbow
+    from run_metabolic_lit_search import (
+        CONDITION_KEYWORDS, _compile_patterns, _filter_by_condition,
+    )
+    from Literature_Search.pubmed_search import extract_key_players
+
+    data   = json.loads(results_path.read_text(encoding="utf-8"))
+    pats   = _compile_patterns(CONDITION_KEYWORDS[condition])
+
+    # Build {pair_key: condition_filtered_papers}
+    pair_papers: dict[str, list] = {}
+    for key, entry in data.items():
+        papers = _filter_by_condition(entry.get("papers", []), pats)
+        pair_papers[key] = papers
+
+    # Compute per-organ union PMID counts
+    organ_pmids: dict[str, set] = {}
+    for key, papers in pair_papers.items():
+        parts = key.split("|")
+        if len(parts) != 2:
+            continue
+        o1, o2 = parts
+        pmids = {p.get("pmid") for p in papers if p.get("pmid")}
+        organ_pmids.setdefault(o1, set()).update(pmids)
+        organ_pmids.setdefault(o2, set()).update(pmids)
+    organ_n = {o: len(s) for o, s in organ_pmids.items()}
+
+    # OO per pair
+    oo_vals: dict[str, float] = {}
+    for key, papers in pair_papers.items():
+        parts = key.split("|")
+        if len(parts) != 2:
+            continue
+        o1, o2 = parts
+        n_co  = len([p for p in papers if p.get("pmid")])
+        n1, n2 = organ_n.get(o1, 0), organ_n.get(o2, 0)
+        denom  = (n1 * n2) ** 0.5 if n1 > 0 and n2 > 0 else 0
+        oo_vals[key] = (n_co / denom) if denom > 0 else 0.0
+
+    nonzero = sorted(v for v in oo_vals.values() if v > 0)
+    thresh  = kneedle_elbow(nonzero) if len(nonzero) >= 3 else 0.0
+
+    # Aggregate key players for pairs that pass the OO threshold
+    totals: dict[str, dict[str, float]] = {
+        "hormones": defaultdict(float),
+        "metabolites": defaultdict(float),
+        "proteins": defaultdict(float),
+    }
+    cat_keys = (
+        ("hormones",    "hormones_counts"),
+        ("metabolites", "metabolites_counts"),
+        ("proteins",    "proteins_counts"),
+    )
+    for key, oo in oo_vals.items():
+        if oo < thresh or oo == 0:
+            continue
+        papers = pair_papers[key]
+        kp = extract_key_players(papers)
+        for cat, count_key in cat_keys:
+            for term, count in (kp.get(count_key) or {}).items():
+                term = term.strip()
+                if term:
+                    totals[cat][term] += float(count)
+
+    return {cat: dict(v) for cat, v in totals.items()}
+
+
 # ── Case registry ─────────────────────────────────────────────────────────────
 
 CASES = {
@@ -129,20 +255,6 @@ CASES = {
                  / "bootstrap_results_obese.json"
         ),
     },
-    "general_healthy": {
-        "title":  "Metabolic + Hormonal Network — Healthy",
-        "loader": lambda: _aggregate_bootstrap(
-            HERE / "Edge_cosine_general_reference_network" / "healthy"
-                 / "bootstrap_results_healthy.json"
-        ),
-    },
-    "general_obese": {
-        "title":  "Metabolic + Hormonal Network — Obese",
-        "loader": lambda: _aggregate_bootstrap(
-            HERE / "Edge_cosine_general_reference_network" / "obese"
-                 / "bootstrap_results_obese.json"
-        ),
-    },
     "reference_metabolic": {
         "title":  "Metabolic Reference Network — All Connections",
         "loader": lambda: _aggregate_reference(
@@ -150,23 +262,31 @@ CASES = {
                  / "metabolic_literature_results.json"
         ),
     },
-    # healthy/obese use their own condition-filtered results file (see
-    # run_metabolic_lit_search.py --condition healthy|obese) -- papers
-    # already restricted to that condition's keyword filter, key players
-    # recomputed from that smaller set -- not the "all" results filtered
-    # down to that scope's pairs.
-    "reference_metabolic_healthy": {
-        "title":  "Metabolic Reference Network — Healthy Connections",
+}
+
+
+CASES_ALL = {
+    "reference_metabolic_all": {
+        "title":  "Metabolic Reference Network — All Connections",
         "loader": lambda: _aggregate_reference(
             HERE / "reference_network_only_metabolic"
-                 / "metabolic_literature_results_healthy.json"
+                 / "metabolic_literature_results.json"
         ),
     },
-    "reference_metabolic_obese": {
-        "title":  "Metabolic Reference Network — Obese Connections",
-        "loader": lambda: _aggregate_reference(
+    "reference_metabolic_healthy_all": {
+        "title":  "Metabolic Reference Network — Healthy (all papers, 14 organs)",
+        "loader": lambda: _aggregate_reference_condition_all(
             HERE / "reference_network_only_metabolic"
-                 / "metabolic_literature_results_obese.json"
+                 / "metabolic_literature_results.json",
+            "healthy",
+        ),
+    },
+    "reference_metabolic_obese_all": {
+        "title":  "Metabolic Reference Network — Obese (all papers, 14 organs)",
+        "loader": lambda: _aggregate_reference_condition_all(
+            HERE / "reference_network_only_metabolic"
+                 / "metabolic_literature_results.json",
+            "obese",
         ),
     },
 }
@@ -191,7 +311,10 @@ def _top_n_plus_other(
 
 def _draw_pie_ax(ax: plt.Axes, counts: dict[str, float], category: str) -> None:
     ax.set_facecolor("white")
-    title = CATEGORY_LABELS[category]
+    n_players = sum(1 for v in counts.values() if v > 0)
+    n_mentions = sum(counts.values())
+    title = (f"{CATEGORY_LABELS[category]}\n"
+             f"{n_players:,} distinct players recovered ({n_mentions:,.0f} mentions)")
 
     if not counts or sum(counts.values()) == 0:
         ax.text(0.5, 0.5, "No data", ha="center", va="center",
@@ -298,9 +421,13 @@ def draw_key_player_figure(
 # case_name -> row label, for the combined reference-network grid figure
 # (all/healthy/obese only -- the cosine-pipeline cases aren't part of it).
 _REFERENCE_GRID_ROWS = {
-    "reference_metabolic":         "All Connections",
-    "reference_metabolic_healthy": "Healthy Connections",
-    "reference_metabolic_obese":   "Obese Connections",
+    "reference_metabolic": "No Condition\n(91 pairs, ≥1 paper)",
+}
+
+_REFERENCE_GRID_ROWS_ALL = {
+    "reference_metabolic_all":         "No Condition\n(91 pairs, ≥1 paper)",
+    "reference_metabolic_healthy_all": "Healthy\n(all papers, 14 organs)",
+    "reference_metabolic_obese_all":   "Obese\n(all papers, 14 organs)",
 }
 
 
@@ -327,10 +454,42 @@ def main() -> None:
         print("[i] reference_metabolic_key_players_grid")
         grid_rows = [
             (_REFERENCE_GRID_ROWS[name], grid_data[name])
-            for name in ("reference_metabolic", "reference_metabolic_healthy", "reference_metabolic_obese")
+            for name in ("reference_metabolic",)
             if name in grid_data
         ]
         draw_key_player_grid(grid_rows, OUT_DIR / "reference_metabolic_key_players_grid.png")
+
+    # ── No-threshold healthy/obese variants ───────────────────────────────────
+    print()
+    grid_data_all: dict[str, dict[str, dict[str, float]]] = {}
+
+    for case_name, cfg in CASES_ALL.items():
+        print(f"[i] {case_name}")
+        try:
+            kp_data = cfg["loader"]()
+        except FileNotFoundError as exc:
+            print(f"  [!] skipped: {exc}")
+            continue
+
+        out_path = OUT_DIR_ALL / case_name / "key_players_pie.png"
+        draw_key_player_figure(kp_data, cfg["title"], out_path)
+
+        if case_name in _REFERENCE_GRID_ROWS_ALL:
+            grid_data_all[case_name] = kp_data
+
+    print("\n[ok] All no-threshold key player pie plots done.")
+
+    if grid_data_all:
+        print("[i] reference_metabolic_key_players_grid_all")
+        grid_rows_all = [
+            (_REFERENCE_GRID_ROWS_ALL[name], grid_data_all[name])
+            for name in ("reference_metabolic_all", "reference_metabolic_healthy_all", "reference_metabolic_obese_all")
+            if name in grid_data_all
+        ]
+        draw_key_player_grid(
+            grid_rows_all,
+            OUT_DIR_ALL / "reference_metabolic_key_players_grid.png",
+        )
 
 
 if __name__ == "__main__":

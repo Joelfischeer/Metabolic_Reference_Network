@@ -17,3 +17,8 @@ Edge_cosine_general_reference_network/*/*.json
 reference_network_only_metabolic/*.json*
 metabolic_data/*.json
 .claude/
+
+# local backups, lock files and raw PET data
+*.bak*
+.~lock.*
+reference_network_only_metabolic/Data FDG*

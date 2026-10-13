@@ -1,0 +1,13 @@
+﻿type,n_pairs,pct_of_pairs,pct_of_assignments,n_pairs_exclusive,n_pairs_shared_with_other_type,n_unique_papers,papers_per_pair_mean,papers_per_pair_median,papers_per_pair_min,papers_per_pair_max,papers_per_pair_sd,OO_mean,n_organs_involved,most_frequent_organs,top_pairs_by_papers
+Direct glucose transfer,57,62.6,59.4,57.0,0.0,22097.0,472.93,203.0,31.0,4986.0,866.15,0.0962,14.0,"Brain (13), Small Intestine (12), Colon (11)",Brain-Small Intestine; Liver-Small Intestine; Colon-Small Intestine
+Adipokine/myokine signaling,16,17.6,16.7,10.0,6.0,272.0,17.19,19.0,2.0,28.0,8.46,0.0189,10.0,"Lung (6), Bone Marrow (5), Pancreas (4)",Muscle-Thyroid; Heart-Pancreas; Lung-Pancreas
+Hormonal glucose control,11,12.1,11.5,6.0,5.0,86.0,7.91,7.0,1.0,26.0,7.92,0.0069,9.0,"Adrenal Glands (6), Thyroid (3), Pancreas (3)",Heart-Pancreas; Pancreas-Thyroid; Adrenal Glands-Kidney
+Nerve connection,5,5.5,5.2,1.0,4.0,96.0,19.2,18.0,1.0,48.0,17.96,0.0134,7.0,"Adrenal Glands (2), Heart (2), Muscle (2)",Kidney-WAT; Lung-Muscle; Heart-Spleen
+No type assigned,5,5.5,,0.0,,63.0,12.6,0.0,0.0,63.0,28.17,0.0075,6.0,"Adrenal Glands (4), Bone Marrow (2), Colon (1)",Bone Marrow-Liver; Adrenal Glands-Bone Marrow; Adrenal Glands-Colon
+Inflammatory/cytokine crosstalk,3,3.3,3.1,0.0,3.0,25.0,8.33,7.0,2.0,16.0,7.09,0.0068,5.0,"WAT (2), Bone Marrow (1), Muscle (1)",Lung-WAT; Spleen-WAT; Bone Marrow-Muscle
+Mineral/electrolyte-coupled metabolic regulation,2,2.2,2.1,1.0,1.0,30.0,15.0,15.0,9.0,21.0,8.49,0.0156,3.0,"Kidney (2), Adrenal Glands (1), Bone Marrow (1)",Bone Marrow-Kidney; Adrenal Glands-Kidney
+Other physical connection,2,2.2,2.1,1.0,1.0,9.0,4.5,4.5,2.0,7.0,3.54,0.0056,4.0,"Adrenal Glands (1), Lung (1), Spleen (1)",Spleen-WAT; Adrenal Glands-Lung
+Other Hormonal influence,0,,,,,,,,,,,,,,
+Ketone body exchange,0,,,,,,,,,,,,,,
+Metabolite crosstalk,0,,,,,,,,,,,,,,
+Circadian/clock synchronization,0,,,,,,,,,,,,,,
